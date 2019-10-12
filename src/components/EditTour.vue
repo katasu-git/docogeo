@@ -5,9 +5,9 @@
             ツアーの選択に戻る
         </button>
       <div class="l-justify-center">
-        <div class="l-both-center">
-            <div class="o-tour_name-text">DoCoGeo</div>
-            <div class="o-group_name-text">for Guide</div>
+        <div class="l-tour_info">
+            <div class="o-tour_name-text">{{ tour_name }}</div>
+            <div class="o-group_name-text">{{ group_name }}</div>
         </div>
       </div>
       <div class="l-justify-center">
@@ -29,14 +29,32 @@
     data() {
       return {
           spot_info: JSON,
+          tour_id: 3,
+          tour_name: 'ツアー名を入力',
+          group_name: 'グループ名を入力'
       }
     },
     created: function () {
+      if(JSON.stringify(this.$route.params) == "{}") {
+        // 更新されたときはトップに戻る
+        this.jumpPage("HelloWorld");
+      }
+      this.tour_id = this.$route.params.tour_id;
+      if(this.$route.params.tour_name != undefined) {
+        this.tour_name = this.$route.params.tour_name;
+      }
+      if(this.$route.params.group_name != undefined) {
+        this.group_name = this.$route.params.group_name;
+      }
       this.accessDb();
     },
     methods: {
       accessDb: function () {
-        axios.post('https://www2.yoslab.net/~nishimura/geotour/PHP/get_spot_info.php').then(response => {
+        const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/get_spot_info.php';
+        let params = new URLSearchParams();
+        params.append('tour_id', this.tour_id);
+        axios.post(url, params
+        ).then(response => {
           this.spot_info = response.data;
         }).catch(error => {
           // エラーを受け取る
@@ -106,7 +124,9 @@
     /*font-weight: bold;*/
   }
 
-  .l-both-center {
+  .l-tour_info {
+    padding: 40px;
+  
     display: flex;
     flex-direction: column;
     justify-content: center;

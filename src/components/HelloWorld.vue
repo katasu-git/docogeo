@@ -12,7 +12,7 @@
       </div>
       <div class="l-justify-center">
         <div class="l-cardContainer">
-          <div class="o-card" v-for="info in tour_info">
+          <div class="o-card" v-for="info in tour_info" v-on:click='jumpPage("editTour", info)'>
             <div class="o-card-img"></div>
             <div class="o-card-title">{{ info.tour_name }}</div>
           </div>
@@ -36,15 +36,24 @@
     },
     methods: {
       accessDb: function () {
-        axios.post('https://www2.yoslab.net/~nishimura/geotour/PHP/get_tour_info.php').then(response => {
+        axios.post('https://www2.yoslab.net/~nishimura/geotour/PHP/get_tour_info.php'
+        ).then(response => {
           this.tour_info = response.data;
-          //console.log(this.tour_info);
-          //console.log(response.data);
         }).catch(error => {
           // エラーを受け取る
           console.log(error);
         });
-      }
+      },
+      jumpPage: function(where, param) {
+        this.$router.push({
+            name: where,
+            params: {
+              tour_id: param.tour_id,
+              tour_name: param.tour_name,
+              group_name: param.group_name,
+            }
+        })
+      },
     }
   }
 

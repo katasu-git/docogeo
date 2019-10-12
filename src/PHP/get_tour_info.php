@@ -8,7 +8,7 @@ function get_tour_info() {
     $stmt = $pdo -> query($sql);
     $result = array();
     foreach($stmt as $row) {
-        $tour_info = array('tour_name' => $row['tour_name'], 'group_name' => $row['group_name']);
+        $tour_info = array('tour_id' => $row['id'], 'tour_name' => $row['tour_name'], 'group_name' => $row['group_name']);
         array_push($result, $tour_info);
     }
     return $result;

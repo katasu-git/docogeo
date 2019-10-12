@@ -3,8 +3,9 @@
 require_once("./connect_mysql.php");
 
 function get_spot_info() {
+    $tour_id = $_POST['tour_id'];
     $pdo = connect_mysql();  //mysqlに接続
-    $sql = "SELECT * FROM spot_name";
+    $sql = "SELECT * FROM spot_name WHERE tour_id=$tour_id";
     $stmt = $pdo -> query($sql);
     $result = array();
     foreach($stmt as $row) {
