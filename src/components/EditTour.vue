@@ -1,6 +1,15 @@
 <template>
   <div id="editTour">
     <div class="l-body">
+        <button class="o-backBtn" v-on:click='jumpPage("HelloWorld")'>
+            ツアーの選択に戻る
+        </button>
+      <div class="l-justify-center">
+        <div class="l-both-center">
+            <div class="o-tour_name-text">DoCoGeo</div>
+            <div class="o-group_name-text">for Guide</div>
+        </div>
+      </div>
       <div class="l-justify-center">
         <div class="l-cardContainer">
           <div class="o-card" v-for="info in spot_info">
@@ -33,7 +42,13 @@
           // エラーを受け取る
           console.log(error);
         });
-      }
+      },
+      jumpPage: function(where) {
+        this.$router.push({
+            name: where,
+            params: {}
+        })
+      },
     }
   }
 
@@ -41,7 +56,7 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-  #hello,
+  #editTour,
   .l-body {
     height: 100%;
     width: 100%;
@@ -89,6 +104,31 @@
   .o-card-title {
     font-size: 12px;
     /*font-weight: bold;*/
+  }
+
+  .l-both-center {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    /*中央よせ*/
+    align-items: center;
+  }
+ 
+  .o-tour_name-text {
+      font-size: 20px;
+      font-weight: bold;
+      color: white;
+  }
+
+  .o-group_name-text {
+      font-size: 12px;
+      color: white;
+  }
+
+  .o-backBtn {
+      padding: 20px;
+      font-size: 12px;
+      color: white;
   }
 
 </style>

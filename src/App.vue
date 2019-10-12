@@ -20,7 +20,7 @@ html, body, #app {
   margin: 0;
   padding: 0;
 }
-a, p {
+a, p, button {
   margin: 0;
   padding: 0;
 }
