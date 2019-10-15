@@ -77,6 +77,8 @@ export default {
       axios.post(url, params
       ).then(response => {
         console.log("挿入に成功しました");
+        this.accessDb(); //更新処理
+        this.text = '';
       }).catch(error => {
         // エラーを受け取る
         console.log(error);
