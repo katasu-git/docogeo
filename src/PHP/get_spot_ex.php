@@ -9,6 +9,7 @@ function get_spot_ex() {
     $stmt = $pdo -> query($sql);
     $result = array();
     foreach($stmt as $row) {
+        //帰り値の設定
         $spot_ex = array('tour_id' => $row['tour_id'], 'spot_ex' => $row['spot_explanation']);
         array_push($result, $spot_ex);
     }

@@ -38,15 +38,16 @@
       if(JSON.stringify(this.$route.params) == "{}") {
         // 更新されたときはトップに戻る
         this.jumpPage("HelloWorld");
+      } else {
+        this.tour_id = this.$route.params.tour_id;
+        if(this.$route.params.tour_name != undefined) {
+          this.tour_name = this.$route.params.tour_name;
+        }
+        if(this.$route.params.group_name != undefined) {
+          this.group_name = this.$route.params.group_name;
+        }
+        this.accessDb();
       }
-      this.tour_id = this.$route.params.tour_id;
-      if(this.$route.params.tour_name != undefined) {
-        this.tour_name = this.$route.params.tour_name;
-      }
-      if(this.$route.params.group_name != undefined) {
-        this.group_name = this.$route.params.group_name;
-      }
-      this.accessDb();
     },
     methods: {
       accessDb: function () {
