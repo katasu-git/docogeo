@@ -12,9 +12,9 @@
       </div>
       <div class="l-justify-center">
         <div class="l-cardContainer">
-          <div class="o-card" v-for="info in spot_info">
+          <div class="o-card" v-for="info in spot_info" v-on:click='jumpPage("editSpot", info.spot_id, info.spot_name)'>
             <div class="o-card-img"></div>
-            <div class="o-card-title">{{ info.spot_name }}</div>
+            <div class="o-card-title">{{ info.spot_id }}:{{ info.spot_name }}</div>
           </div>
         </div>
       </div>
@@ -61,10 +61,13 @@
           console.log(error);
         });
       },
-      jumpPage: function(where) {
+      jumpPage: function(where, spot_id, spot_name) {
         this.$router.push({
             name: where,
-            params: {}
+            params: {
+              spot_id: spot_id,
+              spot_name: spot_name
+            }
         })
       },
     }

@@ -1,7 +1,27 @@
 <template>
   <div id="editSpot">
     <div class="l-body">
-        
+      <button class="o-backBtn" v-on:click='jumpPage("HelloWorld")'>
+        ジオサイトの選択に戻る
+      </button>
+      <div class="l-justify-center">
+        <div class="l-tour_info">
+            <div class="o-tour_name-text">{{ spot_name }}</div>
+        </div>
+      </div>
+      <div class="l-images">
+        <div class="o-img_box-add"></div>
+        <div class="o-img_box" v-for="img in images"></div>
+      </div>
+      <form class="l-input_ex">
+        <input class="o-input_ex" type="text" placeholder="追加する説明を入力" />
+        <button>追加</button>
+      </form>
+      <div class="l-comment">
+        <div class="o-comment" v-for="ex in spot_ex">
+          {{ ex.spot_ex }}
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -12,22 +32,33 @@
     name: 'editTour',
     data() {
       return {
-          spot_info: JSON,
-          tour_name: 'ツアー名を入力',
-          group_name: 'グループ名を入力'
+        images: 5,
+        comments: 3,
+        spot_id: Number,
+        spot_name: 'ジオサイトの名前を入力',
+        spot_ex: JSON,
       }
     },
     created: function () {
-      this.accessDb();
+      this.spot_id = this.$route.params.spot_id;
+      if(this.$route.params.spot_name != undefined) {
+        this.spot_name = this.$route.params.spot_name;
+      }
       if(JSON.stringify(this.$route.params) == "{}") {
         // 更新されたときはトップに戻る
-        this.jumpPage("EditTour");
+        this.jumpPage("editTour");
       }
+      this.accessDb();
     },
     methods: {
       accessDb: function () {
-        axios.post('https://www2.yoslab.net/~nishimura/geotour/PHP/get_spot_info.php').then(response => {
-          this.spot_info = response.data;
+        const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/get_spot_ex.php';
+        let params = new URLSearchParams();
+        //console.log(this.spot_id);
+        params.append('spot_id', this.spot_id);
+        axios.post(url, params
+        ).then(response => {
+          this.spot_ex = response.data;
         }).catch(error => {
           // エラーを受け取る
           console.log(error);
@@ -36,7 +67,8 @@
       jumpPage: function(where) {
         this.$router.push({
             name: where,
-            params: {}
+            params: {
+            }
         })
       },
     }
@@ -50,6 +82,7 @@
   .l-body {
     height: 100%;
     width: 100%;
+    overflow-x: hidden;
   }
 
   .l-body {
@@ -60,6 +93,80 @@
     display: flex;
     justify-content: center;
     /*中央よせ*/
+  }
+
+  .l-tour_info {
+    padding: 40px;
+  
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    /*中央よせ*/
+    align-items: center;
+  }
+ 
+  .o-tour_name-text {
+      font-size: 20px;
+      font-weight: bold;
+      color: white;
+  }
+
+  .o-backBtn {
+      padding: 20px;
+      font-size: 12px;
+      color: white;
+  }
+
+  .l-images {
+      width: 100vw;
+      padding-left: 20px;
+
+      display: flex;
+      overflow: scroll;
+  }
+
+  .o-img_box {
+      min-height: 60px;
+      min-width: 60px;
+      background: white;
+  }
+
+  .o-img_box:not(:first-of-type) {
+      margin-left: 10px;
+  }
+
+  .o-img_box-add {
+      min-height: 60px;
+      min-width: 60px;
+      border: dashed 1px white;
+  }
+
+  .l-input_ex {
+      padding: 50px 0 0 20px;
+  }
+
+  .o-input_ex {
+      min-height: 30px;
+      width: calc(100vw - 80px);
+      border-radius: 5px;
+  }
+
+  .l-comment {
+      padding: 50px 0 0 20px;
+  }
+
+  .o-comment {
+      min-height: 20px;
+      width: calc(100vw - 80px);
+
+      padding: 10px;
+      
+      border-radius: 5px;
+      background-color: white;
+  }
+
+  .o-comment:not(:first-of-type) {
+      margin-top: 20px;
   }
 
 </style>

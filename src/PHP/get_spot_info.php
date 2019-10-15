@@ -9,7 +9,7 @@ function get_spot_info() {
     $stmt = $pdo -> query($sql);
     $result = array();
     foreach($stmt as $row) {
-        $spot_info = array('spot_name' => $row['spot_name']);
+        $spot_info = array('spot_name' => $row['spot_name'], 'spot_id' => $row['id'],);
         array_push($result, $spot_info);
     }
     return $result;
