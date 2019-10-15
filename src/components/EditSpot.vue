@@ -1,7 +1,7 @@
 <template>
   <div id="editSpot">
     <div class="l-body">
-      <button class="o-backBtn" v-on:click='jumpPage("HelloWorld")'>
+      <button class="o-backBtn" v-on:click='jumpPage("editTour")'>
         ジオサイトの選択に戻る
       </button>
       <div class="l-justify-center">
@@ -34,6 +34,7 @@
       return {
         images: 5,
         comments: 3,
+        tour_id: Number,
         spot_id: Number,
         spot_name: 'ジオサイトの名前を入力',
         spot_ex: JSON,
@@ -59,6 +60,7 @@
         axios.post(url, params
         ).then(response => {
           this.spot_ex = response.data;
+          this.tour_id = this.spot_ex[0].tour_id;
         }).catch(error => {
           // エラーを受け取る
           console.log(error);
@@ -68,6 +70,7 @@
         this.$router.push({
             name: where,
             params: {
+              tour_id: this.tour_id,
             }
         })
       },
@@ -158,6 +161,7 @@
   .o-comment {
       min-height: 20px;
       width: calc(100vw - 80px);
+      font-size: 12px;
 
       padding: 10px;
       
