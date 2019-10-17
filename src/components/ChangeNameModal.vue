@@ -2,7 +2,7 @@
   <div id="chageNameModal">
     <div class="l-body">
         <form class="l-input_ex">
-            <input class="o-input_ex" type="text" placeholder="ジオサイトの名前を入力" v-model="spot_name" />
+            <input class="o-input_ex" type="text" placeholder="ジオサイトの名前を入力" v-model="spot_name_updated" />
         </form>
         <button v-on:click="changeName()">保存する</button>
         <button v-on:click="closeModal()">キャンセル</button>
@@ -14,14 +14,38 @@
   import axios from 'axios'
   export default {
     name: 'changeNameModal',
+    props: {
+        spot_id: Number,
+        spot_name: String
+    },
     data() {
       return {
-          spot_name: 'へええy',
+          spot_name_updated: '',
       }
     },
     created: function () {
+        this.spot_name_updated = this.spot_name;
     },
     methods: {
+        changeName: function() {
+        const url =
+        "https://www2.yoslab.net/~nishimura/geotour/PHP/update_spot_name.php";
+        let params = new URLSearchParams();
+        //console.log("発火");
+        params.append("spot_id", this.spot_id);
+        params.append("spot_name_updated", this.spot_name_updated);
+        axios
+        .post(url, params)
+        .then(response => {
+          //this.spot_ex = response.data;
+          //this.tour_id = this.spot_ex[0].tour_id;
+          console.log("更新成功");
+        })
+        .catch(error => {
+          // エラーを受け取る
+          console.log(error);
+        });
+        },
         changeTourName: function() {
 
         },

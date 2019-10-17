@@ -1,7 +1,7 @@
 <template>
   <div id="editSpot">
     <div class="l-body">
-      <ChangeNameModal v-show="modalFlag" @closeModal="closeModal"></ChangeNameModal>
+      <ChangeNameModal v-show="modalFlag" @closeModal="closeModal" :spot_id="Number(spot_id)" :spot_name="spot_name"></ChangeNameModal>
       <button class="o-backBtn" v-on:click='jumpPage("editTour")'>ジオサイトの選択に戻る</button>
       <div class="l-justify-center">
         <div class="l-tour_info">
