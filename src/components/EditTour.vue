@@ -29,7 +29,7 @@
     data() {
       return {
           spot_info: JSON,
-          tour_id: 3,
+          tour_id: Number,
           tour_name: 'ツアー名を入力',
           group_name: 'グループ名を入力'
       }
@@ -66,6 +66,7 @@
         this.$router.push({
             name: where,
             params: {
+              tour_id: this.tour_id,
               spot_id: spot_id,
               spot_name: spot_name
             }

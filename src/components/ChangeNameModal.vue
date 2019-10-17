@@ -37,17 +37,14 @@
         axios
         .post(url, params)
         .then(response => {
-          //this.spot_ex = response.data;
-          //this.tour_id = this.spot_ex[0].tour_id;
           console.log("更新成功");
+          this.$emit('get_spot_name'); //名前の更新処理
+          this.closeModal();
         })
         .catch(error => {
           // エラーを受け取る
           console.log(error);
         });
-        },
-        changeTourName: function() {
-
         },
         closeModal: function() {
             this.$emit('closeModal');

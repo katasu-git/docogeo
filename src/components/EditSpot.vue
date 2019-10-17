@@ -1,11 +1,13 @@
 <template>
   <div id="editSpot">
     <div class="l-body">
-      <ChangeNameModal v-show="modalFlag" @closeModal="closeModal" :spot_id="Number(spot_id)" :spot_name="spot_name"></ChangeNameModal>
+      <ChangeNameModal v-show="modalFlag" 
+        @closeModal="closeModal" @get_spot_name="get_spot_name"
+        :spot_id="Number(spot_id)" :spot_name="spot_name"></ChangeNameModal>
       <button class="o-backBtn" v-on:click='jumpPage("editTour")'>ジオサイトの選択に戻る</button>
       <div class="l-justify-center">
         <div class="l-tour_info">
-          <div class="o-tour_name-text" v-on:click="changeTourName()">{{ spot_name }}</div>
+          <div class="o-tour_name-text" v-on:click="changeSpotName()">{{ spot_name }}</div>
         </div>
       </div>
       <div class="l-images">
@@ -34,10 +36,10 @@ export default {
       comments: 3,
       tour_id: Number,
       spot_id: Number,
-      spot_name: "ジオサイトの名前を入力",
+      spot_name: '',
       spot_ex: JSON,
       text: 'asmdl;amd',
-      modalFlag: true,
+      modalFlag: false,
     };
   },
   created: function() {
@@ -45,10 +47,9 @@ export default {
       // 更新されたときはトップに戻る
       this.jumpPage("editTour");
     } else {
+      this.tour_id = this.$route.params.tour_id;
       this.spot_id = this.$route.params.spot_id;
-      if (this.$route.params.spot_name != undefined) {
-        this.spot_name = this.$route.params.spot_name;
-      }
+      this.spot_name = this.$route.params.spot_name;
       this.accessDb();
     }
   },
@@ -63,7 +64,8 @@ export default {
         .post(url, params)
         .then(response => {
           this.spot_ex = response.data;
-          this.tour_id = this.spot_ex[0].tour_id;
+          //this.tour_id = this.spot_ex[0].tour_id;
+          this.get_spot_name(); //ちゃんとdb叩いてデータ持ってくる
         })
         .catch(error => {
           // エラーを受け取る
@@ -87,6 +89,20 @@ export default {
         console.log(error);
       });
     },
+    get_spot_name: function() {
+      const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/get_spot_info.php';
+      let params = new URLSearchParams();
+      params.append('tour_id', 1);
+      axios.post(url, params
+      ).then(response => {
+        if(response.data[this.spot_id - 1].spot_name != undefined) {
+          this.spot_name = response.data[this.spot_id - 1].spot_name;
+        }
+      }).catch(error => {
+        // エラーを受け取る
+        console.log(error);
+      });
+    },
     jumpPage: function(where) {
       this.$router.push({
         name: where,
@@ -96,9 +112,10 @@ export default {
       });
     },
     changeSpotName: function() {
-      //console.log("hello");
+      this.modalFlag = true;
     },
     closeModal: function() {
+      this.accessDb()
       this.modalFlag = false;
     }
   },
