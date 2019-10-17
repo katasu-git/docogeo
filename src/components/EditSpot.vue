@@ -1,10 +1,11 @@
 <template>
   <div id="editSpot">
     <div class="l-body">
+      <ChangeNameModal v-show="modalFlag" @closeModal="closeModal"></ChangeNameModal>
       <button class="o-backBtn" v-on:click='jumpPage("editTour")'>ジオサイトの選択に戻る</button>
       <div class="l-justify-center">
         <div class="l-tour_info">
-          <div class="o-tour_name-text">{{ spot_name }}</div>
+          <div class="o-tour_name-text" v-on:click="changeTourName()">{{ spot_name }}</div>
         </div>
       </div>
       <div class="l-images">
@@ -24,6 +25,7 @@
 
 <script>
 import axios from "axios";
+import ChangeNameModal from "./ChangeNameModal";
 export default {
   name: "editSpot",
   data() {
@@ -35,6 +37,7 @@ export default {
       spot_name: "ジオサイトの名前を入力",
       spot_ex: JSON,
       text: 'asmdl;amd',
+      modalFlag: true,
     };
   },
   created: function() {
@@ -91,7 +94,16 @@ export default {
           tour_id: this.tour_id
         }
       });
+    },
+    changeSpotName: function() {
+      //console.log("hello");
+    },
+    closeModal: function() {
+      this.modalFlag = false;
     }
+  },
+  components: {
+    ChangeNameModal: ChangeNameModal,
   }
 };
 </script>
@@ -188,5 +200,9 @@ export default {
 
 .o-comment:not(:first-of-type) {
   margin-top: 20px;
+}
+
+.o-comment:last-of-type {
+  margin-bottom: 20px;
 }
 </style>
