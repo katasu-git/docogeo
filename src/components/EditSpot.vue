@@ -92,7 +92,7 @@ export default {
     get_spot_name: function() {
       const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/get_spot_info.php';
       let params = new URLSearchParams();
-      params.append('tour_id', 1);
+      params.append('tour_id', this.tour_id);
       axios.post(url, params
       ).then(response => {
         if(response.data[this.spot_id - 1].spot_name != undefined) {

@@ -1,12 +1,15 @@
 <template>
   <div id="editTour">
     <div class="l-body">
+      <ChangeTourNameModal v-show="modalFlag"
+        @closeModal="closeModal" @get_tour_name="get_tour_name" 
+        :tour_id="Number(tour_id)" :tour_name="tour_name"></ChangeTourNameModal>
         <button class="o-backBtn" v-on:click='jumpPage("HelloWorld")'>
             ツアーの選択に戻る
         </button>
       <div class="l-justify-center">
         <div class="l-tour_info">
-            <div class="o-tour_name-text">{{ tour_name }}</div>
+            <div class="o-tour_name-text" v-on:click="changeTourName()">{{ tour_name }}</div>
             <div class="o-group_name-text">{{ group_name }}</div>
         </div>
       </div>
@@ -24,6 +27,7 @@
 
 <script>
   import axios from 'axios'
+  import ChangeTourNameModal from "./ChangeTourNameModal";
   export default {
     name: 'editTour',
     data() {
@@ -31,7 +35,8 @@
           spot_info: JSON,
           tour_id: Number,
           tour_name: 'ツアー名を入力',
-          group_name: 'グループ名を入力'
+          group_name: 'グループ名を入力',
+          modalFlag: false,
       }
     },
     created: function () {
@@ -62,6 +67,21 @@
           console.log(error);
         });
       },
+      get_tour_name: function() {
+        const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/get_tour_info.php';
+        //let params = new URLSearchParams();
+        //params.append('tour_id', this.tour_id);
+        axios.post(url
+        ).then(response => {
+          if(response.data[this.tour_id - 1].tour_name != undefined) {
+            this.tour_name = response.data[this.tour_id - 1].tour_name;
+            console.log(response.data);
+          }
+        }).catch(error => {
+          // エラーを受け取る
+          console.log(error);
+        });
+      },
       jumpPage: function(where, spot_id, spot_name) {
         this.$router.push({
             name: where,
@@ -72,6 +92,16 @@
             }
         })
       },
+      changeTourName: function() {
+        this.modalFlag = true;
+      },
+      closeModal: function() {
+        this.accessDb()
+        this.modalFlag = false;
+      }
+    },
+    components: {
+      ChangeTourNameModal: ChangeTourNameModal,
     }
   }
 
