@@ -1,9 +1,15 @@
 <template>
   <div id="editTour">
     <div class="l-body">
+
       <ChangeTourNameModal v-show="modalFlag"
         @closeModal="closeModal" @get_tour_name="get_tour_name" 
         :tour_id="Number(tour_id)" :tour_name="tour_name"></ChangeTourNameModal>
+      
+      <AddNewSpotModal v-show="addModalFlag"
+        @closeModal="closeModal"
+        :tour_id="Number(tour_id)"></AddNewSpotModal>
+
         <button class="o-backBtn" v-on:click='jumpPage("HelloWorld")'>
             ツアーの選択に戻る
         </button>
@@ -15,6 +21,11 @@
       </div>
       <div class="l-justify-center">
         <div class="l-cardContainer">
+          <div class="o-card-create" v-on:click='addNewSpot()'>
+            <div class="l-card-create-text">
+              <div class="o-card-create-text">新しく追加する</div>
+            </div>
+          </div>
           <div class="o-card" v-for="info in spot_info" v-on:click='jumpPage("editSpot", info.spot_id, info.spot_name)'>
             <div class="o-card-img"></div>
             <div class="o-card-title">{{ info.spot_id }}:{{ info.spot_name }}</div>
@@ -28,6 +39,7 @@
 <script>
   import axios from 'axios'
   import ChangeTourNameModal from "./ChangeTourNameModal";
+  import AddNewSpotModal from "./addNewSpotModal"
   export default {
     name: 'editTour',
     data() {
@@ -37,6 +49,7 @@
           tour_name: 'ツアー名を入力',
           group_name: 'グループ名を入力',
           modalFlag: false,
+          addModalFlag: false,
       }
     },
     created: function () {
@@ -98,10 +111,15 @@
       closeModal: function() {
         this.accessDb()
         this.modalFlag = false;
+        this.addModalFlag = false;
+      },
+      addNewSpot: function() {
+        this.addModalFlag = true;
       }
     },
     components: {
       ChangeTourNameModal: ChangeTourNameModal,
+      AddNewSpotModal: AddNewSpotModal,
     }
   }
 
@@ -122,6 +140,7 @@
   .l-justify-center {
     display: flex;
     justify-content: center;
+    background: #5c9982;
     /*中央よせ*/
   }
 
@@ -134,12 +153,12 @@
     /*折り返しの指定*/
   }
 
-  .o-card {
+  .o-card, .o-card-create {
     min-height: calc(50vw - 25px);
     min-width: calc(50vw - 25px);
 
     border: solid 0 white;
-    border-radius: 3px;
+    border-radius: 5px;
     background: white;
   }
 
@@ -151,12 +170,29 @@
     height: calc((50vw - 25px)/5*3);
     width: 100%;
 
+    border-radius: 5px 5px 0 0;
     background-color: #c9c9c9;
   }
 
   .o-card-title {
     font-size: 12px;
     /*font-weight: bold;*/
+  }
+
+  .l-card-create-text {
+    height: 100%;
+    width: 100%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .o-card-create {
+    border: dashed 1px white;
+    background-color: rgba(0,0,0,0);
+    color: white;
+    font-size: 12px;
   }
 
   .l-tour_info {
