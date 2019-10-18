@@ -46,8 +46,8 @@
       return {
           spot_info: JSON,
           tour_id: Number,
-          tour_name: 'ツアー名を入力',
-          group_name: 'グループ名を入力',
+          tour_name: '',
+          group_name: '',
           modalFlag: false,
           addModalFlag: false,
       }
@@ -58,17 +58,12 @@
         this.jumpPage("HelloWorld");
       } else {
         this.tour_id = this.$route.params.tour_id;
-        if(this.$route.params.tour_name != undefined) {
-          this.tour_name = this.$route.params.tour_name;
-        }
-        if(this.$route.params.group_name != undefined) {
-          this.group_name = this.$route.params.group_name;
-        }
-        this.accessDb();
+        this.get_tour_name();
+        this.get_spot_info();
       }
     },
     methods: {
-      accessDb: function () {
+      get_spot_info: function () {
         const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/get_spot_info.php';
         let params = new URLSearchParams();
         params.append('tour_id', this.tour_id);
@@ -88,7 +83,8 @@
         ).then(response => {
           if(response.data[this.tour_id - 1].tour_name != undefined) {
             this.tour_name = response.data[this.tour_id - 1].tour_name;
-            console.log(response.data);
+            this.group_name = response.data[this.tour_id - 1].group_name;
+            //console.log(response.data);
           }
         }).catch(error => {
           // エラーを受け取る
@@ -109,7 +105,7 @@
         this.modalFlag = true;
       },
       closeModal: function() {
-        this.accessDb()
+        this.get_spot_info()
         this.modalFlag = false;
         this.addModalFlag = false;
       },
