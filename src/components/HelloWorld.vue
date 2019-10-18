@@ -1,6 +1,10 @@
 <template>
   <div id="hello">
     <div class="l-body">
+
+      <AddNewTourModal v-show="modalFlag"
+        @closeModal="closeModal"></AddNewTourModal>
+        
       <div class="l-logo">
         <div class="o-logo-text">
           <div class="o-logo-text-l">DoCoGeo</div>
@@ -12,6 +16,11 @@
       </div>
       <div class="l-justify-center">
         <div class="l-cardContainer">
+          <div class="o-card-create" v-on:click='addNewTour()'>
+            <div class="l-card-create-text">
+              <div class="o-card-create-text">新しく追加する</div>
+            </div>
+          </div>
           <div class="o-card" v-for="info in tour_info" v-on:click='jumpPage("editTour", info)'>
             <div class="o-card-img"></div>
             <div class="o-card-title">{{ info.tour_name }}</div>
@@ -24,11 +33,13 @@
 
 <script>
   import axios from 'axios'
+  import AddNewTourModal from './addNewTourModal'
   export default {
     name: 'HelloWorld',
     data() {
       return {
         tour_info: JSON,
+        modalFlag: false,
       }
     },
     created: function () {
@@ -54,6 +65,16 @@
             }
         })
       },
+      closeModal: function() {
+        this.accessDb();
+        this.modalFlag = false;
+      },
+      addNewTour: function() {
+        this.modalFlag = true;
+      }
+    },
+    components: {
+      AddNewTourModal: AddNewTourModal
     }
   }
 
@@ -74,6 +95,7 @@
   .l-justify-center {
     display: flex;
     justify-content: center;
+    background: #5c9982;
     /*中央よせ*/
   }
 
@@ -86,12 +108,12 @@
     /*折り返しの指定*/
   }
 
-  .o-card {
+  .o-card, .o-card-create {
     min-height: calc(50vw - 25px);
     min-width: calc(50vw - 25px);
 
     border: solid 0 white;
-    border-radius: 3px;
+    border-radius: 5px;
     background: white;
   }
 
@@ -103,12 +125,29 @@
     height: calc( (50vw - 25px)/5*3 );
     width: 100%;
 
+    border-radius: 5px 5px 0 0;
     background-color: #c9c9c9;
   }
 
   .o-card-title {
     font-size: 12px;
     /*font-weight: bold;*/
+  }
+
+  .l-card-create-text {
+    height: 100%;
+    width: 100%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .o-card-create {
+    border: dashed 1px white;
+    background-color: rgba(0,0,0,0);
+    color: white;
+    font-size: 12px;
   }
 
   .l-logo {

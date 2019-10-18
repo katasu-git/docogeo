@@ -1,8 +1,9 @@
 <template>
-  <div id="addNewSpotModal">
+  <div id="addNewTourModal">
     <div class="l-body">
         <form class="l-input_ex">
-            <input class="o-input_ex" type="text" placeholder="ツアーの名前を入力" v-model="spot_name_new" />
+            <input class="o-input_ex" type="text" placeholder="ツアーの名前を入力" v-model="tour_name" />
+            <input class="o-input_ex" type="text" placeholder="グループの名前を入力" v-model="group_name" />
         </form>
         <button v-on:click="addNewSpot()">新規作成</button>
         <button v-on:click="closeModal()">キャンセル</button>
@@ -13,13 +14,14 @@
 <script>
   import axios from 'axios'
   export default {
-    name: 'addNewSpotModal',
+    name: 'addNewTourModal',
     props: {
-        tour_id: Number, //親から受け取り
+        //tour_id: Number, //親から受け取り
     },
     data() {
       return {
-          spot_name_new: '',
+          tour_name: '',
+          group_name: '',
       }
     },
     created: function () {
@@ -35,11 +37,11 @@
                 return;
             }
           const url =
-          "https://www2.yoslab.net/~nishimura/geotour/PHP/add_new_spot.php";
+          "https://www2.yoslab.net/~nishimura/geotour/PHP/add_new_tour.php";
           let params = new URLSearchParams();
           //console.log("発火");
-          params.append("tour_id", this.tour_id);
-          params.append("spot_name", this.spot_name_new);
+          params.append("tour_name", this.tour_name);
+          params.append("group_name", this.group_name);
           axios
           .post(url, params)
           .then(response => {
@@ -59,7 +61,7 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-#addNewSpotModal, .l-body {
+#addNewTourModal, .l-body {
     height: 100%;
     width: 100%;
     position: fixed;
