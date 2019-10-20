@@ -6,7 +6,8 @@
         @closeModal="closeModal"></AddNewTourModal>
 
       <StartTourM v-show="s_modalFlag"
-        @closeModal="closeModal" @jumpPage="jumpPage"></StartTourM>
+        @closeModal="closeModal" @jumpPage="jumpPage"
+        :tour_name="avoidParam.tour_name"></StartTourM>
         
       <div class="l-logo">
         <div class="o-logo-text">
