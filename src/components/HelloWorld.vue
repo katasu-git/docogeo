@@ -4,6 +4,9 @@
 
       <AddNewTourModal v-show="modalFlag"
         @closeModal="closeModal"></AddNewTourModal>
+
+      <StartTourM v-show="s_modalFlag"
+        @closeModal="closeModal" @jumpPage="jumpPage"></StartTourM>
         
       <div class="l-logo">
         <div class="o-logo-text">
@@ -21,7 +24,7 @@
               <div class="o-card-create-text">新しく追加する</div>
             </div>
           </div>
-          <div class="o-card" v-for="info in tour_info" v-on:click='jumpPage("editTour", info)'>
+          <div class="o-card" v-for="info in tour_info" v-on:click='start_tour(info)'>
             <div class="o-card-img"></div>
             <div class="o-card-title">{{ info.tour_name }}</div>
           </div>
@@ -34,12 +37,15 @@
 <script>
   import axios from 'axios'
   import AddNewTourModal from './addNewTourModal'
+  import StartTourM from './start_tour_m'
   export default {
     name: 'HelloWorld',
     data() {
       return {
         tour_info: JSON,
         modalFlag: false,
+        s_modalFlag: false,
+        avoidParam: JSON,
       }
     },
     created: function () {
@@ -55,26 +61,32 @@
           console.log(error);
         });
       },
-      jumpPage: function(where, param) {
+      jumpPage: function(where) {
         this.$router.push({
             name: where,
             params: {
-              tour_id: param.tour_id,
-              tour_name: param.tour_name,
-              group_name: param.group_name,
+              tour_id: this.avoidParam.tour_id,
+              tour_name: this.avoidParam.tour_name,
+              group_name: this.avoidParam.group_name,
             }
         })
       },
       closeModal: function() {
         this.accessDb();
         this.modalFlag = false;
+        this.s_modalFlag = false;
       },
       addNewTour: function() {
         this.modalFlag = true;
+      },
+      start_tour: function(param) {
+        this.avoidParam = param;
+        this.s_modalFlag = true;
       }
     },
     components: {
-      AddNewTourModal: AddNewTourModal
+      AddNewTourModal: AddNewTourModal,
+      StartTourM: StartTourM,
     }
   }
 
