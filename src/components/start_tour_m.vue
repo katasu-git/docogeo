@@ -1,6 +1,7 @@
 <template>
   <div id="start_tour_m">
     <div class="l-body">
+        <button class="o-btn-close" v-on:click="closeModal()">閉じる</button>
         <div class="l-img-circle">
             <div class="o-img-circle"></div>
             <div class="o-tour_name u-mt16px">{{ tour_name }}</div>
