@@ -4,6 +4,7 @@ import HelloWorld from '@/components/HelloWorld'
 import EditTour from '@/components/editTour'
 import EditSpot from '@/components/editSpot'
 import ChatGuide from '@/components/chat_g'
+import ChatUser from '@/components/chat_u'
 
 Vue.use(Router)
 
@@ -28,6 +29,11 @@ export default new Router({
       path: '/chat_g',
       name: 'chat_g',
       component: ChatGuide
+    },
+    {
+      path: '/chat_u',
+      name: 'chat_u',
+      component: ChatUser
     },
   ]
 })

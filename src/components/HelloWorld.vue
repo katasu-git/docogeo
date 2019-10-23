@@ -67,6 +67,7 @@
             name: where,
             params: {
               tour_id: this.avoidParam.tour_id,
+              spot_id: 1, //1から順番に表示する
               tour_name: this.avoidParam.tour_name,
               group_name: this.avoidParam.group_name,
             }

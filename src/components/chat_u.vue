@@ -1,5 +1,5 @@
 <template>
-  <div id="chat_g">
+  <div id="chat_u">
     <div class="l-body">
         <div class="l-header">
             <div class="o-header">{{ spot_name }}</div>
@@ -10,14 +10,9 @@
                     {{ spot.spot_ex }}
                 </div> -->
                 <div class="l-comment">
-                    <div class="o-comment" v-for="ex in spot_ex">{{ ex.spot_ex }}
-                        <button v-on:click="postEx(ex.ex_id)">配信</button>
-                    </div>
+                    <div class="o-comment" v-for="ex in spot_ex">{{ ex.spot_ex }}</div>
                 </div>
             </div>
-        </div>
-        <div class="l-input">
-
         </div>
     </div>
   </div>
@@ -26,7 +21,7 @@
 <script>
   import axios from 'axios'
   export default {
-    name: 'chat_g',
+    name: 'chat_u',
     data() {
       return {
           tour_id: 1,
@@ -36,19 +31,19 @@
       }
     },
     created: function () {
-        if (JSON.stringify(this.$route.params) == "{}") {
+        //if (JSON.stringify(this.$route.params) == "{}") {
             // 更新されたときはトップに戻る
-            this.jumpPage("HelloWorld");
-        } else {
-            this.tour_id = this.$route.params.tour_id;
-            this.spot_id = this.$route.params.spot_id;
+            //this.jumpPage("HelloWorld");
+        //} else {
+            //this.tour_id = this.$route.params.tour_id;
+            //this.spot_id = this.$route.params.spot_id;
             //this.spot_name = this.$route.params.spot_name;
             this.getPost();
-        }
+        //}
     },
     methods: {
         getPost: function() {
-            const url ="https://www2.yoslab.net/~nishimura/geotour/PHP/getPost.php";
+            const url ="https://www2.yoslab.net/~nishimura/geotour/PHP/getPostedPost.php";
             let params = new URLSearchParams();
             //console.log("発火");
             params.append("spot_id", this.spot_id);
@@ -86,21 +81,6 @@
                 }
             });
         },
-        postEx: function(id) {
-            const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/postEx.php';
-            let params = new URLSearchParams();
-            params.append("ex_id", id);
-            axios
-                .post(url, params)
-                .then(response => {
-                    this.spot_ex = response.data;
-                    this.get_spot_name(); //ちゃんとdb叩いてデータ持ってくる
-                })
-                .catch(error => {
-                    // エラーを受け取る
-                    console.log(error);
-                });
-        }
     }
   }
 
@@ -108,7 +88,7 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-  #chat_g,
+  #chat_u,
   .l-body {
     height: 100%;
     width: 100%;
@@ -140,14 +120,6 @@
 
       overflow: scroll;
       -webkit-overflow-scrolling: touch; /* 惰性でスクロールさせる */
-  }
-
-  .l-input {
-      height: 100px;
-      width: 100%;
-
-      background-color: white;
-      border-top: solid 1px rgba(0,0,0,.12);
   }
 
     .l-comment {
