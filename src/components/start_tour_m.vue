@@ -19,6 +19,7 @@
   export default {
     name: 'start_tour_m',
     props: {
+        tour_id: Number,
         tour_name: String, //親から受け取り
     },
     data() {
@@ -33,8 +34,21 @@
             this.$emit('closeModal');
         },
         jumpPage: function(where) {
+            this.start_tour();
             this.$emit('jumpPage', where);
         },
+        start_tour: function() {
+            const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/start_tour.php';
+            let params = new URLSearchParams();
+            params.append('tour_id', this.tour_id);
+            axios
+                .post(url, params)
+                .then(response => {
+                }).catch(error => {
+                    // エラーを受け取る
+                    console.log(error);
+                });
+        }
     }
   }
 

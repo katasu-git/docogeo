@@ -2,7 +2,7 @@
   <div id="chat_g">
     <div class="l-body">
         <div class="l-header">
-            <div class="o-header">{{ spot_name }}</div>
+            <div class="o-header">guide{{ spot_name }}</div>
         </div>
         <div class="l-chat-body">
             <div class="l-chat">
@@ -92,7 +92,6 @@
                 const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/isPosted_t.php';
                 let params = new URLSearchParams();
                 params.append("ex_id", id);
-                //params.append("isPosted", is);
                 axios
                     .post(url, params)
                     .then(response => {
@@ -110,7 +109,6 @@
                 const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/isPosted_f.php';
                 let params = new URLSearchParams();
                 params.append("ex_id", id);
-                //params.append("isPosted", is);
                 axios
                     .post(url, params)
                     .then(response => {

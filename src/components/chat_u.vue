@@ -2,7 +2,7 @@
   <div id="chat_u">
     <div class="l-body">
         <div class="l-header">
-            <div class="o-header">{{ spot_name }}</div>
+            <div class="o-header">user{{ spot_name }}</div>
         </div>
         <div class="l-chat-body">
             <div class="l-chat">
