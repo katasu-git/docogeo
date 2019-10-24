@@ -18,7 +18,7 @@
               <div class="o-card-create-text">新しく追加する</div>
             </div>
           </div>
-          <div class="o-card" v-for="info in tour_info" v-on:click='start_tour(info)'>
+          <div class="o-card" v-for="info in tour_info" v-on:click='jumpPage("chat_u", info.tour_id)'>
             <div class="o-card-img"></div>
             <div class="o-card-title">{{ info.tour_name }}</div>
           </div>
@@ -57,14 +57,14 @@
           console.log(error);
         });
       },
-      jumpPage: function(where) {
+      jumpPage: function(where, tour_id) {
         this.$router.push({
             name: where,
             params: {
-              tour_id: this.avoidParam.tour_id,
-              spot_id: 1, //1から順番に表示する
-              tour_name: this.avoidParam.tour_name,
-              group_name: this.avoidParam.group_name,
+              tour_id: tour_id
+              //spot_id: 1, //1から順番に表示する
+              //tour_name: this.avoidParam.tour_name,
+              //group_name: this.avoidParam.group_name,
             }
         })
       },

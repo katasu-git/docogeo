@@ -31,15 +31,13 @@
       }
     },
     created: function () {
-        //if (JSON.stringify(this.$route.params) == "{}") {
+        if (JSON.stringify(this.$route.params) == "{}") {
             // 更新されたときはトップに戻る
-            //this.jumpPage("HelloWorld");
-        //} else {
-            //this.tour_id = this.$route.params.tour_id;
-            //this.spot_id = this.$route.params.spot_id;
-            //this.spot_name = this.$route.params.spot_name;
+            this.jumpPage("top_u");
+        } else {
+            this.tour_id = this.$route.params.tour_id;
             this.getPost();
-        //}
+        }
         setInterval(function() {
             this.getPost();
         }.bind(this), 1000);
