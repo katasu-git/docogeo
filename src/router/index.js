@@ -5,6 +5,7 @@ import EditTour from '@/components/editTour'
 import EditSpot from '@/components/editSpot'
 import ChatGuide from '@/components/chat_g'
 import ChatUser from '@/components/chat_u'
+import TopU from '@/components/top_u'
 
 Vue.use(Router)
 
@@ -14,6 +15,11 @@ export default new Router({
       path: '/',
       name: 'HelloWorld',
       component: HelloWorld
+    },
+    {
+      path: '/top_u',
+      name: 'top_u',
+      component: TopU
     },
     {
       path: '/editTour',
