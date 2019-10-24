@@ -40,6 +40,9 @@
             //this.spot_name = this.$route.params.spot_name;
             this.getPost();
         //}
+        setInterval(function() {
+            this.getPost();
+        }.bind(this), 1000);
     },
     methods: {
         getPost: function() {
