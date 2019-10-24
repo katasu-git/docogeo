@@ -10,8 +10,8 @@
                     {{ spot.spot_ex }}
                 </div> -->
                 <div class="l-comment">
-                    <div class="o-comment" v-for="ex in spot_ex">{{ ex.spot_ex }}
-                        <button v-on:click="postEx(ex.ex_id)">配信</button>
+                    <div class="o-comment" v-for="ex in spot_ex">{{ ex.spot_ex }} : {{ ex.isPosted }}
+                        <button v-on:click="postEx(ex.ex_id, ex.isPosted)">配信</button>
                     </div>
                 </div>
             </div>
@@ -86,20 +86,44 @@
                 }
             });
         },
-        postEx: function(id) {
-            const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/postEx.php';
-            let params = new URLSearchParams();
-            params.append("ex_id", id);
-            axios
-                .post(url, params)
-                .then(response => {
-                    this.spot_ex = response.data;
-                    this.get_spot_name(); //ちゃんとdb叩いてデータ持ってくる
-                })
-                .catch(error => {
-                    // エラーを受け取る
-                    console.log(error);
-                });
+        postEx: function(id, isPosted) {
+            if(isPosted == 0) {
+
+                const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/isPosted_t.php';
+                let params = new URLSearchParams();
+                params.append("ex_id", id);
+                //params.append("isPosted", is);
+                axios
+                    .post(url, params)
+                    .then(response => {
+                        this.get_spot_name(); //ちゃんとdb叩いてデータ持ってくる
+                        this.getPost(); //ちゃんとdb叩いてデータ持ってくる
+                        console.log("成功");
+                    })
+                    .catch(error => {
+                        // エラーを受け取る
+                        console.log(error);
+                    });
+
+            } else if(isPosted == 1) {
+
+                const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/isPosted_f.php';
+                let params = new URLSearchParams();
+                params.append("ex_id", id);
+                //params.append("isPosted", is);
+                axios
+                    .post(url, params)
+                    .then(response => {
+                        this.get_spot_name(); //ちゃんとdb叩いてデータ持ってくる
+                        this.getPost(); //ちゃんとdb叩いてデータ持ってくる
+                        console.log("成功");
+                    })
+                    .catch(error => {
+                        // エラーを受け取る
+                        console.log(error);
+                    });
+
+            }
         }
     }
   }
