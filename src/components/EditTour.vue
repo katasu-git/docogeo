@@ -148,8 +148,8 @@
   }
 
   .o-card, .o-card-create {
-    min-height: calc(50vw - 25px);
-    min-width: calc(50vw - 25px);
+    height: calc(50vw - 25px);
+    width: calc(50vw - 25px);
 
     border: solid 0 white;
     border-radius: 5px;

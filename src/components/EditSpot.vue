@@ -95,9 +95,7 @@ export default {
       params.append('tour_id', this.tour_id);
       axios.post(url, params
       ).then(response => {
-        if(response.data[this.spot_id - 1].spot_name != undefined) {
-          this.spot_name = response.data[this.spot_id - 1].spot_name;
-        }
+        this.spot_name = response.data[0].spot_name;
       }).catch(error => {
         // エラーを受け取る
         console.log(error);
