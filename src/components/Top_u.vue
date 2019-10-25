@@ -1,23 +1,19 @@
 <template>
-  <div id="hello">
+  <div id="top_u">
     <div class="l-body">
         
       <div class="l-logo">
         <div class="o-logo-text">
           <div class="o-logo-text-l">DoCoGeo</div>
-          <div class="o-logo-text-s">for Guide</div>
+          <div class="o-logo-text-s">for User</div>
         </div>
         <div class="o-logo-img">
           <img src="../assets/duck.svg" />
         </div>
       </div>
+      <div class="">開催中のツアー</div>
       <div class="l-justify-center">
         <div class="l-cardContainer">
-          <div class="o-card-create" v-on:click='addNewTour()'>
-            <div class="l-card-create-text">
-              <div class="o-card-create-text">新しく追加する</div>
-            </div>
-          </div>
           <div class="o-card" v-for="info in tour_info" v-on:click='jumpPage("chat_u", info.tour_id)'>
             <div class="o-card-img"></div>
             <div class="o-card-title">{{ info.tour_name }}</div>
@@ -33,18 +29,17 @@
   import AddNewTourModal from './addNewTourModal'
   import StartTourM from './start_tour_m'
   export default {
-    name: 'HelloWorld',
+    name: 'top_u',
     data() {
       return {
         tour_info: [],
-        avoidParam: JSON,
       }
     },
     created: function () {
-      this.accessDb();
+      this.get_tour_info();
     },
     methods: {
-      accessDb: function () {
+      get_tour_info: function () {
         axios.post('https://www2.yoslab.net/~nishimura/geotour/PHP/get_tour_info.php'
         ).then(response => {
             for(let i=0; i<response.data.length; i++) {
@@ -62,9 +57,6 @@
             name: where,
             params: {
               tour_id: tour_id
-              //spot_id: 1, //1から順番に表示する
-              //tour_name: this.avoidParam.tour_name,
-              //group_name: this.avoidParam.group_name,
             }
         })
       },
@@ -75,7 +67,7 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-  #hello,
+  #top_u,
   .l-body {
     height: 100%;
     width: 100%;

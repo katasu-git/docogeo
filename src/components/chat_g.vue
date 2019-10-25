@@ -9,9 +9,10 @@
                 <!-- <div class="" v-for="spot in spot_ex">
                     {{ spot.spot_ex }}
                 </div> -->
-                <div class="l-comment">
-                    <div class="o-comment" v-for="ex in spot_ex">{{ ex.spot_ex }} : {{ ex.isPosted }}
-                        <button v-on:click="postEx(ex.ex_id, ex.isPosted)">配信</button>
+                <div class="l-comment-body">
+                    <div class="l-comment" v-for="ex in spot_ex">
+                        <div class="o-comment">{{ ex.spot_ex }} : {{ ex.isPosted }}</div>
+                        <img class="o-post_btn" v-on:click="postEx(ex.ex_id, ex.isPosted)" src="../assets/post_btn.svg" />
                     </div>
                 </div>
             </div>
@@ -172,27 +173,29 @@
       border-top: solid 1px rgba(0,0,0,.12);
   }
 
+    .l-comment-body {
+        padding: 50px 20px 0 20px;
+    }
+
     .l-comment {
-        padding: 50px 0 0 20px;
+        display: flex;
+        align-items: center;
+        border-bottom: solid 1px rgba(0,0,0,.12);
     }
 
     .o-comment {
         min-height: 20px;
-        width: calc(100vw - 80px);
+        width: calc(100vw - 20px);
         font-size: 12px;
 
         padding: 10px;
 
         border-radius: 5px;
-        background-color: #5c9982;
+        /*background-color: rgba(0,0,0,.26);*/
     }
 
-    .o-comment:not(:first-of-type) {
-        margin-top: 20px;
-    }
-
-    .o-comment:last-of-type {
-        margin-bottom: 20px;
+    .o-post_btn {
+        padding: 20px;
     }
 
 </style>
