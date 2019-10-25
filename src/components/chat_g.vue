@@ -6,13 +6,12 @@
         </div>
         <div class="l-chat-body">
             <div class="l-chat">
-                <!-- <div class="" v-for="spot in spot_ex">
-                    {{ spot.spot_ex }}
-                </div> -->
                 <div class="l-comment-body">
                     <div class="l-comment" v-for="ex in spot_ex">
-                        <div class="o-comment">{{ ex.spot_ex }} : {{ ex.isPosted }}</div>
-                        <img class="o-post_btn" v-on:click="postEx(ex.ex_id, ex.isPosted)" src="../assets/post_btn.svg" />
+                        <div v-bind:class='{"o-comment": isActive(ex.isPosted), "o-comment-grayout": !isActive(ex.isPosted)}'>
+                            {{ ex.spot_ex }}
+                        </div>
+                        <img class="o-post_btn" v-bind:class='{"u-btn-op20": !isActive(ex.isPosted)}' v-on:click="postEx(ex.ex_id, ex.isPosted)" src="../assets/post_btn.svg" />
                     </div>
                 </div>
             </div>
@@ -123,6 +122,13 @@
                     });
 
             }
+        },
+        isActive: function(isPosted) {
+            if(isPosted == 1) {
+                return false;
+            } else {
+                return true;
+            }
         }
     }
   }
@@ -183,7 +189,7 @@
         border-bottom: solid 1px rgba(0,0,0,.12);
     }
 
-    .o-comment {
+    .o-comment, .o-comment-grayout {
         min-height: 20px;
         width: calc(100vw - 20px);
         font-size: 12px;
@@ -194,8 +200,16 @@
         /*background-color: rgba(0,0,0,.26);*/
     }
 
+    .o-comment-grayout {
+        color: rgba(0,0,0,.26);
+    }
+
     .o-post_btn {
         padding: 20px;
+    }
+
+    .u-btn-op20 {
+        opacity: .2;
     }
 
 </style>
