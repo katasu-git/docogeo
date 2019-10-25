@@ -7,8 +7,8 @@
             <div class="o-tour_name u-mt16px">{{ tour_name }}</div>
         </div>
         <div class="l-button">
-            <button class="o-btn-prime" v-on:click='jumpPage("chat_g")'>ツアーを開始する</button>
-            <button class="o-btn-second u-mt16px" v-on:click='jumpPage("editTour")'>ツアーを編集する</button>
+            <button class="o-btn-prime" v-on:click='jumpPage("chat_g", true)'>ツアーを開始する</button>
+            <button class="o-btn-second u-mt16px" v-on:click='jumpPage("editTour", false)'>ツアーを編集する</button>
         </div>
     </div>
   </div>
@@ -33,8 +33,10 @@
         closeModal: function() {
             this.$emit('closeModal');
         },
-        jumpPage: function(where) {
-            this.start_tour();
+        jumpPage: function(where, start_bool) {
+            if(start_bool) {
+                this.start_tour(); //ツアーが開始してしまう
+            }
             this.$emit('jumpPage', where);
         },
         start_tour: function() {

@@ -63,6 +63,7 @@
         });
       },
       jumpPage: function(where) {
+        console.log(this.avoidParam.tour_id);
         this.$router.push({
             name: where,
             params: {

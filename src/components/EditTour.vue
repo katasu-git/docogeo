@@ -76,16 +76,14 @@
         });
       },
       get_tour_name: function() {
-        const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/get_tour_info.php';
-        //let params = new URLSearchParams();
-        //params.append('tour_id', this.tour_id);
-        axios.post(url
+        const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/get_tour_name.php';
+        let params = new URLSearchParams();
+        params.append('tour_id', this.tour_id);
+        axios.post(url, params
         ).then(response => {
-          if(response.data[this.tour_id - 1].tour_name != undefined) {
-            this.tour_name = response.data[this.tour_id - 1].tour_name;
-            this.group_name = response.data[this.tour_id - 1].group_name;
-            //console.log(response.data);
-          }
+          //console.log(response.data[0].tour_name);
+          this.tour_name = response.data[0].tour_name;
+          this.group_name = response.data[0].group_name;
         }).catch(error => {
           // エラーを受け取る
           console.log(error);
