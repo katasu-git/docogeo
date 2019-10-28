@@ -45,8 +45,7 @@
             params.append('tour_id', this.tour_id);
             axios
                 .post(url, params)
-                .then(response => {
-                }).catch(error => {
+                .catch(error => {
                     // エラーを受け取る
                     console.log(error);
                 });

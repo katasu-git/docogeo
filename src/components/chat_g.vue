@@ -38,7 +38,7 @@
           spot_id_arr: [],
           spot_count: 0,
           spot_ex: JSON,
-          spot_name: 'かりの名前',
+          spot_name: '',
       }
     },
     created: function () {
@@ -55,12 +55,10 @@
             const url ="https://www2.yoslab.net/~nishimura/geotour/PHP/getPost.php";
             let params = new URLSearchParams();
             //スポットの表示順はarrの長さから逆順で引いていけばok
-            //console.log(this.spot_id_arr);
             params.append("spot_id", this.spot_id_arr[this.spot_count]); //ここを直す
             axios 
                 .post(url, params)
                 .then(response => {
-                    //console.log(response.data);
                     this.spot_ex = response.data;
                     this.get_spot_name(); //ちゃんとdb叩いてデータ持ってくる
                 })
@@ -125,7 +123,8 @@
 
             } else if(ex.isPosted == 1) {
 
-                const url2 = 'https://www2.yoslab.net/~nishimura/geotour/PHP/isPosted_f.php';
+                //配信済みの場合の処理
+                /*const url2 = 'https://www2.yoslab.net/~nishimura/geotour/PHP/isPosted_f.php';
                 let params2 = new URLSearchParams();
                 params2.append("ex_id", ex.ex_id);
                 axios
@@ -135,7 +134,7 @@
                     .catch(error => {
                         // エラーを受け取る
                         console.log(error);
-                    });
+                    });*/
 
             }
         },
@@ -158,7 +157,6 @@
                             arr.push(response.data[i].spot_id);
                         }
                         this.spot_id_arr = arr;
-                        //console.log(this.spot_id_arr);
                         this.getPost();
                     })
                     .catch(error => {
@@ -167,13 +165,11 @@
                     });
         },
         showNextSpot: function() {
-            console.log("spot" + this.spot_count);
-            console.log("leng" + this.spot_id_arr.length);
             if(this.spot_count < this.spot_id_arr.length - 1) {
                 this.spot_count++;
                 this.getPost();
             } else {
-                console.log("ここが最後のスポットです");
+                //console.log("ここが最後のスポットです");
             }
         },
         showBeforeSpot: function() {
@@ -183,6 +179,9 @@
             } else {
                 //戻るボタンをグレーアウト
             }
+        },
+        finishTour: function() {
+            
         }
     }
   }

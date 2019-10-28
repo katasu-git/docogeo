@@ -47,7 +47,7 @@
             const url ="https://www2.yoslab.net/~nishimura/geotour/PHP/getPostedPost.php";
             let params = new URLSearchParams();
             //console.log("発火");
-            params.append("spot_id", this.spot_id);
+            params.append("tour_id", this.tour_id);
             axios
                 .post(url, params)
                 .then(response => {

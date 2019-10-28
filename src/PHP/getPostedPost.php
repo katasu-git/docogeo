@@ -3,10 +3,10 @@
 require_once("./connect_mysql.php");
 
 function get_post() {
-    //$spot_id = $_POST['spot_id'];
+    $tour_id = $_POST['tour_id'];
     $pdo = connect_mysql();  //mysqlに接続
     //本番環境ではisPpsted=1を取得
-    $sql = "SELECT * FROM dist_post ORDER BY id ASC";
+    $sql = "SELECT * FROM dist_post WHERE tour_id=$tour_id ORDER BY id ASC";
     $stmt = $pdo -> query($sql);
     $result = array();
     foreach($stmt as $row) {
