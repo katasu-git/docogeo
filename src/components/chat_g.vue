@@ -169,7 +169,8 @@
                 this.spot_count++;
                 this.getPost();
             } else {
-                //console.log("ここが最後のスポットです");
+                console.log("ここが最後のスポットです");
+                this.finishTour();
             }
         },
         showBeforeSpot: function() {
@@ -181,7 +182,17 @@
             }
         },
         finishTour: function() {
-
+            const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/finish_tour.php';
+            let params = new URLSearchParams();
+            params.append('tour_id', this.tour_id);
+            axios
+                .post(url, params).then(response => {
+                    this.jumpPage("HelloWorld");
+                })
+                .catch(error => {
+                    // エラーを受け取る
+                    console.log(error);
+                });
         }
     }
   }
