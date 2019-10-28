@@ -7,8 +7,8 @@
             <div class="o-tour_name u-mt16px">{{ tour_name }}</div>
         </div>
         <div class="l-button">
-            <button class="o-btn-prime" v-on:click='jumpPage("chat_g", true)'>ツアーを開始する</button>
-            <button class="o-btn-second u-mt16px" v-on:click='jumpPage("editTour", false)'>ツアーを編集する</button>
+            <button class="o-btn-prime" v-on:click='start_tour()'>ツアーを開始する</button>
+            <button class="o-btn-second u-mt16px" v-on:click='jumpPage("editTour")'>ツアーを編集する</button>
         </div>
     </div>
   </div>
@@ -33,10 +33,7 @@
         closeModal: function() {
             this.$emit('closeModal');
         },
-        jumpPage: function(where, start_bool) {
-            if(start_bool) {
-                this.start_tour(); //ツアーが開始してしまう
-            }
+        jumpPage: function(where) {
             this.$emit('jumpPage', where);
         },
         start_tour: function() {
@@ -45,6 +42,30 @@
             params.append('tour_id', this.tour_id);
             axios
                 .post(url, params)
+                .catch(error => {
+                    // エラーを受け取る
+                    console.log(error);
+                });
+
+            const url2 = 'https://www2.yoslab.net/~nishimura/geotour/PHP/delete_posted.php';
+            //let params = new URLSearchParams();
+            //params.append('tour_id', this.tour_id);
+            axios
+                .post(url2, params).then(Response => {
+                    this.$emit('jumpPage', "chat_g");
+                })
+                .catch(error => {
+                    // エラーを受け取る
+                    console.log(error);
+                });
+
+            const url3 = 'https://www2.yoslab.net/~nishimura/geotour/PHP/reset_isPosted.php';
+            //let params = new URLSearchParams();
+            //params.append('tour_id', this.tour_id);
+            axios
+                .post(url3, params).then(Response => {
+                    this.$emit('jumpPage', "chat_g");
+                })
                 .catch(error => {
                     // エラーを受け取る
                     console.log(error);
