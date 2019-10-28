@@ -55,12 +55,12 @@
             const url ="https://www2.yoslab.net/~nishimura/geotour/PHP/getPost.php";
             let params = new URLSearchParams();
             //スポットの表示順はarrの長さから逆順で引いていけばok
-            console.log(this.spot_id_arr);
+            //console.log(this.spot_id_arr);
             params.append("spot_id", this.spot_id_arr[this.spot_count]); //ここを直す
             axios 
                 .post(url, params)
                 .then(response => {
-                    console.log(response.data);
+                    //console.log(response.data);
                     this.spot_ex = response.data;
                     this.get_spot_name(); //ちゃんとdb叩いてデータ持ってくる
                 })
@@ -167,9 +167,13 @@
                     });
         },
         showNextSpot: function() {
-            if(this.spot_count < this.spot_id_arr.length) {
+            console.log("spot" + this.spot_count);
+            console.log("leng" + this.spot_id_arr.length);
+            if(this.spot_count < this.spot_id_arr.length - 1) {
                 this.spot_count++;
                 this.getPost();
+            } else {
+                console.log("ここが最後のスポットです");
             }
         },
         showBeforeSpot: function() {
