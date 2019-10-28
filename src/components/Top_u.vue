@@ -11,7 +11,7 @@
           <img src="../assets/duck.svg" />
         </div>
       </div>
-      <div class="">開催中のツアー</div>
+      <div class="o-text-tour">開催中のツアー</div>
       <div class="l-justify-center">
         <div class="l-cardContainer">
           <div class="o-card" v-for="info in tour_info" v-on:click='jumpPage("chat_u", info.tour_id)'>
@@ -86,6 +86,7 @@
 
   .l-cardContainer {
     width: calc(100% - 40px);
+    padding: 30px 0 0 0;
 
     display: flex;
     justify-content: space-between;
@@ -136,7 +137,7 @@
   }
 
   .l-logo {
-    padding: 20px;
+    padding: 20px 0 0 20px;
     display: flex;
   }
 
@@ -156,6 +157,13 @@
 
   .o-logo-img>img {
     height: 60px;
+  }
+
+  .o-text-tour {
+    padding: 30px 0 0 20px;
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
   }
 
 </style>

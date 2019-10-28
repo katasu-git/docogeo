@@ -102,7 +102,7 @@
                     .then(response => {
                         this.get_spot_name(); //ちゃんとdb叩いてデータ持ってくる
                         this.getPost(); //ちゃんとdb叩いてデータ持ってくる
-                        console.log("成功");
+                        //console.log("成功");
                     })
                     .catch(error => {
                         // エラーを受け取る
@@ -181,7 +181,7 @@
             }
         },
         finishTour: function() {
-            
+
         }
     }
   }

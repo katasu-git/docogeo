@@ -2,17 +2,20 @@
   <div id="chat_u">
     <div class="l-body">
         <div class="l-header">
-            <div class="o-header">user{{ spot_name }}</div>
+            <div class="o-header">{{ spot_name }}</div>
         </div>
         <div class="l-chat-body">
             <div class="l-chat">
-                <!-- <div class="" v-for="spot in spot_ex">
-                    {{ spot.spot_ex }}
-                </div> -->
                 <div class="l-comment">
                     <div class="o-comment" v-for="ex in spot_ex">{{ ex.spot_ex }}</div>
                 </div>
             </div>
+        </div>
+        <div class="l-duck-img">
+            <img class="o-duck-img" src="../assets/duck.svg" />
+        </div>
+        <div class="l-input">
+
         </div>
     </div>
   </div>
@@ -26,8 +29,8 @@
       return {
           tour_id: 1,
           spot_id: 1,
+          spot_name: '',
           spot_ex: JSON,
-          spot_name: 'かりの名前',
       }
     },
     created: function () {
@@ -67,12 +70,10 @@
             axios
                 .post(url, params)
                 .then(response => {
-                    //console.log(response.data);
                     let spot_id_arr = [];
                     for(let i=0; i<this.spot_ex.length; i++) {
                         spot_id_arr.push(this.spot_ex[i].spot_id);
                     }
-                    //console.log(spot_id_arr);
                     this.spot_id = Math.max.apply(null, spot_id_arr);
                     for(let i=0; i<response.data.length; i++) {
                         if(response.data[i].spot_id == this.spot_id) {
@@ -140,13 +141,14 @@
 
     .o-comment {
         min-height: 20px;
-        width: calc(100vw - 80px);
+        width: calc(100vw - 110px);
         font-size: 12px;
 
         padding: 10px;
 
         border-radius: 5px;
         background-color: #5c9982;
+        color: white;
     }
 
     .o-comment:not(:first-of-type) {
@@ -155,6 +157,28 @@
 
     .o-comment:last-of-type {
         margin-bottom: 20px;
+    }
+
+    .l-input {
+      height: 100px;
+      width: 100%;
+
+      background-color: white;
+      border-top: solid 1px rgba(0,0,0,.12);
+    }
+
+    .l-duck-img {
+        height: 50px;
+        width: 50px;
+
+        position: fixed;
+        right: 0;
+        bottom: 100px;
+    }
+
+    .o-duck-img {
+        height: 50px;
+        width: 50px;
     }
 
 </style>
