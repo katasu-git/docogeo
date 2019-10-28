@@ -51,8 +51,9 @@
             axios
                 .post(url, params)
                 .then(response => {
+                    //console.log(response.data);
                     this.spot_ex = response.data;
-                    this.get_spot_name(); //ちゃんとdb叩いてデータ持ってくる
+                    this.get_spot_name();
                 })
                 .catch(error => {
                     // エラーを受け取る
@@ -66,8 +67,18 @@
             axios
                 .post(url, params)
                 .then(response => {
-                    if(response.data[this.spot_id - 1].spot_name != undefined) {
-                        this.spot_name = response.data[this.spot_id - 1].spot_name;
+                    //console.log(response.data);
+                    let spot_id_arr = [];
+                    for(let i=0; i<this.spot_ex.length; i++) {
+                        spot_id_arr.push(this.spot_ex[i].spot_id);
+                    }
+                    //console.log(spot_id_arr);
+                    this.spot_id = Math.max.apply(null, spot_id_arr);
+                    for(let i=0; i<response.data.length; i++) {
+                        if(response.data[i].spot_id == this.spot_id) {
+                            this.spot_name = response.data[i].spot_name;
+                            break;
+                        }
                     }
                 }).catch(error => {
                     // エラーを受け取る

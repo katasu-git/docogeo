@@ -15,7 +15,7 @@
                         <div v-bind:class='{"o-comment": isActive(ex.isPosted), "o-comment-grayout": !isActive(ex.isPosted)}'>
                             {{ ex.spot_ex }}
                         </div>
-                        <img class="o-post_btn" v-bind:class='{"u-btn-op20": !isActive(ex.isPosted)}' v-on:click="postEx(ex.ex_id, ex.isPosted)" src="../assets/post_btn.svg" />
+                        <img class="o-post_btn" v-bind:class='{"u-btn-op20": !isActive(ex.isPosted)}' v-on:click="postEx(ex)" src="../assets/post_btn.svg" />
                     </div>
                 </div>
             </div>
@@ -60,7 +60,7 @@
             axios 
                 .post(url, params)
                 .then(response => {
-                    //console.log(response.data);
+                    console.log(response.data);
                     this.spot_ex = response.data;
                     this.get_spot_name(); //ちゃんとdb叩いてデータ持ってくる
                 })
@@ -90,12 +90,15 @@
                 }
             });
         },
-        postEx: function(id, isPosted) {
-            if(isPosted == 0) {
+        postEx: function(ex) {
+            if(ex.isPosted == 0) {
 
-                const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/isPosted_t.php';
+                const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/post_ex.php';
                 let params = new URLSearchParams();
-                params.append("ex_id", id);
+                params.append("tour_id", ex.tour_id);
+                params.append("spot_id", ex.spot_id);
+                params.append("ex_id", ex.ex_id);
+                params.append("posted_ex", ex.spot_ex);
                 axios
                     .post(url, params)
                     .then(response => {
@@ -108,17 +111,26 @@
                         console.log(error);
                     });
 
-            } else if(isPosted == 1) {
-
-                const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/isPosted_f.php';
-                let params = new URLSearchParams();
-                params.append("ex_id", id);
+                const url2 = 'https://www2.yoslab.net/~nishimura/geotour/PHP/isPosted_t.php';
+                let params2 = new URLSearchParams();
+                params2.append("ex_id", ex.ex_id);
                 axios
-                    .post(url, params)
-                    .then(response => {
-                        this.get_spot_name(); //ちゃんとdb叩いてデータ持ってくる
-                        this.getPost(); //ちゃんとdb叩いてデータ持ってくる
-                        console.log("成功");
+                    .post(url2, params2).then(response => {
+                        this.getPost();
+                    })
+                    .catch(error => {
+                        // エラーを受け取る
+                        console.log(error);
+                    });
+
+            } else if(ex.isPosted == 1) {
+
+                const url2 = 'https://www2.yoslab.net/~nishimura/geotour/PHP/isPosted_f.php';
+                let params2 = new URLSearchParams();
+                params2.append("ex_id", ex.ex_id);
+                axios
+                    .post(url2, params2).then(response => {
+                        this.getPost();
                     })
                     .catch(error => {
                         // エラーを受け取る
@@ -158,14 +170,12 @@
             if(this.spot_count < this.spot_id_arr.length) {
                 this.spot_count++;
                 this.getPost();
-                //this.get_spot_name();
             }
         },
         showBeforeSpot: function() {
             if(this.spot_count > 0) {
                 this.spot_count--;
                 this.getPost();
-                //this.get_spot_name();
             } else {
                 //戻るボタンをグレーアウト
             }
