@@ -6,7 +6,7 @@ function get_post() {
     $spot_id = $_POST['spot_id'];
     $pdo = connect_mysql();  //mysqlに接続
     //本番環境ではisPpsted=1を取得
-    $sql = "SELECT * FROM spot_explanation WHERE spot_id=$spot_id";
+    $sql = "SELECT * FROM spot_explanation WHERE spot_id=$spot_id ORDER BY id ASC";
     $stmt = $pdo -> query($sql);
     $result = array();
     foreach($stmt as $row) {

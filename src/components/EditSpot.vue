@@ -38,7 +38,7 @@ export default {
       spot_id: Number,
       spot_name: '',
       spot_ex: JSON,
-      text: 'asmdl;amd',
+      text: '',
       modalFlag: false,
     };
   },

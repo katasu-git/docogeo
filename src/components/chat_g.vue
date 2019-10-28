@@ -2,7 +2,11 @@
   <div id="chat_g">
     <div class="l-body">
         <div class="l-header">
-            <div class="o-header">guide{{ spot_name }}</div>
+            <div class="o-header">
+                <button v-on:click="showBeforeSpot()"> ＜ </button>
+                {{ spot_name }}
+                <button v-on:click="showNextSpot()"> ＞ </button>
+            </div>
         </div>
         <div class="l-chat-body">
             <div class="l-chat">
@@ -31,6 +35,8 @@
       return {
           tour_id: 1,
           spot_id: 1,
+          spot_id_arr: [],
+          spot_count: 0,
           spot_ex: JSON,
           spot_name: 'かりの名前',
       }
@@ -41,20 +47,20 @@
             this.jumpPage("HelloWorld");
         } else {
             this.tour_id = this.$route.params.tour_id;
-            this.spot_id = this.$route.params.spot_id;
-            //this.spot_name = this.$route.params.spot_name;
-            this.getPost();
+            this.get_spot_id_array();
         }
     },
     methods: {
         getPost: function() {
             const url ="https://www2.yoslab.net/~nishimura/geotour/PHP/getPost.php";
             let params = new URLSearchParams();
-            //console.log("発火");
-            params.append("spot_id", this.spot_id);
-            axios
+            //スポットの表示順はarrの長さから逆順で引いていけばok
+            console.log(this.spot_id_arr);
+            params.append("spot_id", this.spot_id_arr[this.spot_count]); //ここを直す
+            axios 
                 .post(url, params)
                 .then(response => {
+                    //console.log(response.data);
                     this.spot_ex = response.data;
                     this.get_spot_name(); //ちゃんとdb叩いてデータ持ってくる
                 })
@@ -70,9 +76,7 @@
             axios
                 .post(url, params)
                 .then(response => {
-                    if(response.data[this.spot_id - 1].spot_name != undefined) {
-                        this.spot_name = response.data[this.spot_id - 1].spot_name;
-                    }
+                    this.spot_name = response.data[this.spot_count].spot_name;
                 }).catch(error => {
                     // エラーを受け取る
                     console.log(error);
@@ -128,6 +132,42 @@
                 return false;
             } else {
                 return true;
+            }
+        },
+        get_spot_id_array: function() {
+            const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/get_spot_id_array.php';
+                let params = new URLSearchParams();
+                params.append("tour_id", this.tour_id);
+                axios
+                    .post(url, params)
+                    .then(response => {
+                        const arr = [];
+                        for(let i=0; i<response.data.length; i++) {
+                            arr.push(response.data[i].spot_id);
+                        }
+                        this.spot_id_arr = arr;
+                        //console.log(this.spot_id_arr);
+                        this.getPost();
+                    })
+                    .catch(error => {
+                        // エラーを受け取る
+                        console.log(error);
+                    });
+        },
+        showNextSpot: function() {
+            if(this.spot_count < this.spot_id_arr.length) {
+                this.spot_count++;
+                this.getPost();
+                //this.get_spot_name();
+            }
+        },
+        showBeforeSpot: function() {
+            if(this.spot_count > 0) {
+                this.spot_count--;
+                this.getPost();
+                //this.get_spot_name();
+            } else {
+                //戻るボタンをグレーアウト
             }
         }
     }
