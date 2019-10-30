@@ -22,7 +22,7 @@
         <div class="l-cardContainer">
           <div class="o-card-create" v-on:click='addNewTour()'>
             <div class="l-card-create-text">
-              <div class="o-card-create-text">新しく追加する</div>
+              <div class="o-card-create-text">新しくツアーを作る</div>
             </div>
           </div>
           <div class="o-card" v-for="info in tour_info" v-on:click='start_tour(info)'>
