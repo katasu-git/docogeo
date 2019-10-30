@@ -10,6 +10,9 @@
             <input class="o-input_ex" type="text" placeholder="ツアーの名前を入力" v-model="tour_name" />
             <input class="o-input_ex u-mt16px" type="text" placeholder="グループの名前を入力" v-model="group_name" />
         </form>
+        <div class="l-err_message">
+          <div class="o-err_message" v-show="errFlag()">名前を入力してください！</div>
+        </div>
         <div class="l-button">
             <button class="o-btn-prime" v-on:click='addNewSpot()'>新規作成</button>
             <button class="o-btn-second u-mt16px" v-on:click='closeModal()'>キャンセル</button>
@@ -29,6 +32,7 @@
       return {
           tour_name: '',
           group_name: '',
+          errFlag_first: false,
       }
     },
     created: function () {
@@ -39,8 +43,8 @@
             this.$emit('closeModal');
         },
         addNewSpot: function() {
-            if (this.spot_name_new == '') {
-                console.log("からです");
+            if (this.tour_name == '' || this.group_name == '') {
+                this.errFlag_first = true;
                 return;
             }
           const url =
@@ -60,8 +64,13 @@
             // エラーを受け取る
             console.log(error);
           });
+        },
+        errFlag() {
+          if (this.errFlag_first && (this.tour_name == '' || this.group_name == '')) {
+                return true;
+          }
         }
-    }
+     }
   }
 
 </script>
@@ -106,7 +115,7 @@ button {
 .l-button {
     width: 100%;
 
-    padding-top: 60px;
+    padding-top: 40px;
 
     display: flex;
     flex-direction: column;
@@ -143,6 +152,14 @@ button {
   font-size: 20px;
   font-weight: bold;
   color: white;
+}
+
+.l-err_message {
+  padding: 20px 0 0 20px;
+}
+
+.o-err_message {
+  color: red;
 }
 
 </style>

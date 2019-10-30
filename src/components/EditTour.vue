@@ -23,7 +23,7 @@
         <div class="l-cardContainer">
           <div class="o-card-create" v-on:click='addNewSpot()'>
             <div class="l-card-create-text">
-              <div class="o-card-create-text">新しく追加する</div>
+              <div class="o-card-create-text">スポットを追加する</div>
             </div>
           </div>
           <div class="o-card" v-for="info in spot_info" v-on:click='jumpPage("editSpot", info.spot_id, info.spot_name)'>
