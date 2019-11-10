@@ -9,6 +9,15 @@
         <div class="o-text_tour_min">ツアー</div>
         <div class="o-text_add_image">画像を登録</div>
       </div>
+      <div class="o-slider">
+        <div class="o-card" v-for="num in card_num">
+          <img src="../assets/sample.jpg" class="o-image_tour" />
+          <div class="o-transparent">
+            <div class="o-text_tour_title">ここにツアー名</div>
+            <div class="o-text_update">最終更新 2019.11.7</div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -25,6 +34,7 @@
         modalFlag: false,
         s_modalFlag: false,
         avoidParam: JSON,
+        card_num: 3,
       }
     },
     created: function () {
@@ -124,5 +134,50 @@
       font-weight: bold;
       color: rgba(0,0,0, .26);
     }
+
+  .o-slider {
+    padding: 40px 0 0 0;
+    display: flex;
+    overflow-x: scroll;
+    -webkit-overflow-scrolling: touch; /*ios*/
+  }
+
+  .o-card {
+    padding: 0 0 0 20px;
+    position: relative;
+    height: 380px;
+    width: 240px;
+  }
+
+    .o-image_tour {
+      height: 380px;
+      width: 240px;
+      border-radius: 30px;
+      object-fit: cover;
+    }
+
+    .o-transparent {
+      height: 80px;
+      width: 240px;
+      position: absolute;
+      bottom: 0;
+      border-radius: 0 0 30px 30px;
+      background-color: rgba(0,0,0,.5);
+    }
+
+      .o-text_tour_title {
+        padding: 20px 0 0 20px;
+
+        font-size: 18px;
+        font-weight: bold;
+        color: #fff;
+      }
+
+      .o-text_update {
+        padding: 0 0 0 20px;
+
+        font-size: 14px;
+        color: rgba(255,255,255,.70);
+      }
 
 </style>
