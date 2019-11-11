@@ -10,10 +10,11 @@
         <div class="o-text_add_image">画像を登録</div>
       </div>
       <div class="o-slider">
-        <div class="o-card" v-for="num in card_num">
+        <div class="o-card" v-for="info in tour_info" 
+            v-on:click='jumpPage("editTour", info.tour_id, info.tour_name)'>
           <img src="../assets/sample.jpg" class="o-image_tour" />
           <div class="o-transparent">
-            <div class="o-text_tour_title">ここにツアー名</div>
+            <div class="o-text_tour_title">{{ info.tour_name }}</div>
             <div class="o-text_update">最終更新 2019.11.7</div>
           </div>
         </div>
@@ -24,24 +25,18 @@
 
 <script>
   import axios from 'axios'
-  import AddNewTourModal from './addNewTourModal'
-  import StartTourM from './start_tour_m'
   export default {
     name: 'HelloWorld',
     data() {
       return {
         tour_info: JSON,
-        modalFlag: false,
-        s_modalFlag: false,
-        avoidParam: JSON,
-        card_num: 3,
       }
     },
     created: function () {
-      this.accessDb();
+      this.get_tour();
     },
     methods: {
-      accessDb: function () {
+      get_tour: function () {
         axios.post('https://www2.yoslab.net/~nishimura/geotour/PHP/get_tour_info.php'
         ).then(response => {
           this.tour_info = response.data;
@@ -50,35 +45,17 @@
           console.log(error);
         });
       },
-      jumpPage: function(where) {
+      jumpPage: function(where, tour_id, tour_name) {
         //console.log(this.avoidParam.tour_id);
         this.$router.push({
             name: where,
             params: {
-              tour_id: this.avoidParam.tour_id,
-              spot_id: 1, //1から順番に表示する
-              tour_name: this.avoidParam.tour_name,
-              group_name: this.avoidParam.group_name,
+              tour_id: tour_id,
+              tour_name: tour_name,
             }
         })
-      },
-      closeModal: function() {
-        this.accessDb();
-        this.modalFlag = false;
-        this.s_modalFlag = false;
-      },
-      addNewTour: function() {
-        this.modalFlag = true;
-      },
-      start_tour: function(param) {
-        this.avoidParam = param;
-        this.s_modalFlag = true;
       }
     },
-    components: {
-      AddNewTourModal: AddNewTourModal,
-      StartTourM: StartTourM,
-    }
   }
 
 </script>
@@ -117,7 +94,7 @@
 
     display: flex;
     justify-content: space-between;
-    align-items: flex-end;
+    align-items: center;
   }
 
     .o-text_tour_min {
@@ -147,6 +124,10 @@
     position: relative;
     height: 380px;
     width: 240px;
+  }
+
+  .o-card:last-of-type {
+    padding: 0 20px 0 20px;
   }
 
     .o-image_tour {
