@@ -19,12 +19,14 @@
         </div>
         <div class="o-border u-mt10"></div>
       </div>
+      <div class="dock-item" data-long-press-delay="1000">Press and hold me for .5s</div>
     </div>
   </div>
 </template>
 
 <script>
   import axios from 'axios'
+  import long_press from '../../node_modules/long-press-event/src/long-press-event'
   export default {
     name: 'editTour',
     data() {
@@ -32,6 +34,13 @@
           spot_info: JSON,
           tour_id: Number,
       }
+    },
+    mounted() {
+      //window.addEventListener('scroll', this.handleScroll);
+      document.addEventListener('long-press', function(e) {
+        e.target.setAttribute('data-editing', 'true');
+        console.log("発火");
+      });
     },
     created: function () {
       if(JSON.stringify(this.$route.params) == "{}") {
@@ -67,7 +76,7 @@
       },
     },
   }
-
+/* -------------------------- */
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
@@ -164,5 +173,35 @@
   .u-mb20 {
     margin-bottom: 20px;
   }
+
+  .dock-item {
+  font-size: 14px;
+  font-family: arial;
+  display: inline-block;
+  margin: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  width: 70px;
+  height: 70px;
+  border-radius: 3px;
+  text-align: center;
+  user-select: none;
+}
+
+@keyframes jiggle {
+  0% {
+    transform: rotate(-1deg);
+  }
+  50% {
+    transform: rotate(1deg);
+  }
+}
+
+.dock-item[data-editing="true"] {
+  animation: jiggle 0.2s infinite;
+  border: 1px solid #aaa;
+  box-shadow: 0 0 1px rgba(0,0,0,.85);
+}
 
 </style>
