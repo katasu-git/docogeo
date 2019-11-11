@@ -1,6 +1,9 @@
 <template>
   <div id="editTour">
     <div class="o-background">
+
+      <GeoLongPress v-show="flag"></GeoLongPress>
+      
       <div class="l-header_above">
         <div class="o-text_tour">Geosite</div>
         <div class="o-image_image_button"><img src="../assets/sort_button.svg" /></div>
@@ -9,38 +12,38 @@
         <div class="o-text_tour_min">ジオサイト</div>
         <div class="o-text_add_image">並べ替え</div>
       </div>
-      <div class="o-list" v-for="info in spot_info" v-on:click='jumpPage("editSpot", info.spot_id, info.spot_name)'>
+      <div class="o-list" v-long-press="300" @long-press-start="onPlusStart"
+          v-for="info in spot_info" v-on:click='jumpPage("editSpot", info.spot_id, info.spot_name)'>
         <div class="l-image_text">
           <div class="o-list_image"><img class="o-image_circle" src="../assets/sample.jpg" /></div>
           <div class="l-list_text">
-            <div class="o-list_text_geosite">{{ info.spot_name }}</div>
+            <div id="o-list_text_geosite">{{ info.spot_name }}</div>
             <div class="o-list_text_update">最終更新 2019.11.7</div>
           </div>
         </div>
         <div class="o-border u-mt10"></div>
       </div>
-      <div class="dock-item" data-long-press-delay="1000">Press and hold me for .5s</div>
     </div>
   </div>
 </template>
 
 <script>
   import axios from 'axios'
-  import long_press from '../../node_modules/long-press-event/src/long-press-event'
+  import GeoLongPress from '../components/modals/geoLongPress'
   export default {
     name: 'editTour',
     data() {
       return {
           spot_info: JSON,
           tour_id: Number,
+          flag: false,
       }
     },
     mounted() {
-      //window.addEventListener('scroll', this.handleScroll);
-      document.addEventListener('long-press', function(e) {
-        e.target.setAttribute('data-editing', 'true');
-        console.log("発火");
-      });
+      //長押しでイベント発火
+      //document.addEventListener('long-press', () => {
+      //  this.flag = true;
+      //});
     },
     created: function () {
       if(JSON.stringify(this.$route.params) == "{}") {
@@ -74,6 +77,12 @@
             }
         })
       },
+      onPlusStart: function()  {
+        this.flag = true;
+      },
+    },
+    components: {
+      GeoLongPress: GeoLongPress,
     },
   }
 /* -------------------------- */
@@ -150,14 +159,22 @@
     margin: 0 0 0 10px;
   }
 
-  .o-list_text_geosite {
+  #o-list_text_geosite {
     font-size: 18px;
     font-weight: bold;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
   }
 
   .o-list_text_update {
     font-size: 12px;
     color: rgba(0,0,0, .26);
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
   }
 
   .o-border {
@@ -174,34 +191,39 @@
     margin-bottom: 20px;
   }
 
-  .dock-item {
-  font-size: 14px;
-  font-family: arial;
-  display: inline-block;
-  margin: 10px;
-  padding: 10px;
-  border: 1px solid #ccc;
-  cursor: pointer;
-  width: 70px;
-  height: 70px;
-  border-radius: 3px;
-  text-align: center;
-  user-select: none;
-}
+  .o-background_black {
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    background-color: rgba(0,0,0, .54);
 
-@keyframes jiggle {
-  0% {
-    transform: rotate(-1deg);
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
-  50% {
-    transform: rotate(1deg);
-  }
-}
 
-.dock-item[data-editing="true"] {
-  animation: jiggle 0.2s infinite;
-  border: 1px solid #aaa;
-  box-shadow: 0 0 1px rgba(0,0,0,.85);
-}
+  .o-modal {
+    width: 240px;
+    border-radius: 30px;
+    background-color: #fff;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .o-text {
+    padding: 20px;
+    font-size: 16px;
+    font-weight: bold;
+  }
+
+  .u-color-green {
+    color: #4B8E8D;
+  }
+
+  .u-color-red {
+    color: #CC544D;
+  }
 
 </style>
