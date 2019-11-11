@@ -6,32 +6,40 @@
         <div class="o-modal">
             <div class="l-image u-mt20"><img class="o-image" src="../../assets/sample.jpg" /></div>
             <form class="u-mt20">
-                <input type="text" placeholder="ここにジオサイトの名前を入力！" />
+                <input type="text" placeholder="ここにジオサイトの名前を入力！" v-model="spot_name_updated" />
             </form>
             <div class="o-border u-mt40"></div>
             <div class="l-button">
                 <button class="o-button_cancel" v-on:click="closeModal()">キャンセル</button>
-                <button class="o-button_save">保存する</button>
+                <button class="o-button_save" v-on:click="update_spot_name()">保存する</button>
             </div>
         </div>
       </div>
+
     </div>
   </div>
 </template>
 
 <script>
+　import axios from 'axios'
   export default {
     name: 'geochangename',
+    props: {
+        spot_id: Number,
+        spot_name: String,
+    },
     data() {
       return {
+          spot_name_updated: '',
       }
-    },
-    created: function () {
     },
     methods: {
         closeModal: function() {
             this.$emit('closeModal');
         },
+        update_spot_name: function() {
+            this.$emit('update_spot_name', this.spot_name_updated);
+        }
     },
   }
 </script>
@@ -82,12 +90,14 @@
       font-size: 18px;
       font-weight: bold;
       color: rgba(0,0,0, .87);
+      text-align: center;
   }
 
   input::placeholder {
       font-size: 18px;
       font-weight: bold;
       color: rgba(0,0,0, .12);
+      text-align: center;
   }
 
   .l-button {
