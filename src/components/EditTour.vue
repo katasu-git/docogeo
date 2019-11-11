@@ -2,7 +2,11 @@
   <div id="editTour">
     <div class="o-background">
 
-      <GeoLongPress v-show="flag"></GeoLongPress>
+      <GeoLongPress v-show="flag"
+        @closeModal="closeModal" @wakeChangeNameModal="wakeChangeNameModal"></GeoLongPress>
+
+      <GeoChangeName v-show="flag_name"
+        @closeModal="closeModal"></GeoChangeName>
       
       <div class="l-header_above">
         <div class="o-text_tour">Geosite</div>
@@ -30,6 +34,7 @@
 <script>
   import axios from 'axios'
   import GeoLongPress from '../components/modals/geoLongPress'
+  import GeoChangeName from '../components/modals/geoChageName'
   export default {
     name: 'editTour',
     data() {
@@ -37,13 +42,8 @@
           spot_info: JSON,
           tour_id: Number,
           flag: false,
+          flag_name: false,
       }
-    },
-    mounted() {
-      //長押しでイベント発火
-      //document.addEventListener('long-press', () => {
-      //  this.flag = true;
-      //});
     },
     created: function () {
       if(JSON.stringify(this.$route.params) == "{}") {
@@ -80,9 +80,18 @@
       onPlusStart: function()  {
         this.flag = true;
       },
+      closeModal: function() {
+        this.flag = false;
+        this.flag_name = false;
+      },
+      wakeChangeNameModal: function() {
+        this.flag = false; //前のモーダルを閉じる
+        this.flag_name = true;
+      }
     },
     components: {
       GeoLongPress: GeoLongPress,
+      GeoChangeName: GeoChangeName,
     },
   }
 /* -------------------------- */

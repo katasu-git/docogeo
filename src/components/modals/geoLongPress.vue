@@ -4,11 +4,11 @@
       
       <div class="o-background_black">
         <div class="o-modal">
-          <div class="o-text">名前の変更</div>
+          <div class="o-text" v-on:click="wakeChangeNameModal()">名前の変更</div>
           <div class="o-border u-mt10"></div>
           <div class="o-text u-color-red">削除</div>
           <div class="o-border u-mt10"></div>
-          <div class="o-text u-color-green">キャンセル</div>
+          <div class="o-text u-color-green" v-on:click='closeModal()'>キャンセル</div>
         </div>
       </div>
     </div>
@@ -25,6 +25,12 @@
     created: function () {
     },
     methods: {
+        closeModal: function() {
+            this.$emit('closeModal');
+        },
+        wakeChangeNameModal: function() {
+            this.$emit('wakeChangeNameModal');
+        }
     },
   }
 </script>
