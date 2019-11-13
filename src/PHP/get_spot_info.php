@@ -5,11 +5,11 @@ require_once("./connect_mysql.php");
 function get_spot_info() {
     $tour_id = $_POST['tour_id'];
     $pdo = connect_mysql();  //mysqlに接続
-    $sql = "SELECT * FROM spot_name WHERE tour_id=$tour_id ORDER BY id ASC";
+    $sql = "SELECT * FROM spot_name WHERE tour_id=$tour_id AND isDeleted=0 ORDER BY order_num ASC";
     $stmt = $pdo -> query($sql);
     $result = array();
     foreach($stmt as $row) {
-        $spot_info = array('spot_name' => $row['spot_name'], 'spot_id' => $row['id'],);
+        $spot_info = array('spot_name' => $row['spot_name'], 'spot_id' => $row['id'], 'order' => $row['order']);
         array_push($result, $spot_info);
     }
     return $result;

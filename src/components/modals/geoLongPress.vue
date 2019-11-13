@@ -51,13 +51,12 @@
     background-color: rgba(0,0,0, .54);
 
     display: flex;
-    justify-content: center;
-    align-items: center;
+    align-items: flex-end;
   }
 
   .o-modal {
-    width: 240px;
-    border-radius: 30px;
+    width: 100%;
+    border-radius: 30px 30px 0 0;
     background-color: #fff;
 
     display: flex;

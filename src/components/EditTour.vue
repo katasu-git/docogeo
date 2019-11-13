@@ -16,30 +16,37 @@
         <div class="o-text_tour_min">ジオサイト</div>
         <div class="o-text_add_image">並べ替え</div>
       </div>
-      <div class="o-list" v-long-press="300" @long-press-start="onPlusStart(info.spot_id, info.spot_name)"
-          v-for="info in spot_info" v-on:click='jumpPage("editSpot", info.spot_id, info.spot_name)'>
-        <div class="l-image_text">
-          <div class="o-list_image"><img class="o-image_circle" src="../assets/sample.jpg" /></div>
-          <div class="l-list_text">
-            <div id="o-list_text_geosite">{{ info.spot_name }}</div>
-            <div class="o-list_text_update">最終更新 2019.11.7</div>
+      <draggable v-model="spot_info" :animation="150">
+        <div class="o-list" v-long-press="300" @long-press-start="onPlusStart(info.spot_id, info.spot_name)"
+            v-for="(info, i) in spot_info" v-on:click='jumpPage("editSpot", info.spot_id, info.spot_name)' :key="info.spot_id">
+          <div class="l-image_text_burger">
+            <div class="l-image_text">
+              <div class="o-list_image"><img class="o-image_circle" src="../assets/sample.jpg" /></div>
+              <div class="l-list_text">
+                <div id="o-list_text_geosite">{{i}} : {{ info.spot_name }}</div>
+                <div class="o-list_text_update">最終更新 2019.11.7</div>
+              </div>
+            </div>
+            <div class="o-burger"><img src="../assets/burger_button.svg" /></div>
           </div>
+          <div class="o-border u-mt10"></div>
         </div>
-        <div class="o-border u-mt10"></div>
-      </div>
+      </draggable>
+      <button class="o-button_save_order" v-on:click="update_order_spot_name()">並べ替えを保存する</button>
     </div>
   </div>
 </template>
 
 <script>
   import axios from 'axios'
+  import draggable from 'vuedraggable'
   import GeoLongPress from '../components/modals/geoLongPress'
   import GeoChangeName from '../components/modals/geoChageName'
   export default {
     name: 'editTour',
     data() {
       return {
-          spot_info: JSON,
+          spot_info: [],
           tour_id: Number,
           flag: false,
           flag_name: false,
@@ -63,6 +70,7 @@
         axios.post(url, params
         ).then(response => {
           this.spot_info = response.data;
+          //console.log(this.spot_info);
         }).catch(error => {
           // エラーを受け取る
           console.log(error);
@@ -81,6 +89,25 @@
                 console.log(error);
             });
       },
+      update_order_spot_name: function() {
+            const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/update_order_spot_name.php';
+            //let arr = [];
+            for(let i=0; i<this.spot_info.length; i++) {
+              let params = new URLSearchParams();
+              let arr= this.spot_info[i].spot_id;
+              params.append('spot_id_arr', arr);
+              params.append('order', i);
+              axios.post(url, params
+              ).then(response => {
+                  //this.closeModal();
+                  console.log(response.data);
+              }).catch(error => {
+                  // エラーを受け取る
+                  console.log(error);
+              });
+            }
+            this.get_spot_info();
+      },
       jumpPage: function(where, spot_id, spot_name) {
         this.$router.push({
             name: where,
@@ -93,7 +120,8 @@
       },
       onPlusStart: function(spot_id, spot_name)  {
         this.spot_id_avoid = spot_id
-        this.flag = true;
+        //console.log(this.spot_info[0].spot_name);
+        //this.flag = true; //戻す
       },
       closeModal: function() {
         this.flag = false;
@@ -103,17 +131,32 @@
       wakeChangeNameModal: function() {
         this.flag = false; //前のモーダルを閉じる
         this.flag_name = true;
+      },
+      onEnd: function(evt) {
+        //console.log(evt.item);
+        //alert('Moved!!');
+        //this.spot_name_updated();  //ここで発火させればオートセーブも可能
       }
     },
     components: {
       GeoLongPress: GeoLongPress,
       GeoChangeName: GeoChangeName,
+      draggable: draggable,
     },
   }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+  ul {
+    margin: 0;
+    padding: 0;
+  }
+
+  button {
+    outline: none;
+  }
+
   #editTour, .o-background {
     height: 100%;
     width: 100%;
@@ -175,6 +218,16 @@
     padding: 20px 0 0 20px;
   }
 
+  .l-image_text_burger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .o-burger {
+    margin-right: 20px;
+  }
+  
   .l-image_text {
     display: flex;
   }
@@ -240,6 +293,22 @@
     padding: 20px;
     font-size: 16px;
     font-weight: bold;
+  }
+
+  .o-button_save_order {
+    margin: 0 0 0 20px;
+    height: 40px;
+    width: calc(100% - 40px);
+    border: solid 2px #4B8E8D;
+    border-radius: 10px;
+    background-color: rgba(0,0,0,0);
+    color: #4B8E8D;
+    font-size: 12px;
+    font-weight: bold;
+  }
+
+  .o-button_save_order:active {
+    opacity: .7;
   }
 
   .u-color-green {
