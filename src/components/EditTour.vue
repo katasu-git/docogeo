@@ -53,8 +53,8 @@
         </div>
       </div>
 
-      <button class="o-button_save_order" v-on:click="startSort()" v-show="flag_order">並べ替えを保存する</button>
-      <button class="o-button_create_geosite" v-show="!flag_order">新しくジオサイトを登録する</button>
+      <button class="o-button_save_order" v-on:click="startSort()" v-show="flag_order && !flag">並べ替えを保存する</button>
+      <button class="o-button_create_geosite" v-show="!flag_order && !flag">新しくジオサイトを登録する</button>
 
     </div>
   </div>
