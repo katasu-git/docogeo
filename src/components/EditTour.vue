@@ -1,55 +1,86 @@
 <template>
   <div id="editTour">
-    <div class="l-body">
+    <div class="o-background">
 
-      <ChangeTourNameModal v-show="modalFlag"
-        @closeModal="closeModal" @get_tour_name="get_tour_name" 
-        :tour_id="Number(tour_id)" :tour_name="tour_name"></ChangeTourNameModal>
+      <GeoLongPress v-show="flag"
+        @closeModal="closeModal" @wakeChangeNameModal="wakeChangeNameModal"></GeoLongPress>
+
+      <GeoChangeName v-show="flag_name"
+        @closeModal="closeModal" @update_spot_name="update_spot_name"></GeoChangeName>
+
+      <GeoCreateGeo v-show="flag_create"
+        :tour_id="tour_id" @closeModal="closeModal"></GeoCreateGeo>
       
-      <AddNewSpotModal v-show="addModalFlag"
-        @closeModal="closeModal"
-        :tour_id="Number(tour_id)"></AddNewSpotModal>
-
-        <button class="o-backBtn" v-on:click='jumpPage("HelloWorld")'>
-            ツアーの選択に戻る
-        </button>
-      <div class="l-justify-center">
-        <div class="l-tour_info">
-            <div class="o-tour_name-text" v-on:click="changeTourName()">{{ tour_name }}</div>
-            <div class="o-group_name-text">{{ group_name }}</div>
+      <div class="l-header_above">
+        <div class="o-text_tour">Geosite</div>
+        <div class="o-image_image_button">
+          <img v-on:click="startSort()" v-show="!flag_order" src="../assets/sort_button.svg" />
+          <img v-on:click="startSort()" v-show="flag_order" src="../assets/sort_button_active.svg" />
         </div>
       </div>
-      <div class="l-justify-center">
-        <div class="l-cardContainer">
-          <div class="o-card-create" v-on:click='addNewSpot()'>
-            <div class="l-card-create-text">
-              <div class="o-card-create-text">スポットを追加する</div>
+      <div class="l-header_under u-mb20">
+        <div class="o-text_tour_min">ジオサイト</div>
+        <div class="o-text_add_image" v-bind:style="{ color: returnSortColor()}">並べ替え</div>
+      </div>
+
+      <draggable v-model="spot_info" :animation="150" @update="onEnd()" v-show="flag_order">
+        <div class="o-list" v-long-press="300" @long-press-start="onPlusStart(info.spot_id, info.spot_name)"
+            v-for="(info) in spot_info" :key="info.spot_id">
+          <div class="l-image_text_burger">
+            <div class="l-image_text">
+              <div class="o-list_image"><img class="o-image_circle" src="../assets/sample.jpg" /></div>
+              <div class="l-list_text">
+                <div class="o-list_text_geosite">{{ info.spot_name }}</div>
+                <div class="o-list_text_update">最終更新 2019.11.7</div>
+              </div>
+            </div>
+            <div class="o-burger"><img src="../assets/burger_button.svg" /></div>
+          </div>
+          <div class="o-border u-mt10"></div>
+        </div>
+      </draggable>
+
+      <div v-show="!flag_order">
+        <div class="o-list" v-long-press="500" @long-press-start="onPlusStart(info.spot_id, info.spot_name)"
+            v-for="(info) in spot_info" v-on:click='jumpPage("editSpot", info.spot_id, info.spot_name)' :key="info.spot_id">
+          <div class="l-image_text_burger">
+            <div class="l-image_text">
+              <div class="o-list_image"><img class="o-image_circle" src="../assets/sample.jpg" /></div>
+              <div class="l-list_text">
+                <div class="o-list_text_geosite">{{ info.spot_name }}</div>
+                <div class="o-list_text_update">最終更新 2019.11.7</div>
+              </div>
             </div>
           </div>
-          <div class="o-card" v-for="info in spot_info" v-on:click='jumpPage("editSpot", info.spot_id, info.spot_name)'>
-            <div class="o-card-img"></div>
-            <div class="o-card-title">{{ info.spot_id }}:{{ info.spot_name }}</div>
-          </div>
+          <div class="o-border u-mt10"></div>
         </div>
       </div>
+
+      <button class="o-button_create_geosite" v-on:click="wakeCreateGeo()"
+        v-show="!flag_order && !flag && !flag_name && !flag_create">新しくジオサイトを登録する</button>
+
     </div>
   </div>
 </template>
 
 <script>
-  import axios from 'axios'
-  import ChangeTourNameModal from "./ChangeTourNameModal";
-  import AddNewSpotModal from "./addNewSpotModal"
+import axios from 'axios'
+import draggable from 'vuedraggable'
+import GeoLongPress from '../components/modals/geoLongPress'
+import GeoChangeName from '../components/modals/geoChageName'
+import GeoCreateGeo from '../components/modals/geoCreateGeo'
+
   export default {
     name: 'editTour',
     data() {
       return {
-          spot_info: JSON,
+          spot_info: [],
           tour_id: Number,
-          tour_name: '',
-          group_name: '',
-          modalFlag: false,
-          addModalFlag: false,
+          flag: false,
+          flag_name: false,
+          flag_order: false,
+          flag_create: false,
+          spot_id_avoid: '', //名前を変更する時に呼び出し
       }
     },
     created: function () {
@@ -57,8 +88,7 @@
         // 更新されたときはトップに戻る
         this.jumpPage("HelloWorld");
       } else {
-        this.tour_id = this.$route.params.tour_id;
-        this.get_tour_name();
+        this.tour_id = Number(this.$route.params.tour_id);
         this.get_spot_info();
       }
     },
@@ -75,19 +105,35 @@
           console.log(error);
         });
       },
-      get_tour_name: function() {
-        const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/get_tour_name.php';
-        let params = new URLSearchParams();
-        params.append('tour_id', this.tour_id);
-        axios.post(url, params
-        ).then(response => {
-          //console.log(response.data[0].tour_name);
-          this.tour_name = response.data[0].tour_name;
-          this.group_name = response.data[0].group_name;
-        }).catch(error => {
-          // エラーを受け取る
-          console.log(error);
-        });
+      update_spot_name: function (spot_name_updated) {
+            const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/update_spot_name.php';
+            let params = new URLSearchParams();
+            params.append('spot_id', this.spot_id_avoid);
+            params.append('spot_name_updated', spot_name_updated);
+            axios.post(url, params
+            ).then(response => {
+                this.closeModal();
+            }).catch(error => {
+                // エラーを受け取る
+                console.log(error);
+            });
+      },
+      update_order_spot_name: function() {
+            const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/update_order_spot_name.php';
+            //let arr = [];
+            for(let i=0; i<this.spot_info.length; i++) {
+              let params = new URLSearchParams();
+              let arr= this.spot_info[i].spot_id;
+              params.append('spot_id_arr', arr);
+              params.append('order', i);
+              axios.post(url, params
+              ).then(response => {
+              }).catch(error => {
+                  // エラーを受け取る
+                  console.log(error);
+              });
+            }
+            this.get_spot_info();
       },
       jumpPage: function(where, spot_id, spot_name) {
         this.$router.push({
@@ -99,121 +145,237 @@
             }
         })
       },
-      changeTourName: function() {
-        this.modalFlag = true;
+      onPlusStart: function(spot_id, spot_name)  {
+        if(this.flag_order) {
+          return;  //並び替えが有効な時は，長押しを無効化する
+        }
+        this.spot_id_avoid = spot_id;
+        this.flag = true; //戻す
       },
       closeModal: function() {
-        this.get_spot_info()
-        this.modalFlag = false;
-        this.addModalFlag = false;
+        this.flag = false;
+        this.flag_name = false;
+        this.flag_create = false;
+        this.get_spot_info(); //名前の更新を反映
       },
-      addNewSpot: function() {
-        this.addModalFlag = true;
+      wakeChangeNameModal: function() {
+        this.flag = false; //前のモーダルを閉じる
+        this.flag_name = true;
+      },
+      onEnd: function() {
+        this.update_order_spot_name();  //ここで発火させればオートセーブも可能
+      },
+      startSort: function() {
+        if(this.flag_order) {
+          this.flag_order = false;
+        } else {
+          this.flag_order = true;
+        }
+      },
+      returnSortColor: function() {
+        if(this.flag_order) {
+          return '#4B8E8D';
+        } else {
+          return 'rgba(0,0,0,.26)';
+        }
+      },
+      wakeCreateGeo: function() {
+        this.flag_create = true;
       }
     },
     components: {
-      ChangeTourNameModal: ChangeTourNameModal,
-      AddNewSpotModal: AddNewSpotModal,
-    }
+      GeoLongPress: GeoLongPress,
+      GeoChangeName: GeoChangeName,
+      GeoCreateGeo: GeoCreateGeo,
+      draggable: draggable,
+    },
   }
-
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-  #editTour,
-  .l-body {
+  ul {
+    margin: 0;
+    padding: 0;
+  }
+
+  button {
+    outline: none;
+  }
+
+  #editTour, .o-background {
     height: 100%;
     width: 100%;
+
+    background-color: #F5F5F5;
+    color: rgba(0,0,0,.87);
   }
 
-  .l-body {
-    background: #5c9982;
-  }
-
-  .l-justify-center {
-    display: flex;
-    justify-content: center;
-    background: #5c9982;
-    /*中央よせ*/
-  }
-
-  .l-cardContainer {
-    width: calc(100% - 40px);
+  .l-header_above {
+    width: 100%;
 
     display: flex;
     justify-content: space-between;
-    flex-wrap: wrap;
-    /*折り返しの指定*/
+    align-items: flex-end;
   }
 
-  .o-card, .o-card-create {
-    height: calc(50vw - 25px);
-    width: calc(50vw - 25px);
+    .o-text_tour {
+      padding: 20px 0 0 20px;
 
-    border: solid 0 white;
-    border-radius: 5px;
-    background: white;
+      font-size: 36px;
+      font-weight: bold;
+    }
+
+    .o-image_image_button {
+      padding: 0 20px 0 20px;
+    }
+
+    .o-button_sort {
+      fill: #4B8E8D;
+    }
+
+  .l-header_under {
+    width: 100%;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
 
-  .o-card:nth-child(n+3) {
+    .o-text_tour_min {
+      padding: 0 0 0 20px;
+
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .o-text_add_image {
+      padding: 0 15px 0 0;
+
+      font-size: 12px;
+      font-weight: bold;
+      color: rgba(0,0,0, .26);
+    }
+
+  .o-image_circle {
+    height: 50px;
+    width: 50px;
+    border-radius: 100px;
+    object-fit: cover;
+  }
+
+  .o-list {
+    padding: 20px 0 0 20px;
+  }
+
+  .l-image_text_burger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .o-burger {
+    margin-right: 20px;
+  }
+  
+  .l-image_text {
+    display: flex;
+  }
+
+  .l-list_text {
+    margin: 0 0 0 10px;
+  }
+
+  .o-list_text_geosite {
+    font-size: 18px;
+    font-weight: bold;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+
+  .o-list_text_update {
+    font-size: 12px;
+    color: rgba(0,0,0, .26);
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+
+  .o-border {
+    height: 1px;
+    width: calc(100vw - 40px);
+    background-color: rgba(0,0,0, .12);
+  }
+
+  .u-mt10 {
     margin-top: 10px;
   }
 
-  .o-card-img {
-    height: calc((50vw - 25px)/5*3);
-    width: 100%;
-
-    border-radius: 5px 5px 0 0;
-    background-color: #c9c9c9;
+  .u-mb20 {
+    margin-bottom: 20px;
   }
 
-  .o-card-title {
-    font-size: 12px;
-    /*font-weight: bold;*/
-  }
-
-  .l-card-create-text {
+  .o-background_black {
     height: 100%;
     width: 100%;
+    position: fixed;
+    background-color: rgba(0,0,0, .54);
 
     display: flex;
     justify-content: center;
     align-items: center;
   }
 
-  .o-card-create {
-    border: dashed 1px white;
-    background-color: rgba(0,0,0,0);
-    color: white;
-    font-size: 12px;
-  }
+  .o-modal {
+    width: 240px;
+    border-radius: 30px;
+    background-color: #fff;
 
-  .l-tour_info {
-    padding: 40px;
-  
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    /*中央よせ*/
     align-items: center;
   }
- 
-  .o-tour_name-text {
-      font-size: 20px;
-      font-weight: bold;
-      color: white;
+
+  .o-text {
+    padding: 20px;
+    font-size: 16px;
+    font-weight: bold;
   }
 
-  .o-group_name-text {
-      font-size: 12px;
-      color: white;
+  .o-button_save_order, .o-button_create_geosite {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    height: 40px;
+    width: calc(100% - 40px);
+    border: solid 2px #4B8E8D;
+    border-radius: 10px;
+    background-color: rgba(0,0,0,0);
+    color: #4B8E8D;
+    font-size: 12px;
+    font-weight: bold;
   }
 
-  .o-backBtn {
-      padding: 20px;
-      font-size: 12px;
-      color: white;
+  .o-button_create_geosite {
+    background-color: #4B8E8D;
+    color: #fff;
+  }
+
+  .o-button_save_order:active, .o-button_create_geosite:acitve {
+    opacity: .7;
+  }
+
+  .o-modal
+
+  .u-color-green {
+    color: #4B8E8D;
+  }
+
+  .u-color-red {
+    color: #CC544D;
   }
 
 </style>

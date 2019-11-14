@@ -64,7 +64,6 @@ export default {
         .post(url, params)
         .then(response => {
           this.spot_ex = response.data;
-          //this.tour_id = this.spot_ex[0].tour_id;
           this.get_spot_name(); //ちゃんとdb叩いてデータ持ってくる
         })
         .catch(error => {

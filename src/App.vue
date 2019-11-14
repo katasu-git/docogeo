@@ -8,13 +8,13 @@
 
 <script>
 export default {
-  name: 'App'
+  name: 'App',
 }
 </script>
 
 <style>
 html, body, #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family: 'Noto Sans JP', sans-serif, 'Avenir', Helvetica, Arial, sans-serif;
 
   height: 100%;
   widows: 100%;
