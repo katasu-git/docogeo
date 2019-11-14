@@ -26,4 +26,10 @@ a, p, button {
   margin: 0;
   padding: 0;
 }
+
+button, input {
+  border: none;
+  background-color: rgba(0,0,0,0);
+  outline: none;
+}
 </style>

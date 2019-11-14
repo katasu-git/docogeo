@@ -217,6 +217,11 @@ import GeoCreateGeo from '../components/modals/geoCreateGeo'
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
+
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
   }
 
     .o-text_tour {
