@@ -10,20 +10,24 @@
       
       <div class="l-header_above">
         <div class="o-text_tour">Geosite</div>
-        <div class="o-image_image_button"><img src="../assets/sort_button.svg" /></div>
+        <div class="o-image_image_button">
+          <img v-on:click="startSort()" v-show="!flag_order" src="../assets/sort_button.svg" />
+          <img v-on:click="startSort()" v-show="flag_order" src="../assets/sort_button_active.svg" />
+        </div>
       </div>
       <div class="l-header_under u-mb20">
         <div class="o-text_tour_min">ジオサイト</div>
-        <div class="o-text_add_image">並べ替え</div>
+        <div class="o-text_add_image" v-bind:style="{ color: returnSortColor()}">並べ替え</div>
       </div>
-      <draggable v-model="spot_info" :animation="150">
+
+      <draggable v-model="spot_info" :animation="150" @update="onEnd()" v-show="flag_order">
         <div class="o-list" v-long-press="300" @long-press-start="onPlusStart(info.spot_id, info.spot_name)"
-            v-for="(info, i) in spot_info" v-on:click='jumpPage("editSpot", info.spot_id, info.spot_name)' :key="info.spot_id">
+            v-for="(info) in spot_info" v-on:click='jumpPage("editSpot", info.spot_id, info.spot_name)' :key="info.spot_id">
           <div class="l-image_text_burger">
             <div class="l-image_text">
               <div class="o-list_image"><img class="o-image_circle" src="../assets/sample.jpg" /></div>
               <div class="l-list_text">
-                <div id="o-list_text_geosite">{{i}} : {{ info.spot_name }}</div>
+                <div id="o-list_text_geosite">{{ info.spot_name }}</div>
                 <div class="o-list_text_update">最終更新 2019.11.7</div>
               </div>
             </div>
@@ -32,7 +36,26 @@
           <div class="o-border u-mt10"></div>
         </div>
       </draggable>
-      <button class="o-button_save_order" v-on:click="update_order_spot_name()">並べ替えを保存する</button>
+
+      <div v-show="!flag_order">
+        <div class="o-list" v-long-press="300" @long-press-start="onPlusStart(info.spot_id, info.spot_name)"
+            v-for="(info) in spot_info" v-on:click='jumpPage("editSpot", info.spot_id, info.spot_name)' :key="info.spot_id">
+          <div class="l-image_text_burger">
+            <div class="l-image_text">
+              <div class="o-list_image"><img class="o-image_circle" src="../assets/sample.jpg" /></div>
+              <div class="l-list_text">
+                <div id="o-list_text_geosite">{{ info.spot_name }}</div>
+                <div class="o-list_text_update">最終更新 2019.11.7</div>
+              </div>
+            </div>
+          </div>
+          <div class="o-border u-mt10"></div>
+        </div>
+      </div>
+
+      <button class="o-button_save_order" v-on:click="startSort()" v-show="flag_order">並べ替えを保存する</button>
+      <button class="o-button_create_geosite" v-show="!flag_order">新しくジオサイトを登録する</button>
+
     </div>
   </div>
 </template>
@@ -50,6 +73,7 @@
           tour_id: Number,
           flag: false,
           flag_name: false,
+          flag_order: false,
           spot_id_avoid: '', //名前を変更する時に呼び出し
       }
     },
@@ -99,7 +123,6 @@
               params.append('order', i);
               axios.post(url, params
               ).then(response => {
-                  //this.closeModal();
                   console.log(response.data);
               }).catch(error => {
                   // エラーを受け取る
@@ -119,9 +142,11 @@
         })
       },
       onPlusStart: function(spot_id, spot_name)  {
-        this.spot_id_avoid = spot_id
-        //console.log(this.spot_info[0].spot_name);
-        //this.flag = true; //戻す
+        if(this.flag_order) {
+          return;  //並び替えが有効な時は，長押しを無効化する
+        }
+        this.spot_id_avoid = spot_id;
+        this.flag = true; //戻す
       },
       closeModal: function() {
         this.flag = false;
@@ -132,11 +157,26 @@
         this.flag = false; //前のモーダルを閉じる
         this.flag_name = true;
       },
-      onEnd: function(evt) {
-        //console.log(evt.item);
-        //alert('Moved!!');
-        //this.spot_name_updated();  //ここで発火させればオートセーブも可能
-      }
+      onEnd: function() {
+        this.update_order_spot_name();  //ここで発火させればオートセーブも可能
+      },
+      startSort: function() {
+        if(this.flag_order) {
+          this.flag_order = false;
+        } else {
+          this.flag_order = true;
+        }
+      },
+      returnSortColor: function() {
+        if(this.flag_order) {
+          return '#4B8E8D';
+        } else {
+          return 'rgba(0,0,0,.26)';
+        }
+      },
+      checkMove() {
+        //return false;
+      } 
     },
     components: {
       GeoLongPress: GeoLongPress,
@@ -182,6 +222,10 @@
 
     .o-image_image_button {
       padding: 0 20px 0 20px;
+    }
+
+    .o-button_sort {
+      fill: #4B8E8D;
     }
 
   .l-header_under {
@@ -256,7 +300,7 @@
 
   .o-border {
     height: 1px;
-    width: 280px;
+    width: calc(100vw - 40px);
     background-color: rgba(0,0,0, .12);
   }
 
@@ -295,8 +339,10 @@
     font-weight: bold;
   }
 
-  .o-button_save_order {
-    margin: 0 0 0 20px;
+  .o-button_save_order, .o-button_create_geosite {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
     height: 40px;
     width: calc(100% - 40px);
     border: solid 2px #4B8E8D;
@@ -307,9 +353,16 @@
     font-weight: bold;
   }
 
+  .o-button_create_geosite {
+    background-color: #4B8E8D;
+    color: #fff;
+  }
+
   .o-button_save_order:active {
     opacity: .7;
   }
+
+  .o-modal
 
   .u-color-green {
     color: #4B8E8D;
