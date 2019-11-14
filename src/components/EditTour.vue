@@ -7,6 +7,9 @@
 
       <GeoChangeName v-show="flag_name"
         @closeModal="closeModal" @update_spot_name="update_spot_name"></GeoChangeName>
+
+      <GeoCreateGeo v-show="flag_create"
+        :tour_id="tour_id" @closeModal="closeModal"></GeoCreateGeo>
       
       <div class="l-header_above">
         <div class="o-text_tour">Geosite</div>
@@ -22,12 +25,12 @@
 
       <draggable v-model="spot_info" :animation="150" @update="onEnd()" v-show="flag_order">
         <div class="o-list" v-long-press="300" @long-press-start="onPlusStart(info.spot_id, info.spot_name)"
-            v-for="(info) in spot_info" v-on:click='jumpPage("editSpot", info.spot_id, info.spot_name)' :key="info.spot_id">
+            v-for="(info) in spot_info" :key="info.spot_id">
           <div class="l-image_text_burger">
             <div class="l-image_text">
               <div class="o-list_image"><img class="o-image_circle" src="../assets/sample.jpg" /></div>
               <div class="l-list_text">
-                <div id="o-list_text_geosite">{{ info.spot_name }}</div>
+                <div class="o-list_text_geosite">{{ info.spot_name }}</div>
                 <div class="o-list_text_update">最終更新 2019.11.7</div>
               </div>
             </div>
@@ -38,13 +41,13 @@
       </draggable>
 
       <div v-show="!flag_order">
-        <div class="o-list" v-long-press="300" @long-press-start="onPlusStart(info.spot_id, info.spot_name)"
+        <div class="o-list" v-long-press="500" @long-press-start="onPlusStart(info.spot_id, info.spot_name)"
             v-for="(info) in spot_info" v-on:click='jumpPage("editSpot", info.spot_id, info.spot_name)' :key="info.spot_id">
           <div class="l-image_text_burger">
             <div class="l-image_text">
               <div class="o-list_image"><img class="o-image_circle" src="../assets/sample.jpg" /></div>
               <div class="l-list_text">
-                <div id="o-list_text_geosite">{{ info.spot_name }}</div>
+                <div class="o-list_text_geosite">{{ info.spot_name }}</div>
                 <div class="o-list_text_update">最終更新 2019.11.7</div>
               </div>
             </div>
@@ -53,18 +56,20 @@
         </div>
       </div>
 
-      <button class="o-button_save_order" v-on:click="startSort()" v-show="flag_order && !flag">並べ替えを保存する</button>
-      <button class="o-button_create_geosite" v-show="!flag_order && !flag">新しくジオサイトを登録する</button>
+      <button class="o-button_create_geosite" v-on:click="wakeCreateGeo()"
+        v-show="!flag_order && !flag && !flag_name && !flag_create">新しくジオサイトを登録する</button>
 
     </div>
   </div>
 </template>
 
 <script>
-  import axios from 'axios'
-  import draggable from 'vuedraggable'
-  import GeoLongPress from '../components/modals/geoLongPress'
-  import GeoChangeName from '../components/modals/geoChageName'
+import axios from 'axios'
+import draggable from 'vuedraggable'
+import GeoLongPress from '../components/modals/geoLongPress'
+import GeoChangeName from '../components/modals/geoChageName'
+import GeoCreateGeo from '../components/modals/geoCreateGeo'
+
   export default {
     name: 'editTour',
     data() {
@@ -74,6 +79,7 @@
           flag: false,
           flag_name: false,
           flag_order: false,
+          flag_create: false,
           spot_id_avoid: '', //名前を変更する時に呼び出し
       }
     },
@@ -82,7 +88,7 @@
         // 更新されたときはトップに戻る
         this.jumpPage("HelloWorld");
       } else {
-        this.tour_id = this.$route.params.tour_id;
+        this.tour_id = Number(this.$route.params.tour_id);
         this.get_spot_info();
       }
     },
@@ -94,7 +100,6 @@
         axios.post(url, params
         ).then(response => {
           this.spot_info = response.data;
-          //console.log(this.spot_info);
         }).catch(error => {
           // エラーを受け取る
           console.log(error);
@@ -123,7 +128,6 @@
               params.append('order', i);
               axios.post(url, params
               ).then(response => {
-                  console.log(response.data);
               }).catch(error => {
                   // エラーを受け取る
                   console.log(error);
@@ -151,6 +155,7 @@
       closeModal: function() {
         this.flag = false;
         this.flag_name = false;
+        this.flag_create = false;
         this.get_spot_info(); //名前の更新を反映
       },
       wakeChangeNameModal: function() {
@@ -174,13 +179,14 @@
           return 'rgba(0,0,0,.26)';
         }
       },
-      checkMove() {
-        //return false;
-      } 
+      wakeCreateGeo: function() {
+        this.flag_create = true;
+      }
     },
     components: {
       GeoLongPress: GeoLongPress,
       GeoChangeName: GeoChangeName,
+      GeoCreateGeo: GeoCreateGeo,
       draggable: draggable,
     },
   }
@@ -280,7 +286,7 @@
     margin: 0 0 0 10px;
   }
 
-  #o-list_text_geosite {
+  .o-list_text_geosite {
     font-size: 18px;
     font-weight: bold;
     -webkit-user-select: none;
@@ -358,7 +364,7 @@
     color: #fff;
   }
 
-  .o-button_save_order:active {
+  .o-button_save_order:active, .o-button_create_geosite:acitve {
     opacity: .7;
   }
 

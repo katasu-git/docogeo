@@ -1,17 +1,17 @@
 <template>
-  <div id="geochangename">
+  <div id="creategeo">
     <div class="o-background">
       
       <div class="o-background_black">
         <div class="o-modal">
-            <div class="l-image u-mt20"><img class="o-image" src="../../assets/sample.jpg" /></div>
+            <div class="o-image u-mt20"></div>
             <form class="u-mt20">
-                <input type="text" placeholder="ここにジオサイトの名前を入力！" v-model="spot_name_updated" />
+                <input type="text" placeholder="ここにジオサイトの名前を入力" v-model="spot_name_updated" />
             </form>
             <div class="o-border u-mt40"></div>
             <div class="l-button">
                 <button class="o-button_cancel" v-on:click="closeModal()">キャンセル</button>
-                <button class="o-button_save" v-on:click="update_spot_name()">保存する</button>
+                <button class="o-button_save" v-on:click="addNewSpot()">保存する</button>
             </div>
         </div>
       </div>
@@ -23,10 +23,9 @@
 <script>
 　import axios from 'axios'
   export default {
-    name: 'geochangename',
+    name: 'creategeo',
     props: {
-        spot_id: Number,
-        spot_name: String,
+        tour_id: '',
     },
     data() {
       return {
@@ -37,9 +36,24 @@
         closeModal: function() {
             this.$emit('closeModal');
         },
-        update_spot_name: function() {
-            this.$emit('update_spot_name', this.spot_name_updated);
-        }
+        addNewSpot: function() {
+            const url =
+            "https://www2.yoslab.net/~nishimura/geotour/PHP/add_new_spot.php";
+            let params = new URLSearchParams();
+            params.append("tour_id", this.tour_id);
+            params.append("spot_name", this.spot_name_updated);
+            axios
+            .post(url, params)
+            .then(response => {
+                console.log("更新成功");
+                this.spot_name_updated = ''; //リセット
+                this.closeModal();
+            })
+            .catch(error => {
+                // エラーを受け取る
+                console.log(error);
+            });
+        },
     },
   }
 </script>
@@ -78,6 +92,7 @@
       width: 80px;
       border-radius: 100px;
       object-fit: cover;
+      background-color: rgba(0,0,0,.12);
   }
 
   .o-text {
