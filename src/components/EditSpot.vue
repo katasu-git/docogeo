@@ -17,7 +17,7 @@
         </div>
       </div>
       <div class="l-header_under u-mb20">
-        <div class="o-text_tour_min">説明：<span class="u-color-green">{{spot_name}}</span></div>
+        <div class="o-text_tour_min"><span class="u-color-green">{{spot_name}}</span></div>
         <div class="o-text_add_image" v-bind:style="{ color: returnSortColor()}">並べ替え</div>
       </div>
 

@@ -19,7 +19,7 @@
         </div>
       </div>
       <div class="l-header_under u-mb20">
-        <div class="o-text_tour_min">ジオサイト</div>
+        <div class="o-text_tour_min"><span class="u-color-green">{{tour_name}}</span></div>
         <div class="o-text_add_image" v-bind:style="{ color: returnSortColor()}">並べ替え</div>
       </div>
 
@@ -79,6 +79,7 @@ import GeoCreateGeo from '../components/modals/geoCreateGeo'
       return {
           spot_info: [],
           tour_id: Number,
+          tour_name: String,
           flag: false,
           flag_name: false,
           flag_order: false,
@@ -92,6 +93,7 @@ import GeoCreateGeo from '../components/modals/geoCreateGeo'
         this.jumpPage("HelloWorld");
       } else {
         this.tour_id = Number(this.$route.params.tour_id);
+        this.tour_name = this.$route.params.tour_name;
         this.get_spot_info();
       }
     },
@@ -272,6 +274,10 @@ import GeoCreateGeo from '../components/modals/geoCreateGeo'
   .o-list {
     padding: 20px 0 0 20px;
     width: calc(100% - 80px);
+  }
+
+  .o-list:last-of-type {
+    margin-bottom: 100px;
   }
 
   .l-image_text_burger {
