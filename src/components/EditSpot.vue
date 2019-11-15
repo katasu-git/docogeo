@@ -36,9 +36,10 @@
       <div　class="l-comment" v-show="!flag_order">
         <div v-for="ex in spot_ex" :key="ex.id">
           <div class="l-image_text_burger">
-              <div class="l-image_text" v-long-press="500" @long-press-start="onPlusStart()">
+              <div class="l-image_text">
                 <div class="l-list_text">
-                  <div class="o-list_text_geosite">{{ ex.spot_ex }}</div>
+                  <div class="o-list_text_geosite"
+                    v-long-press="500" @long-press-start="onPlusStart()">{{ ex.spot_ex }}</div>
                   <div class="o-list_text_update">2019.11.7</div>
                 </div>
               </div>
@@ -264,6 +265,7 @@ export default {
 
   .l-comment {
     margin-bottom: 80px;
+    width: calc(100% - 40px);
   }
 
   .o-list {
@@ -314,7 +316,7 @@ export default {
     position: fixed;
     bottom: 20px;
     left: 20px;
-    height: 40px;
+    height: 50px;
     width: calc(100% - 40px);
     border: solid 2px #4B8E8D;
     border-radius: 10px;

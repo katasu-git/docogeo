@@ -40,13 +40,14 @@
       </draggable>
 
       <div v-show="!flag_order">
-        <div class="o-list" v-long-press="300" @long-press-start.stop="onPlusStart(info.spot_id, info.spot_name)"
+        <div class="o-list"
             v-for="(info) in spot_info" v-on:click='jumpPage("editSpot", info.spot_id, info.spot_name)' :key="info.spot_id">
           <div class="l-image_text_burger">
             <div class="l-image_text">
               <div class="o-list_image"><img class="o-image_circle" src="../assets/sample.jpg" /></div>
               <div class="l-list_text">
-                <div class="o-list_text_geosite">{{ info.spot_name }}</div>
+                <div class="o-list_text_geosite" 
+                  v-long-press="300" @long-press-start="onPlusStart(info.spot_id, info.spot_name)">{{ info.spot_name }}</div>
                 <div class="o-list_text_update">最終更新 2019.11.7</div>
               </div>
             </div>
@@ -270,6 +271,7 @@ import GeoCreateGeo from '../components/modals/geoCreateGeo'
 
   .o-list {
     padding: 20px 0 0 20px;
+    width: calc(100% - 80px);
   }
 
   .l-image_text_burger {
@@ -310,7 +312,7 @@ import GeoCreateGeo from '../components/modals/geoCreateGeo'
 
   .o-border {
     height: 1px;
-    width: calc(100vw - 40px);
+    width: calc(100vw - 100px);
     background-color: rgba(0,0,0, .12);
   }
 
@@ -353,11 +355,11 @@ import GeoCreateGeo from '../components/modals/geoCreateGeo'
     position: fixed;
     bottom: 20px;
     left: 20px;
-    height: 40px;
+    height: 50px;
     width: calc(100% - 40px);
     border: solid 2px #4B8E8D;
     border-radius: 10px;
-    background-color: rgba(0,0,0,0);
+    background-color: #fff;
     color: #4B8E8D;
     font-size: 12px;
     font-weight: bold;
