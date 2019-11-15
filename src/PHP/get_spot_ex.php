@@ -10,7 +10,7 @@ function get_spot_ex() {
     $result = array();
     foreach($stmt as $row) {
         //帰り値の設定
-        $spot_ex = array('tour_id' => $row['tour_id'], 'spot_name' => $row['spot_name'], 'spot_ex' => $row['spot_explanation']);
+        $spot_ex = array('id' => $row['id'], 'tour_id' => $row['tour_id'], 'spot_name' => $row['spot_name'], 'spot_ex' => $row['spot_explanation']);
         array_push($result, $spot_ex);
     }
     return $result;
