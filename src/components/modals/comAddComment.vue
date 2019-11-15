@@ -7,7 +7,6 @@
             <form class="u-mt20">
                 <textarea type="text" placeholder="ここに説明を入力" v-model="comment"></textarea>
             </form>
-            <div class="o-border u-mt40"></div>
             <div class="l-button">
                 <button class="o-button_cancel" v-on:click="closeModal()">キャンセル</button>
                 <button class="o-button_save" v-on:click="addComment()">追加する</button>
@@ -73,7 +72,6 @@
 
   .o-border {
     height: 1px;
-    width: 100%;
     background-color: rgba(0,0,0, .12);
   }
 
@@ -105,7 +103,7 @@
 
   textarea {
       outline: none;
-      margin-top: 20px;
+      margin: 20px 0;
       resize: vertical;
       width: calc(100vw - 60px);
       min-height: 80px;

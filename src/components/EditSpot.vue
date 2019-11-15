@@ -2,6 +2,9 @@
   <div id="editSpot">
     <div class="o-background">
 
+      <ComLongPress v-show="flag_longpress"
+        @closeModal="closeModal"></ComLongPress>
+
       <ComAddComment @closeModal="closeModal"
         :tour_id="tour_id" :spot_id="spot_id"
         v-show="flag_add_com"></ComAddComment>
@@ -26,9 +29,11 @@
         <div class="o-image" v-for="(image, i) in images" :key="i">{{i}}</div>
       </draggable>
 
-      <div class="o-border u-mt20"></div>
+      <div class="l-border">
+        <div class="o-border u-mt20"></div>
+      </div>
 
-      <div　class="l-comment" v-show="!flag_order">
+      <div　class="l-comment" v-show="!flag_order" v-long-press="300" @long-press-start="onPlusStart()">
         <div v-for="ex in spot_ex" :key="ex.id">
           <div class="l-image_text_burger">
               <div class="l-image_text">
@@ -55,8 +60,8 @@
         </div>
       </draggable>
 
-      <button class="o-button_create_geosite" v-on:click="addComment()"
-        v-show="!flag_order && !flag_add_com">新しく説明を追加する</button>
+      <button class="o-button_create_geosite" v-on:click="addComment()" 
+        v-show="!flag_order && !flag_add_com &&!flag_longpress">新しく説明を追加する</button>
     </div>
   </div>
 </template>
@@ -65,6 +70,7 @@
 import axios from "axios";
 import draggable from 'vuedraggable';
 import ComAddComment from '../components/modals/comAddComment'
+import ComLongPress from '../components/modals/comLongPress'
 export default {
   name: "editSpot",
   data() {
@@ -77,6 +83,7 @@ export default {
       images: 10,
       flag_order: false,
       flag_add_com: false,
+      flag_longpress: false,
     };
   },
   created: function() {
@@ -87,11 +94,11 @@ export default {
       this.tour_id = this.$route.params.tour_id;
       this.spot_id = this.$route.params.spot_id;
       this.spot_name = this.$route.params.spot_name;
-      this.accessDb();
+      this.get_spot_ex();
     }
   },
   methods: {
-    accessDb: function() {
+    get_spot_ex: function() {
       const url =
         "https://www2.yoslab.net/~nishimura/geotour/PHP/get_spot_ex.php";
       let params = new URLSearchParams();
@@ -116,7 +123,8 @@ export default {
     },
     closeModal: function() {
         this.flag_add_com = false;
-        //this.get_spot_info(); //名前の更新を反映
+        this.flag_longpress = false;
+        this.get_spot_ex(); //説明の更新を反映
       },
     startSort: function() {
         if(this.flag_order) {
@@ -138,11 +146,16 @@ export default {
       } else {
         this.flag_add_com = true;
       }
+    },
+    onPlusStart: function() {
+      console.log("hello");
+      this.flag_longpress = true;
     }
   },
   components: {
     draggable: draggable,
     ComAddComment: ComAddComment,
+    ComLongPress: ComLongPress,
   }
 };
 </script>
@@ -234,9 +247,15 @@ export default {
     margin-left: 10px;
   }
 
+  .l-border {
+    width: 100vw;
+    display: flex;
+    justify-content: flex-end;
+  }
+
   .o-border {
     height: 1px;
-    width: calc(100% - 40px);
+    width: calc(100% - 20px);
     background-color: rgba(0,0,0, .12);
   }
 
