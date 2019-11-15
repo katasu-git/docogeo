@@ -4,11 +4,11 @@
       
       <div class="o-background_black">
         <div class="o-modal">
-          <div class="o-text" v-on:click="wakeChangeNameModal()">名前の変更</div>
+          <div class="o-text" @click="wakeChangeNameModal()">名前の変更</div>
           <div class="o-border u-mt10"></div>
           <div class="o-text u-color-red">削除</div>
           <div class="o-border u-mt10"></div>
-          <div class="o-text u-color-green" v-on:click='closeModal()'>キャンセル</div>
+          <div class="o-text u-color-green" @click.stop='closeModal()'>キャンセル</div>
         </div>
       </div>
     </div>
@@ -54,15 +54,15 @@
     height: 100%;
     width: 100%;
     position: fixed;
-    background-color: rgba(0,0,0, .54);
+    background-color: rgba(0,0,0, .35);
 
     display: flex;
-    align-items: flex-end;
+    align-items: center;
   }
 
   .o-modal {
-    width: 100%;
-    border-radius: 30px 30px 0 0;
+    width: 100px;
+    border-radius: 0 30px 30px 0;
     background-color: #fff;
 
     display: flex;
@@ -72,7 +72,7 @@
 
   .o-text {
     padding: 20px;
-    font-size: 16px;
+    font-size: 12px;
     font-weight: bold;
   }
 

@@ -8,8 +8,8 @@
                 <textarea type="text" placeholder="ここに説明を入力" v-model="comment"></textarea>
             </form>
             <div class="l-button">
-                <button class="o-button_cancel" v-on:click="closeModal()">キャンセル</button>
-                <button class="o-button_save" v-on:click="addComment()">追加する</button>
+                <button class="o-button_cancel" @click="closeModal()">キャンセル</button>
+                <button class="o-button_save" @click="addComment()">追加する</button>
             </div>
         </div>
       </div>

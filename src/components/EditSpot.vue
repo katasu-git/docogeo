@@ -60,6 +60,9 @@
         </div>
       </draggable>
 
+      <button class="o-button_save_sort" v-on:click="startSort()" 
+        v-show="flag_order && !flag_add_com &&!flag_longpress">並び替えを終了する</button>
+
       <button class="o-button_create_geosite" v-on:click="addComment()" 
         v-show="!flag_order && !flag_add_com &&!flag_longpress">新しく説明を追加する</button>
     </div>
@@ -307,7 +310,7 @@ export default {
     user-select: none;
   }
 
-  .o-button_create_geosite {
+  .o-button_create_geosite, .o-button_save_sort {
     position: fixed;
     bottom: 20px;
     left: 20px;
@@ -315,7 +318,7 @@ export default {
     width: calc(100% - 40px);
     border: solid 2px #4B8E8D;
     border-radius: 10px;
-    background-color: rgba(0,0,0,0);
+    background-color: #fff;
     color: #4B8E8D;
     font-size: 12px;
     font-weight: bold;

@@ -40,7 +40,7 @@
       </draggable>
 
       <div v-show="!flag_order">
-        <div class="o-list" v-long-press="300" @long-press-start="onPlusStart(info.spot_id, info.spot_name)"
+        <div class="o-list" v-long-press="300" @long-press-start.stop="onPlusStart(info.spot_id, info.spot_name)"
             v-for="(info) in spot_info" v-on:click='jumpPage("editSpot", info.spot_id, info.spot_name)' :key="info.spot_id">
           <div class="l-image_text_burger">
             <div class="l-image_text">
@@ -55,7 +55,10 @@
         </div>
       </div>
 
-      <button class="o-button_create_geosite" v-on:click="wakeCreateGeo()"
+      <button class="o-button_save_sort" v-on:click="startSort()" 
+        v-show="flag_order && !flag && !flag_name && !flag_create">並び替えを終了する</button>
+
+      <button class="o-button_create_geosite" @click="wakeCreateGeo()"
         v-show="!flag_order && !flag && !flag_name && !flag_create">新しくジオサイトを登録する</button>
 
     </div>
@@ -346,7 +349,7 @@ import GeoCreateGeo from '../components/modals/geoCreateGeo'
     font-weight: bold;
   }
 
-  .o-button_save_order, .o-button_create_geosite {
+  .o-button_save_sort, .o-button_create_geosite {
     position: fixed;
     bottom: 20px;
     left: 20px;
@@ -365,7 +368,7 @@ import GeoCreateGeo from '../components/modals/geoCreateGeo'
     color: #fff;
   }
 
-  .o-button_save_order:active, .o-button_create_geosite:acitve {
+  .o-button_save_sort:active, .o-button_create_geosite:acitve {
     opacity: .7;
   }
 
