@@ -34,7 +34,7 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-  #geolongpress {
+  #comlongpress {
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;

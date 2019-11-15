@@ -33,10 +33,10 @@
         <div class="o-border u-mt20"></div>
       </div>
 
-      <div　class="l-comment" v-show="!flag_order" v-long-press="300" @long-press-start="onPlusStart()">
+      <div　class="l-comment" v-show="!flag_order">
         <div v-for="ex in spot_ex" :key="ex.id">
           <div class="l-image_text_burger">
-              <div class="l-image_text">
+              <div class="l-image_text" v-long-press="500" @long-press-start="onPlusStart()">
                 <div class="l-list_text">
                   <div class="o-list_text_geosite">{{ ex.spot_ex }}</div>
                   <div class="o-list_text_update">2019.11.7</div>
