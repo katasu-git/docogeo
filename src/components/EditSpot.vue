@@ -1,45 +1,89 @@
 <template>
   <div id="editSpot">
-    <div class="l-body">
-      <ChangeNameModal v-show="modalFlag" 
-        @closeModal="closeModal" @get_spot_name="get_spot_name"
-        :spot_id="Number(spot_id)" :spot_name="spot_name"></ChangeNameModal>
-      <button class="o-backBtn" v-on:click='jumpPage("editTour")'>ジオサイトの選択に戻る</button>
-      <div class="l-justify-center">
-        <div class="l-tour_info">
-          <div class="o-tour_name-text" v-on:click="changeSpotName()">{{ spot_name }}</div>
+    <div class="o-background">
+
+      <ComLongPress v-show="flag_longpress"
+        @closeModal="closeModal"></ComLongPress>
+
+      <ComAddComment @closeModal="closeModal"
+        :tour_id="tour_id" :spot_id="spot_id"
+        v-show="flag_add_com"></ComAddComment>
+      
+      <div class="l-header_above">
+        <div class="o-text_tour">Comment</div>
+        <div class="o-image_image_button">
+          <img v-on:click="startSort()" v-show="!flag_order" src="../assets/sort_button.svg" />
+          <img v-on:click="startSort()" v-show="flag_order" src="../assets/sort_button_active.svg" />
         </div>
       </div>
-      <div class="l-images">
-        <div class="o-img_box-add"></div>
-        <div class="o-img_box" v-for="img in images"></div>
+      <div class="l-header_under u-mb20">
+        <div class="o-text_tour_min">説明：<span class="u-color-green">{{spot_name}}</span></div>
+        <div class="o-text_add_image" v-bind:style="{ color: returnSortColor()}">並べ替え</div>
       </div>
-      <form class="l-input_ex">
-        <input class="o-input_ex" type="text" placeholder="追加する説明を入力" v-model="text" />
-        <button v-on:click="innsert_spot_ex()">追加</button>
-      </form>
-      <div class="l-comment">
-        <div class="o-comment" v-for="ex in spot_ex">{{ ex.spot_ex }}</div>
+
+      <div class="l-slider_images" v-show="!flag_order">
+        <div class="o-image" v-for="(image, i) in images" :key="i">{{i}}</div>
       </div>
+
+      <draggable class="l-slider_images" :animation="150" v-show="flag_order">
+        <div class="o-image" v-for="(image, i) in images" :key="i">{{i}}</div>
+      </draggable>
+
+      <div class="l-border">
+        <div class="o-border u-mt20"></div>
+      </div>
+
+      <div　class="l-comment" v-show="!flag_order" v-long-press="300" @long-press-start="onPlusStart()">
+        <div v-for="ex in spot_ex" :key="ex.id">
+          <div class="l-image_text_burger">
+              <div class="l-image_text">
+                <div class="l-list_text">
+                  <div class="o-list_text_geosite">{{ ex.spot_ex }}</div>
+                  <div class="o-list_text_update">2019.11.7</div>
+                </div>
+              </div>
+          </div>
+        </div>
+      </div>
+
+      <draggable class="l-comment" v-model="spot_ex" :animation="150" v-show="flag_order">
+        <div v-for="ex in spot_ex" :key="ex.id">
+        <div class="l-image_text_burger">
+            <div class="l-image_text">
+              <div class="l-list_text">
+                <div class="o-list_text_geosite">{{ ex.spot_ex }}</div>
+                <div class="o-list_text_update">2019.11.7</div>
+              </div>
+            </div>
+            <div class="o-burger u-mt20"><img src="../assets/burger_button.svg" /></div>
+          </div>
+        </div>
+      </draggable>
+
+      <button class="o-button_create_geosite" v-on:click="addComment()" 
+        v-show="!flag_order && !flag_add_com &&!flag_longpress">新しく説明を追加する</button>
     </div>
   </div>
 </template>
 
 <script>
 import axios from "axios";
-import ChangeNameModal from "./ChangeNameModal";
+import draggable from 'vuedraggable';
+import ComAddComment from '../components/modals/comAddComment'
+import ComLongPress from '../components/modals/comLongPress'
 export default {
   name: "editSpot",
   data() {
     return {
-      images: 5,
-      comments: 3,
-      tour_id: Number,
-      spot_id: Number,
+      tour_id: '',
+      spot_id: '',
+      tour_name: '',
       spot_name: '',
-      spot_ex: JSON,
-      text: '',
-      modalFlag: false,
+      spot_ex: [],
+      images: 10,
+      flag_order: false,
+      flag_add_com: false,
+      flag_longpress: false,
     };
   },
   created: function() {
@@ -50,173 +94,259 @@ export default {
       this.tour_id = this.$route.params.tour_id;
       this.spot_id = this.$route.params.spot_id;
       this.spot_name = this.$route.params.spot_name;
-      this.accessDb();
+      this.get_spot_ex();
     }
   },
   methods: {
-    accessDb: function() {
+    get_spot_ex: function() {
       const url =
         "https://www2.yoslab.net/~nishimura/geotour/PHP/get_spot_ex.php";
       let params = new URLSearchParams();
-      //console.log("発火");
       params.append("spot_id", this.spot_id);
       axios
         .post(url, params)
         .then(response => {
           this.spot_ex = response.data;
-          this.get_spot_name(); //ちゃんとdb叩いてデータ持ってくる
+          //console.log(this.spot_ex);
         })
         .catch(error => {
           // エラーを受け取る
           console.log(error);
         });
     },
-    innsert_spot_ex: function() {
-      const url =
-        "https://www2.yoslab.net/~nishimura/geotour/PHP/insert_spot_ex.php";
-      let params = new URLSearchParams();
-      params.append("tour_id", this.tour_id);
-      params.append("spot_id", this.spot_id);
-      params.append("spot_ex", this.text);
-      axios.post(url, params
-      ).then(response => {
-        console.log("挿入に成功しました");
-        this.accessDb(); //更新処理
-        this.text = '';
-      }).catch(error => {
-        // エラーを受け取る
-        console.log(error);
-      });
-    },
-    get_spot_name: function() {
-      const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/get_spot_info.php';
-      let params = new URLSearchParams();
-      params.append('tour_id', this.tour_id);
-      axios.post(url, params
-      ).then(response => {
-        this.spot_name = response.data[0].spot_name;
-      }).catch(error => {
-        // エラーを受け取る
-        console.log(error);
-      });
-    },
     jumpPage: function(where) {
-      this.$router.push({
-        name: where,
-        params: {
-          tour_id: this.tour_id
-        }
-      });
-    },
-    changeSpotName: function() {
-      this.modalFlag = true;
+        this.$router.push({
+            name: where,
+            params: {
+            }
+        })
     },
     closeModal: function() {
-      this.accessDb()
-      this.modalFlag = false;
+        this.flag_add_com = false;
+        this.flag_longpress = false;
+        this.get_spot_ex(); //説明の更新を反映
+      },
+    startSort: function() {
+        if(this.flag_order) {
+          this.flag_order = false;
+        } else {
+          this.flag_order = true;
+        }
+    },
+    returnSortColor: function() {
+        if(this.flag_order) {
+          return '#4B8E8D';
+        } else {
+          return 'rgba(0,0,0,.26)';
+        }
+    },
+    addComment: function() {
+      if(this.flag_add_com) {
+        this.flag_add_com = false;
+      } else {
+        this.flag_add_com = true;
+      }
+    },
+    onPlusStart: function() {
+      console.log("hello");
+      this.flag_longpress = true;
     }
   },
   components: {
-    ChangeNameModal: ChangeNameModal,
+    draggable: draggable,
+    ComAddComment: ComAddComment,
+    ComLongPress: ComLongPress,
   }
 };
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-#editSpot,
-.l-body {
+#editSpot {
   height: 100%;
   width: 100%;
-  overflow-x: hidden;
+  background-color: #F5F5F5;
+  
+  color: rgba(0,0,0,.87);
 }
 
-.l-body {
-  background: #5c9982;
-}
+.l-header_above {
+    width: 100%;
 
-.l-justify-center {
-  display: flex;
-  justify-content: center;
-  /*中央よせ*/
-}
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
 
-.l-tour_info {
-  padding: 40px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
 
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  /*中央よせ*/
-  align-items: center;
-}
+    .o-text_tour {
+      padding: 20px 0 0 20px;
 
-.o-tour_name-text {
-  font-size: 20px;
-  font-weight: bold;
-  color: white;
-}
+      font-size: 36px;
+      font-weight: bold;
+    }
 
-.o-backBtn {
-  padding: 20px;
-  font-size: 12px;
-  color: white;
-}
+    .o-image_image_button {
+      padding: 0 20px 0 20px;
+    }
 
-.l-images {
-  width: 100vw;
-  padding-left: 20px;
+    .o-button_sort {
+      fill: #4B8E8D;
+    }
 
-  display: flex;
-  overflow: scroll;
-}
+  .l-header_under {
+    width: 100%;
 
-.o-img_box {
-  min-height: 60px;
-  min-width: 60px;
-  background: white;
-}
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
 
-.o-img_box:not(:first-of-type) {
-  margin-left: 10px;
-}
+    .o-text_tour_min {
+      padding: 0 0 0 20px;
 
-.o-img_box-add {
-  min-height: 60px;
-  min-width: 60px;
-  border: dashed 1px white;
-}
+      font-size: 18px;
+      font-weight: bold;
+    }
 
-.l-input_ex {
-  padding: 50px 0 0 20px;
-}
+    .o-text_add_image {
+      padding: 0 15px 0 0;
 
-.o-input_ex {
-  min-height: 30px;
-  width: calc(100vw - 80px);
-  border-radius: 5px;
-}
+      font-size: 12px;
+      font-weight: bold;
+      color: rgba(0,0,0, .26);
+    }
 
-.l-comment {
-  padding: 50px 0 0 20px;
-}
+  .o-image_circle {
+    height: 50px;
+    width: 50px;
+    border-radius: 100px;
+    object-fit: cover;
+  }
 
-.o-comment {
-  min-height: 20px;
-  width: calc(100vw - 80px);
-  font-size: 12px;
+  .l-slider_images {
+    padding: 40px 0 0 20px;
+    display: flex;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch; /*ios*/
+  }
 
-  padding: 10px;
+  .o-image {
+    min-height: 100px;
+    min-width: 100px;
+    background-color: rgba(0,0,0, .05);
+    border-radius: 10px;
+  }
 
-  border-radius: 5px;
-  background-color: white;
-}
+  .o-image:not(:first-of-type) {
+    margin-left: 10px;
+  }
 
-.o-comment:not(:first-of-type) {
-  margin-top: 20px;
-}
+  .l-border {
+    width: 100vw;
+    display: flex;
+    justify-content: flex-end;
+  }
 
-.o-comment:last-of-type {
-  margin-bottom: 20px;
-}
+  .o-border {
+    height: 1px;
+    width: calc(100% - 20px);
+    background-color: rgba(0,0,0, .12);
+  }
+
+  .l-comment {
+    margin-bottom: 80px;
+  }
+
+  .o-list {
+    padding: 20px 0 0 20px;
+  }
+
+  .l-image_text_burger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .o-burger {
+    margin: 0 20px;
+  }
+  
+  .l-image_text {
+    display: flex;
+    margin-right: 20px;
+  }
+
+  .l-list_text {
+    margin: 20px 0 0 20px;
+    background-color: rgba(0,0,0, .05);
+    border-radius: 10px;
+  }
+
+  .o-list_text_geosite {
+    padding: 20px 20px 10px 20px;
+    font-size: 14px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+
+  .o-list_text_update {
+    padding: 0 20px 20px 20px;
+    font-size: 12px;
+    color: rgba(0,0,0, .26);
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+
+  .o-button_create_geosite {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    height: 40px;
+    width: calc(100% - 40px);
+    border: solid 2px #4B8E8D;
+    border-radius: 10px;
+    background-color: rgba(0,0,0,0);
+    color: #4B8E8D;
+    font-size: 12px;
+    font-weight: bold;
+  }
+
+  .o-button_create_geosite {
+    background-color: #4B8E8D;
+    color: #fff;
+  }
+
+  .o-button_create_geosite:acitve {
+    opacity: .7;
+  }
+
+  .u-mt10 {
+    margin-top: 10px;
+  }
+
+  .u-mt20 {
+    margin-top: 20px;
+  }
+
+  .u-mb20 {
+    margin-bottom: 20px;
+  }
+
+  .u-color-green {
+    color: #4B8E8D;
+  }
+
+  .u-color-red {
+    color: #CC544D;
+  }
 </style>

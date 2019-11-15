@@ -116,6 +116,7 @@
     padding: 40px 0 0 0;
     display: flex;
     overflow-x: scroll;
+    overflow-y: hidden;
     -webkit-overflow-scrolling: touch; /*ios*/
   }
 

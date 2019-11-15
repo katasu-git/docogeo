@@ -19,6 +19,8 @@ html, body, #app {
   height: 100%;
   widows: 100%;
 
+  background-color: #F5F5F5;
+
   margin: 0;
   padding: 0;
 }

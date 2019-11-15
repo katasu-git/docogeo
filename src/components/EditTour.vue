@@ -24,8 +24,7 @@
       </div>
 
       <draggable v-model="spot_info" :animation="150" @update="onEnd()" v-show="flag_order">
-        <div class="o-list" v-long-press="300" @long-press-start="onPlusStart(info.spot_id, info.spot_name)"
-            v-for="(info) in spot_info" :key="info.spot_id">
+        <div class="o-list" v-for="(info) in spot_info" :key="info.spot_id">
           <div class="l-image_text_burger">
             <div class="l-image_text">
               <div class="o-list_image"><img class="o-image_circle" src="../assets/sample.jpg" /></div>
@@ -41,7 +40,7 @@
       </draggable>
 
       <div v-show="!flag_order">
-        <div class="o-list" v-long-press="500" @long-press-start="onPlusStart(info.spot_id, info.spot_name)"
+        <div class="o-list" v-long-press="300" @long-press-start="onPlusStart(info.spot_id, info.spot_name)"
             v-for="(info) in spot_info" v-on:click='jumpPage("editSpot", info.spot_id, info.spot_name)' :key="info.spot_id">
           <div class="l-image_text_burger">
             <div class="l-image_text">
@@ -146,9 +145,6 @@ import GeoCreateGeo from '../components/modals/geoCreateGeo'
         })
       },
       onPlusStart: function(spot_id, spot_name)  {
-        if(this.flag_order) {
-          return;  //並び替えが有効な時は，長押しを無効化する
-        }
         this.spot_id_avoid = spot_id;
         this.flag = true; //戻す
       },
@@ -372,8 +368,6 @@ import GeoCreateGeo from '../components/modals/geoCreateGeo'
   .o-button_save_order:active, .o-button_create_geosite:acitve {
     opacity: .7;
   }
-
-  .o-modal
 
   .u-color-green {
     color: #4B8E8D;
