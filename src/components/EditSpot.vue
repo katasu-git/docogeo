@@ -18,13 +18,30 @@
         <div class="o-text_add_image" v-bind:style="{ color: returnSortColor()}">並べ替え</div>
       </div>
 
+      <div class="l-slider_images" v-show="!flag_order">
+        <div class="o-image" v-for="(image, i) in images" :key="i">{{i}}</div>
+      </div>
+
       <draggable class="l-slider_images" :animation="150" v-show="flag_order">
         <div class="o-image" v-for="(image, i) in images" :key="i">{{i}}</div>
       </draggable>
 
       <div class="o-border u-mt20"></div>
 
-      <draggable v-model="spot_ex" :animation="150" v-show="flag_order">
+      <div　class="l-comment" v-show="!flag_order">
+        <div v-for="ex in spot_ex" :key="ex.id">
+          <div class="l-image_text_burger">
+              <div class="l-image_text">
+                <div class="l-list_text">
+                  <div class="o-list_text_geosite">{{ ex.spot_ex }}</div>
+                  <div class="o-list_text_update">2019.11.7</div>
+                </div>
+              </div>
+          </div>
+        </div>
+      </div>
+
+      <draggable class="l-comment" v-model="spot_ex" :animation="150" v-show="flag_order">
         <div v-for="ex in spot_ex" :key="ex.id">
         <div class="l-image_text_burger">
             <div class="l-image_text">
@@ -223,6 +240,10 @@ export default {
     background-color: rgba(0,0,0, .12);
   }
 
+  .l-comment {
+    margin-bottom: 80px;
+  }
+
   .o-list {
     padding: 20px 0 0 20px;
   }
@@ -234,11 +255,12 @@ export default {
   }
 
   .o-burger {
-    margin-right: 20px;
+    margin: 0 20px;
   }
   
   .l-image_text {
     display: flex;
+    margin-right: 20px;
   }
 
   .l-list_text {

@@ -5,7 +5,7 @@
       <div class="o-background_black">
         <div class="o-modal">
             <form class="u-mt20">
-                <input type="text" placeholder="ここに説明を入力" v-model="comment" />
+                <textarea type="text" placeholder="ここに説明を入力" v-model="comment"></textarea>
             </form>
             <div class="o-border u-mt40"></div>
             <div class="l-button">
@@ -103,11 +103,17 @@
     font-weight: bold;
   }
 
-  input {
-      width: calc(100vw - 20px);
+  textarea {
+      outline: none;
+      margin-top: 20px;
+      resize: vertical;
+      width: calc(100vw - 60px);
+      min-height: 80px;
       font-size: 18px;
       color: rgba(0,0,0, .87);
       text-align: center;
+      border: solid 1px rgba(0,0,0, .12);
+      border-radius: 10px;
   }
 
   input::placeholder {
