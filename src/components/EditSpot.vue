@@ -47,7 +47,7 @@
         </div>
       </div>
 
-      <draggable class="l-comment" v-model="spot_ex" :animation="150" v-show="flag_order">
+      <draggable @update="update_order_spot_ex()" class="l-comment" v-model="spot_ex" :animation="150" v-show="flag_order">
         <div v-for="ex in spot_ex" :key="ex.id">
         <div class="l-image_text_burger">
             <div class="l-image_text">
@@ -154,7 +154,24 @@ export default {
     onPlusStart: function() {
       console.log("hello");
       this.flag_longpress = true;
-    }
+    },
+    update_order_spot_ex: function() {
+            const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/update_order_spot_ex.php';
+            //let arr = [];
+            for(let i=0; i<this.spot_ex.length; i++) {
+              let params = new URLSearchParams();
+              let arr= this.spot_ex[i].id;
+              params.append('spot_id_arr', arr);
+              params.append('order', i);
+              axios.post(url, params
+              ).then(response => {
+              }).catch(error => {
+                  // エラーを受け取る
+                  console.log(error);
+              });
+            }
+            this.get_spot_ex();
+      },
   },
   components: {
     draggable: draggable,
