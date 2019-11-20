@@ -6,6 +6,8 @@ import EditSpot from '@/components/editSpot'
 import ChatGuide from '@/components/chat_g'
 import ChatUser from '@/components/chat_u'
 import TopU from '@/components/top_u'
+import Images from '@/components/Images.vue'
+import Camera from '@/components/Camera'
 
 Vue.use(Router)
 
@@ -20,6 +22,16 @@ export default new Router({
       path: '/top_u',
       name: 'top_u',
       component: TopU
+    },
+    {
+      path: '/imaegs',
+      name: 'images',
+      component: Images
+    },
+    {
+      path: '/camera',
+      name: 'camera',
+      component: Camera
     },
     {
       path: '/editTour',

@@ -3,11 +3,14 @@
     <div class="o-background">
       <div class="l-header_above">
         <div class="o-text_tour">Tour</div>
-        <div class="o-image_image_button"><img src="../assets/image_button.svg" /></div>
+        <div 
+          class="o-image_image_button"
+          v-on:click='jumpPage("images")'
+        ><img src="../assets/image_button.svg" /></div>
       </div>
       <div class="l-header_under">
         <div class="o-text_tour_min">ツアー</div>
-        <div class="o-text_add_image">画像を登録</div>
+        <div class="o-text_add_image">画像をみる</div>
       </div>
       <div class="o-slider">
         <div class="o-card" v-for="info in tour_info" 
