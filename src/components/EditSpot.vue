@@ -3,7 +3,10 @@
     <div class="o-background">
 
       <ComLongPress v-show="flag_longpress"
-        @closeModal="closeModal"></ComLongPress>
+        :ex_id_avoid="ex_id_avoid"
+        @closeModal="closeModal"
+        @get_spot_ex="get_spot_ex"
+      ></ComLongPress>
 
       <ComAddComment @closeModal="closeModal"
         :tour_id="tour_id" :spot_id="spot_id"
@@ -39,7 +42,7 @@
               <div class="l-image_text">
                 <div class="l-list_text">
                   <div class="o-list_text_geosite"
-                    v-long-press="500" @long-press-start="onPlusStart()">{{ ex.spot_ex }}</div>
+                    v-long-press="500" @long-press-start="onPlusStart(ex.id)">{{ ex.spot_ex }}</div>
                   <div class="o-list_text_update">2019.11.7</div>
                 </div>
               </div>
@@ -84,6 +87,7 @@ export default {
       tour_name: '',
       spot_name: '',
       spot_ex: [],
+      ex_id_avoid: '',
       images: 10,
       flag_order: false,
       flag_add_com: false,
@@ -151,8 +155,9 @@ export default {
         this.flag_add_com = true;
       }
     },
-    onPlusStart: function() {
+    onPlusStart: function(id) {
       console.log("hello");
+      this.ex_id_avoid = id;  //削除する時の判定に使う
       this.flag_longpress = true;
     },
     update_order_spot_ex: function() {

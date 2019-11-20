@@ -6,7 +6,7 @@
         <div class="o-modal">
           <div class="o-text">名前の変更</div>
           <div class="o-border u-mt10"></div>
-          <div class="o-text u-color-red">削除</div>
+          <div class="o-text u-color-red" @click="deleteEx()">削除</div>
           <div class="o-border u-mt10"></div>
           <div class="o-text u-color-green" @click='closeModal()'>キャンセル</div>
         </div>
@@ -16,8 +16,12 @@
 </template>
 
 <script>
+import axios from 'axios'
   export default {
     name: 'comlongpress',
+    props: {
+      ex_id_avoid: '',
+    },
     data() {
       return {
       }
@@ -28,6 +32,22 @@
         closeModal: function() {
             this.$emit('closeModal');
         },
+        deleteEx: function() {
+
+          //先に何かしらの確認が欲しいかも？
+
+          const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/delete_spot_ex.php';
+              let params = new URLSearchParams();
+              params.append('ex_id', this.ex_id_avoid);
+              axios.post(url, params
+              ).then(response => {
+                this.$emit('get_spot_ex');
+                this.closeModal();
+              }).catch(error => {
+                  // エラーを受け取る
+                  console.log(error);
+              });
+        }
     },
   }
 </script>
