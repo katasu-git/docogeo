@@ -4,7 +4,7 @@
       
       <div class="o-background_black">
         <div class="o-modal">
-          <div class="o-text">名前の変更</div>
+          <div class="o-text">編集</div>
           <div class="o-border u-mt10"></div>
           <div class="o-text u-color-red" @click="deleteEx()">削除</div>
           <div class="o-border u-mt10"></div>
@@ -91,6 +91,12 @@ import axios from 'axios'
     padding: 20px;
     font-size: 12px;
     font-weight: bold;
+    transition: 100ms;
+  }
+
+  .o-text:active {
+    opacity: .7;
+    transform: scale(1.2);
   }
 
   .u-color-green {

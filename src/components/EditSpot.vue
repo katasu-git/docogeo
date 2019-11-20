@@ -130,10 +130,12 @@ export default {
         })
     },
     closeModal: function() {
+      setTimeout(() => {
         this.flag_add_com = false;
         this.flag_longpress = false;
         this.get_spot_ex(); //説明の更新を反映
-      },
+      }, 200)
+    },
     startSort: function() {
         if(this.flag_order) {
           this.flag_order = false;
