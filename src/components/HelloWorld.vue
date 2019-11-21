@@ -3,8 +3,12 @@
     <div class="o-background">
 
       <TopCreateTour
-      @closeModal="closeModal"
+        @closeModal="closeModal"
         v-show="flag_create_tour"></TopCreateTour>
+
+      <TopLongPress
+        @closeModal="closeModal"
+        v-show="flag_long_press"></TopLongPress>
 
       <div class="l-header_above">
         <div class="o-text_tour">Tour</div>
@@ -19,7 +23,8 @@
       </div>
       <div class="o-slider">
         <div class="o-card" v-for="info in tour_info" 
-            v-on:click='jumpPage("editTour", info.tour_id, info.tour_name)' :key="info.tour_id">
+            v-on:click='jumpPage("editTour", info.tour_id, info.tour_name)' :key="info.tour_id"
+            v-long-press="400" @long-press-start="onPlusStart(info.tour_id, info.tour_name)">
           <img src="../assets/sample.jpg" class="o-image_tour" />
           <div class="o-transparent">
             <div class="o-text_tour_title">{{ info.tour_name }}</div>
@@ -39,12 +44,16 @@
 <script>
   import axios from 'axios'
   import TopCreateTour from '../components/modals/topCreateTour'
+  import TopLongPress from '../components/modals/toplongPress'
   export default {
     name: 'HelloWorld',
     data() {
       return {
         tour_info: JSON,
         flag_create_tour: false,
+        flag_long_press: false,
+        tour_id_avoid: '',
+        tour_name_avoid: '',
       }
     },
     created: function () {
@@ -75,11 +84,17 @@
       },
       closeModal: function() {
         this.flag_create_tour = false;
+        this.flag_long_press = false;
         this.get_tour(); //更新を反映
       },
+      onPlusStart() {
+        //longpress
+        this.flag_long_press = true;
+      }
     },
     components: {
       TopCreateTour: TopCreateTour,
+      TopLongPress: TopLongPress,
     }
   }
 
