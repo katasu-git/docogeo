@@ -5,6 +5,7 @@ import App from './App'
 import router from './router'
 import LongPress from 'vue-directive-long-press'
 
+
 Vue.config.productionTip = false
 Vue.directive('long-press', LongPress)
 

@@ -8,7 +8,15 @@
 
       <TopLongPress
         @closeModal="closeModal"
+        @wakeChangeName="wakeChangeName"
+        :tour_id="tour_id_avoid"
+        :tour_name="tour_name_avoid"
         v-show="flag_long_press"></TopLongPress>
+
+      <TopChangeName
+        v-show="flag_change_name"
+        @closeModal="closeModal"
+        :tour_id="tour_id_avoid"></TopChangeName>
 
       <div class="l-header_above">
         <div class="o-text_tour">Tour</div>
@@ -22,9 +30,8 @@
         <div class="o-text_add_image">画像をみる</div>
       </div>
       <div class="o-slider">
-        <div class="o-card" v-for="info in tour_info" 
-            v-on:click='jumpPage("editTour", info.tour_id, info.tour_name)' :key="info.tour_id"
-            v-long-press="400" @long-press-start="onPlusStart(info.tour_id, info.tour_name)">
+        <div class="o-card" v-for="info in tour_info"
+          @click="onPlusStart(info.tour_id, info.tour_name)" :key="info.tour_id">
           <img src="../assets/sample.jpg" class="o-image_tour" />
           <div class="o-transparent">
             <div class="o-text_tour_title">{{ info.tour_name }}</div>
@@ -45,6 +52,7 @@
   import axios from 'axios'
   import TopCreateTour from '../components/modals/topCreateTour'
   import TopLongPress from '../components/modals/toplongPress'
+  import TopChangeName from '../components/modals/topChageName'
   export default {
     name: 'HelloWorld',
     data() {
@@ -52,6 +60,7 @@
         tour_info: JSON,
         flag_create_tour: false,
         flag_long_press: false,
+        flag_change_name: false,
         tour_id_avoid: '',
         tour_name_avoid: '',
       }
@@ -74,27 +83,35 @@
         this.$router.push({
             name: where,
             params: {
-              tour_id: tour_id,
-              tour_name: tour_name,
+              tour_id: this.tour_id_avoid,
+              tour_name: this.tour_name_avoid,
             }
         })
       },
       wakeCreateTour: function() {
+        this.closeModal();
         this.flag_create_tour = true;
+      },
+      wakeChangeName() {
+        this.closeModal();
+        this.flag_change_name = true;
       },
       closeModal: function() {
         this.flag_create_tour = false;
         this.flag_long_press = false;
+        this.flag_change_name = false;
         this.get_tour(); //更新を反映
       },
-      onPlusStart() {
-        //longpress
+      onPlusStart(tour_id, tour_name) {
+        this.tour_id_avoid = tour_id;
+        this.tour_name_avoid = tour_name;
         this.flag_long_press = true;
       }
     },
     components: {
       TopCreateTour: TopCreateTour,
       TopLongPress: TopLongPress,
+      TopChangeName: TopChangeName
     }
   }
 
