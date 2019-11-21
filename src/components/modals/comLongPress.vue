@@ -4,7 +4,7 @@
       
       <div class="o-background_black">
         <div class="o-modal">
-          <div class="o-text">編集</div>
+          <div class="o-text" @click="changeCom">編集</div>
           <div class="o-border u-mt10"></div>
           <div class="o-text u-color-red" @click="deleteEx()">削除</div>
           <div class="o-border u-mt10"></div>
@@ -21,12 +21,6 @@ import axios from 'axios'
     name: 'comlongpress',
     props: {
       ex_id_avoid: '',
-    },
-    data() {
-      return {
-      }
-    },
-    created: function () {
     },
     methods: {
         closeModal: function() {
@@ -47,6 +41,9 @@ import axios from 'axios'
                   // エラーを受け取る
                   console.log(error);
               });
+        },
+        changeCom() {
+          this.$emit("changeCom")
         }
     },
   }

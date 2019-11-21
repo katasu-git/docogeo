@@ -6,11 +6,17 @@
         :ex_id_avoid="ex_id_avoid"
         @closeModal="closeModal"
         @get_spot_ex="get_spot_ex"
+        @changeCom="changeCom"
       ></ComLongPress>
 
       <ComAddComment @closeModal="closeModal"
         :tour_id="tour_id" :spot_id="spot_id"
         v-show="flag_add_com"></ComAddComment>
+
+      <ComChangeCom
+        v-show="flag_change_com"
+        :ex_id_avoid="ex_id_avoid"
+        @closeModal="closeModal"></ComChangeCom>
       
       <div class="l-header_above">
         <div class="o-text_tour">Comment</div>
@@ -78,6 +84,7 @@ import axios from "axios";
 import draggable from 'vuedraggable';
 import ComAddComment from '../components/modals/comAddComment'
 import ComLongPress from '../components/modals/comLongPress'
+import ComChangeCom from '../components/modals/comChangeCom'
 export default {
   name: "editSpot",
   data() {
@@ -92,6 +99,7 @@ export default {
       flag_order: false,
       flag_add_com: false,
       flag_longpress: false,
+      flag_change_com: false,
     };
   },
   created: function() {
@@ -133,6 +141,7 @@ export default {
       setTimeout(() => {
         this.flag_add_com = false;
         this.flag_longpress = false;
+        this.flag_change_com = false;
         this.get_spot_ex(); //説明の更新を反映
       }, 200)
     },
@@ -156,6 +165,10 @@ export default {
       } else {
         this.flag_add_com = true;
       }
+    },
+    changeCom() {
+      //this.closeModal();
+      this.flag_change_com = true;
     },
     onPlusStart: function(id) {
       console.log("hello");
@@ -184,6 +197,7 @@ export default {
     draggable: draggable,
     ComAddComment: ComAddComment,
     ComLongPress: ComLongPress,
+    ComChangeCom: ComChangeCom,
   }
 };
 </script>
