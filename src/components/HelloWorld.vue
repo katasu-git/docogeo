@@ -1,6 +1,11 @@
 <template>
   <div id="hello">
     <div class="o-background">
+
+      <TopCreateTour
+      @closeModal="closeModal"
+        v-show="flag_create_tour"></TopCreateTour>
+
       <div class="l-header_above">
         <div class="o-text_tour">Tour</div>
         <div 
@@ -14,7 +19,7 @@
       </div>
       <div class="o-slider">
         <div class="o-card" v-for="info in tour_info" 
-            v-on:click='jumpPage("editTour", info.tour_id, info.tour_name)'>
+            v-on:click='jumpPage("editTour", info.tour_id, info.tour_name)' :key="info.tour_id">
           <img src="../assets/sample.jpg" class="o-image_tour" />
           <div class="o-transparent">
             <div class="o-text_tour_title">{{ info.tour_name }}</div>
@@ -22,17 +27,24 @@
           </div>
         </div>
       </div>
+
+      <button class="o-button_create_geosite"
+        v-show="!flag_create_tour"
+        @click="wakeCreateTour()">新しくツアーを作成する</button>
+
     </div>
   </div>
 </template>
 
 <script>
   import axios from 'axios'
+  import TopCreateTour from '../components/modals/topCreateTour'
   export default {
     name: 'HelloWorld',
     data() {
       return {
         tour_info: JSON,
+        flag_create_tour: false,
       }
     },
     created: function () {
@@ -57,8 +69,18 @@
               tour_name: tour_name,
             }
         })
-      }
+      },
+      wakeCreateTour: function() {
+        this.flag_create_tour = true;
+      },
+      closeModal: function() {
+        this.flag_create_tour = false;
+        this.get_tour(); //更新を反映
+      },
     },
+    components: {
+      TopCreateTour: TopCreateTour,
+    }
   }
 
 </script>
@@ -126,7 +148,7 @@
   .o-card {
     padding: 0 0 0 20px;
     position: relative;
-    height: 380px;
+    height: 330px;
     width: 240px;
   }
 
@@ -135,7 +157,7 @@
   }
 
     .o-image_tour {
-      height: 380px;
+      height: 330px;
       width: 240px;
       border-radius: 30px;
       object-fit: cover;
@@ -163,6 +185,25 @@
 
         font-size: 14px;
         color: rgba(255,255,255,.70);
+      }
+
+      .o-button_save_sort, .o-button_create_geosite {
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        height: 50px;
+        width: calc(100% - 40px);
+        border: solid 2px #4B8E8D;
+        border-radius: 10px;
+        background-color: #fff;
+        color: #4B8E8D;
+        font-size: 12px;
+        font-weight: bold;
+      }
+
+      .o-button_create_geosite {
+        background-color: #4B8E8D;
+        color: #fff;
       }
 
 </style>

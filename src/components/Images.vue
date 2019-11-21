@@ -31,6 +31,13 @@
         <img src="../assets/upload_button.svg" @click="wakeAddImg()"/>
         <input class="u-disp_none" type="file" @change="onFileChange" name="upfile" id="upfile"/>
       </label>
+
+      <div class="o-img_container">
+        <div class="o-img_fit">
+          <img id="o-img" 
+            v-bind:style="{ 'min-height': height}" v-for="(image, i) in images" src="../assets/sample.jpg" :key="i" />
+        </div>
+      </div>
       
     </div>
   </div>
@@ -48,10 +55,17 @@ import { async } from 'q';
         img_name: '',
         flag_order: false,
         flag_add_img: false,
+        height: '',
+        images: 20,
       }
     },
     created: function () {
       this.get_tour();
+    },
+    mounted: function() {
+      //マウントしてからじゃないとgetElementできない
+      let h = document.getElementById("o-img").clientWidth;
+      this.height = h + 'px';
     },
     methods: {
         get_tour: function () {
@@ -187,10 +201,10 @@ import { async } from 'q';
     }
 
     .o-upload_button {
-        width: 50px;
+        width: 40px;
         position: fixed;
-        bottom: 15px;
-        right: 15px;
+        bottom: 20px;
+        right: 20px;
     }
 
     .u-disp_none {
@@ -236,8 +250,8 @@ import { async } from 'q';
   }
 
   button {
-      height: 50px;
-      width: 50%;
+      height: 40px;
+      width: 40px;
       font-size: 18px;
       font-weight: bold;
   }
@@ -253,6 +267,29 @@ import { async } from 'q';
       padding: 20px;
       width: calc(100% - 50px);
       border-radius: 30px;
+  }
+
+  .o-img_container {
+    margin: 20px 0 100px 20px;
+    width: calc(100vw - 100px);
+    display: flex;
+  }
+
+  .o-img_fit {
+    width: 100%;
+  }
+
+  #o-img {
+    width: calc(50% - .5px);
+    object-fit: fill;
+  }
+
+  #o-img:nth-child(even) {
+    margin-left: 1px;
+  }
+
+  #o-img:nth-child(n+3) {
+    margin-top: -4px;
   }
 
 </style>
