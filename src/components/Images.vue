@@ -7,7 +7,7 @@
                 <div class="o-modal">
                     <!-- <img src="/~nishimura/docogeo/pic/FH020018.JPG" /> <!--相対パスで直接叩けば表示できる -->
                     <img class="o-preview_img" v-show="uploadedImage" :src="uploadedImage" alt="preview_img" />
-                    <div class="l-button">
+                    <div class="l-button u-mt40">
                         <button class="o-button_cancel" @click="closeModal()">キャンセル</button>
                         <button class="o-button_save" type="submit" @click="postFile()">追加する</button>
                     </div>
@@ -250,8 +250,8 @@ import { async } from 'q';
   }
 
   button {
-      height: 40px;
-      width: 40px;
+      height: 60px;
+      width: 50%;
       font-size: 18px;
       font-weight: bold;
   }
@@ -290,6 +290,10 @@ import { async } from 'q';
 
   #o-img:nth-child(n+3) {
     margin-top: -4px;
+  }
+
+  .u-mt40 {
+    margin-top: 40px;
   }
 
 </style>
