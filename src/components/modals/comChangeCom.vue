@@ -9,7 +9,7 @@
             </form>
             <div class="l-button">
                 <button class="o-button_cancel" @click="closeModal()">キャンセル</button>
-                <button class="o-button_save" @click="changeCom()">追加する</button>
+                <button class="o-button_save" @click="changeCom()">保存する</button>
             </div>
         </div>
       </div>
