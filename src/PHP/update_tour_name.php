@@ -2,8 +2,8 @@
 
 require_once("./connect_mysql.php");
 
-function innsert_spot_ex() {
-    $spot_id = $_POST['spot_id'];
+function update_tour_name() {
+    $tour_id = $_POST['tour_id'];
     $tour_name_updated = $_POST['tour_name_updated'];
     $date = date("Y/m/d H:i:s");
 
@@ -20,12 +20,9 @@ function innsert_spot_ex() {
  
     // 更新する値と該当のIDが入った変数をexecuteにセットしてSQLを実行
     $stmt->execute($params);
- 
-    // 更新完了のメッセージ
-    //echo '更新完了しました';
 
 }
 
-innsert_spot_ex();
+update_tour_name();
 
 ?>

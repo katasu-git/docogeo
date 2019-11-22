@@ -40,6 +40,7 @@
             const url =
             "https://www2.yoslab.net/~nishimura/geotour/PHP/update_tour_name.php";
             let params = new URLSearchParams();
+            console.log(this.tour_id);
             params.append("tour_id", this.tour_id);
             params.append("tour_name_updated", this.tour_name_updated);
             axios
