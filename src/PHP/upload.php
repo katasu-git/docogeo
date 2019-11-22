@@ -5,6 +5,7 @@ require_once("./connect_mysql.php");
 function add_img_db() {
 
     $dir = str_shuffle('1234567890abcdefghijklmnopqrstuvwxyz');
+    $date = date("Y/m/d H:i:s");
     //ファイルをフォルダーに移動
     //move_uploaded_file($_FILES["upfile"]["tmp_name"], "../../docogeo/pic/" . $_FILES["upfile"]["name"]);
     move_uploaded_file($_FILES["upfile"]["tmp_name"], "../../docogeo/pic/" . $dir);
@@ -15,10 +16,12 @@ function add_img_db() {
     $pdo = connect_mysql();  //mysqlに接続
 
     $stmt = $pdo -> prepare("INSERT INTO 
-    images (image_name, image_path) 
-    VALUES (:image_name, :image_path)");
+    images (image_name, image_path, uploaded, updated) 
+    VALUES (:image_name, :image_path, :uploaded, :updated)");
     $stmt->bindValue(':image_name', $image_name, PDO::PARAM_STR);
     $stmt->bindParam(':image_path', $image_path, PDO::PARAM_STR);
+    $stmt->bindParam(':uploaded', $date, PDO::PARAM_STR);
+    $stmt->bindParam(':updated', $date, PDO::PARAM_STR);
 
     $stmt->execute();
     echo "成功！";

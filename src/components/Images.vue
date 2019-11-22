@@ -5,7 +5,6 @@
     　　 <div id="comuppic" v-show="flag_add_img">
             <div class="o-background_black">
                 <div class="o-modal">
-                    <!-- <img src="/~nishimura/docogeo/pic/FH020018.JPG" /> <!--相対パスで直接叩けば表示できる -->
                     <img class="o-preview_img" v-show="uploadedImage" :src="uploadedImage" alt="preview_img" />
                     <div class="l-button u-mt40">
                         <button class="o-button_cancel" @click="closeModal()">キャンセル</button>
@@ -83,8 +82,9 @@ import { async } from 'q';
             })
         },
         closeModal: function() {
+            console.log("発火");
             this.flag_add_img = false;
-            //this.get_spot_info(); //名前の更新を反映
+            this.getAllImage();
         },
         wakeAddImg() {
             this.flag_add_img = true;
@@ -132,6 +132,7 @@ import { async } from 'q';
                     .then(function(response) {
                         // response 処理
                         console.log(response.data);
+                        this.closeModal();
                     })
                     .catch(function(error) {
                         // error 処理
