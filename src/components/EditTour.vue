@@ -3,6 +3,7 @@
     <div class="o-background">
 
       <GeoLongPress v-show="flag"
+        :spot_id_avoid="spot_id_avoid"
         @closeModal="closeModal" @wakeChangeNameModal="wakeChangeNameModal"></GeoLongPress>
 
       <GeoChangeName v-show="flag_name"
@@ -47,7 +48,7 @@
               <div class="o-list_image"><img class="o-image_circle" src="../assets/sample.jpg" /></div>
               <div class="l-list_text">
                 <div class="o-list_text_geosite" 
-                  v-long-press="300" @long-press-start="onPlusStart(info.spot_id, info.spot_name)">{{ info.spot_name }}</div>
+                  v-long-press="300" @long-press-start="onPlusStart(info.spot_id)">{{ info.spot_name }}</div>
                 <div class="o-list_text_update">最終更新 2019.11.7</div>
               </div>
             </div>
@@ -149,7 +150,7 @@ import GeoCreateGeo from '../components/modals/geoCreateGeo'
             }
         })
       },
-      onPlusStart: function(spot_id, spot_name)  {
+      onPlusStart: function(spot_id)  {
         this.spot_id_avoid = spot_id;
         this.flag = true; //戻す
       },

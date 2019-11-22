@@ -43,7 +43,12 @@
       </div>
 
       <draggable class="l-slider_images" :animation="150" v-show="flag_order">
-        <div class="o-image" v-for="(image, i) in images" :key="i">{{i}}</div>
+        <div class="o-image" 
+          v-for="image in srcArray"
+          :key="image.id"
+        >
+          <img class="img" :src="image.imgPath" :alt="image.imgName" />
+        </div>
       </draggable>
 
       <div class="l-border">
@@ -132,7 +137,6 @@ export default {
         .post(url, params)
         .then(response => {
           this.spot_ex = response.data;
-          //console.log(this.spot_ex);
         })
         .catch(error => {
           // エラーを受け取る
@@ -180,7 +184,6 @@ export default {
       this.flag_change_com = true;
     },
     onPlusStart: function(id) {
-      console.log("hello");
       this.ex_id_avoid = id;  //削除する時の判定に使う
       this.flag_longpress = true;
     },
@@ -215,8 +218,6 @@ export default {
               let params = new URLSearchParams();
               params.append('tour_id', this.tour_id);
               params.append('spot_id', this.spot_id);
-              console.log(this.tour_id);
-              console.log(this.spot_id);
               axios.post(url, params
               ).then(response => {
                 this.srcArray = response.data;

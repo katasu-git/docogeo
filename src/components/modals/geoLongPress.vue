@@ -6,7 +6,7 @@
         <div class="o-modal">
           <div class="o-text" @click="wakeChangeNameModal()">名前の変更</div>
           <div class="o-border u-mt10"></div>
-          <div class="o-text u-color-red">削除</div>
+          <div class="o-text u-color-red" @click="delete_spot()">削除</div>
           <div class="o-border u-mt10"></div>
           <div class="o-text u-color-green" @click.stop='closeModal()'>キャンセル</div>
         </div>
@@ -16,13 +16,11 @@
 </template>
 
 <script>
+  import axios from 'axios'
   export default {
     name: 'geolongpress',
-    data() {
-      return {
-      }
-    },
-    created: function () {
+    props: {
+      spot_id_avoid: '',
     },
     methods: {
         closeModal: function() {
@@ -30,6 +28,18 @@
         },
         wakeChangeNameModal: function() {
             this.$emit('wakeChangeNameModal');
+        },
+        delete_spot: function() {
+          const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/DELETE/delete_spot.php';
+            let params = new URLSearchParams();
+            params.append('spot_id', this.spot_id_avoid);
+            axios.post(url, params
+            ).then(response => {
+                this.closeModal();
+            }).catch(error => {
+                // エラーを受け取る
+                console.log(error);
+            });
         }
     },
   }
