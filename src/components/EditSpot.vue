@@ -3,11 +3,20 @@
     <div class="o-background">
 
       <ComLongPress v-show="flag_longpress"
-        @closeModal="closeModal"></ComLongPress>
+        :ex_id_avoid="ex_id_avoid"
+        @closeModal="closeModal"
+        @get_spot_ex="get_spot_ex"
+        @changeCom="changeCom"
+      ></ComLongPress>
 
       <ComAddComment @closeModal="closeModal"
         :tour_id="tour_id" :spot_id="spot_id"
         v-show="flag_add_com"></ComAddComment>
+
+      <ComChangeCom
+        v-show="flag_change_com"
+        :ex_id_avoid="ex_id_avoid"
+        @closeModal="closeModal"></ComChangeCom>
       
       <div class="l-header_above">
         <div class="o-text_tour">Comment</div>
@@ -17,11 +26,14 @@
         </div>
       </div>
       <div class="l-header_under u-mb20">
-        <div class="o-text_tour_min">説明：<span class="u-color-green">{{spot_name}}</span></div>
+        <div class="o-text_tour_min"><span class="u-color-green">{{spot_name}}</span></div>
         <div class="o-text_add_image" v-bind:style="{ color: returnSortColor()}">並べ替え</div>
       </div>
 
       <div class="l-slider_images" v-show="!flag_order">
+        <button 
+          class="o-button_add_img"
+          @touchend="addImg()">画像を追加する</button>
         <div class="o-image" v-for="(image, i) in images" :key="i">{{i}}</div>
       </div>
 
@@ -33,12 +45,13 @@
         <div class="o-border u-mt20"></div>
       </div>
 
-      <div　class="l-comment" v-show="!flag_order" v-long-press="300" @long-press-start="onPlusStart()">
+      <div　class="l-comment" v-show="!flag_order">
         <div v-for="ex in spot_ex" :key="ex.id">
           <div class="l-image_text_burger">
               <div class="l-image_text">
                 <div class="l-list_text">
-                  <div class="o-list_text_geosite">{{ ex.spot_ex }}</div>
+                  <div class="o-list_text_geosite"
+                    v-long-press="500" @long-press-start="onPlusStart(ex.id)">{{ ex.spot_ex }}</div>
                   <div class="o-list_text_update">2019.11.7</div>
                 </div>
               </div>
@@ -46,7 +59,7 @@
         </div>
       </div>
 
-      <draggable class="l-comment" v-model="spot_ex" :animation="150" v-show="flag_order">
+      <draggable @update="update_order_spot_ex()" class="l-comment" v-model="spot_ex" :animation="150" v-show="flag_order">
         <div v-for="ex in spot_ex" :key="ex.id">
         <div class="l-image_text_burger">
             <div class="l-image_text">
@@ -60,6 +73,9 @@
         </div>
       </draggable>
 
+      <button class="o-button_save_sort" v-on:click="startSort()" 
+        v-show="flag_order && !flag_add_com &&!flag_longpress">並び替えを終了する</button>
+
       <button class="o-button_create_geosite" v-on:click="addComment()" 
         v-show="!flag_order && !flag_add_com &&!flag_longpress">新しく説明を追加する</button>
     </div>
@@ -71,6 +87,7 @@ import axios from "axios";
 import draggable from 'vuedraggable';
 import ComAddComment from '../components/modals/comAddComment'
 import ComLongPress from '../components/modals/comLongPress'
+import ComChangeCom from '../components/modals/comChangeCom'
 export default {
   name: "editSpot",
   data() {
@@ -80,10 +97,12 @@ export default {
       tour_name: '',
       spot_name: '',
       spot_ex: [],
+      ex_id_avoid: '',
       images: 10,
       flag_order: false,
       flag_add_com: false,
       flag_longpress: false,
+      flag_change_com: false,
     };
   },
   created: function() {
@@ -122,10 +141,13 @@ export default {
         })
     },
     closeModal: function() {
+      setTimeout(() => {
         this.flag_add_com = false;
         this.flag_longpress = false;
+        this.flag_change_com = false;
         this.get_spot_ex(); //説明の更新を反映
-      },
+      }, 200)
+    },
     startSort: function() {
         if(this.flag_order) {
           this.flag_order = false;
@@ -147,15 +169,47 @@ export default {
         this.flag_add_com = true;
       }
     },
-    onPlusStart: function() {
+    changeCom() {
+      //this.closeModal();
+      this.flag_change_com = true;
+    },
+    onPlusStart: function(id) {
       console.log("hello");
+      this.ex_id_avoid = id;  //削除する時の判定に使う
       this.flag_longpress = true;
-    }
+    },
+    update_order_spot_ex: function() {
+            const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/update_order_spot_ex.php';
+            //let arr = [];
+            for(let i=0; i<this.spot_ex.length; i++) {
+              let params = new URLSearchParams();
+              let arr= this.spot_ex[i].id;
+              params.append('spot_id_arr', arr);
+              params.append('order', i);
+              axios.post(url, params
+              ).then(response => {
+              }).catch(error => {
+                  // エラーを受け取る
+                  console.log(error);
+              });
+            }
+            this.get_spot_ex();
+      },
+      addImg() {
+        this.$router.push({
+            name: 'images',
+            params: {
+              tour_id: this.tour_id,
+              spot_id: this.spot_id
+            }
+        })
+      }
   },
   components: {
     draggable: draggable,
     ComAddComment: ComAddComment,
     ComLongPress: ComLongPress,
+    ComChangeCom: ComChangeCom,
   }
 };
 </script>
@@ -236,7 +290,7 @@ export default {
     -webkit-overflow-scrolling: touch; /*ios*/
   }
 
-  .o-image {
+  .o-image, .o-button_add_img {
     min-height: 100px;
     min-width: 100px;
     background-color: rgba(0,0,0, .05);
@@ -245,6 +299,13 @@ export default {
 
   .o-image:not(:first-of-type) {
     margin-left: 10px;
+  }
+
+  .o-button_add_img {
+    margin-right: 10px;
+    background-color: #4B8E8D;
+    color: white;
+    font-weight: bold;
   }
 
   .l-border {
@@ -261,6 +322,7 @@ export default {
 
   .l-comment {
     margin-bottom: 80px;
+    width: calc(100% - 40px);
   }
 
   .o-list {
@@ -307,15 +369,15 @@ export default {
     user-select: none;
   }
 
-  .o-button_create_geosite {
+  .o-button_create_geosite, .o-button_save_sort {
     position: fixed;
     bottom: 20px;
     left: 20px;
-    height: 40px;
+    height: 50px;
     width: calc(100% - 40px);
     border: solid 2px #4B8E8D;
     border-radius: 10px;
-    background-color: rgba(0,0,0,0);
+    background-color: #fff;
     color: #4B8E8D;
     font-size: 12px;
     font-weight: bold;

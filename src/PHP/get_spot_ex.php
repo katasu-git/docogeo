@@ -5,7 +5,7 @@ require_once("./connect_mysql.php");
 function get_spot_ex() {
     $spot_id = $_POST['spot_id'];
     $pdo = connect_mysql();  //mysqlに接続
-    $sql = "SELECT * FROM spot_explanation WHERE spot_id=$spot_id";
+    $sql = "SELECT * FROM spot_explanation WHERE spot_id=$spot_id AND isDeleted=0 ORDER BY order_num ASC";
     $stmt = $pdo -> query($sql);
     $result = array();
     foreach($stmt as $row) {

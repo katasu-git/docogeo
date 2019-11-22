@@ -1,17 +1,37 @@
 <template>
   <div id="hello">
     <div class="o-background">
+
+      <TopCreateTour
+        @closeModal="closeModal"
+        v-show="flag_create_tour"></TopCreateTour>
+
+      <TopLongPress
+        @closeModal="closeModal"
+        @wakeChangeName="wakeChangeName"
+        :tour_id="tour_id_avoid"
+        :tour_name="tour_name_avoid"
+        v-show="flag_long_press"></TopLongPress>
+
+      <TopChangeName
+        v-show="flag_change_name"
+        @closeModal="closeModal"
+        :tour_id="tour_id_avoid"></TopChangeName>
+
       <div class="l-header_above">
         <div class="o-text_tour">Tour</div>
-        <div class="o-image_image_button"><img src="../assets/image_button.svg" /></div>
+        <div 
+          class="o-image_image_button"
+          v-on:click='jumpPage("images")'
+        ><img src="../assets/image_button.svg" /></div>
       </div>
       <div class="l-header_under">
         <div class="o-text_tour_min">ツアー</div>
-        <div class="o-text_add_image">画像を登録</div>
+        <div class="o-text_add_image">画像をみる</div>
       </div>
       <div class="o-slider">
-        <div class="o-card" v-for="info in tour_info" 
-            v-on:click='jumpPage("editTour", info.tour_id, info.tour_name)'>
+        <div class="o-card" v-for="info in tour_info"
+          @click="onPlusStart(info.tour_id, info.tour_name)" :key="info.tour_id">
           <img src="../assets/sample.jpg" class="o-image_tour" />
           <div class="o-transparent">
             <div class="o-text_tour_title">{{ info.tour_name }}</div>
@@ -19,17 +39,30 @@
           </div>
         </div>
       </div>
+
+      <button class="o-button_create_geosite"
+        v-show="!flag_create_tour"
+        @click="wakeCreateTour()">新しくツアーを作成する</button>
+
     </div>
   </div>
 </template>
 
 <script>
   import axios from 'axios'
+  import TopCreateTour from '../components/modals/topCreateTour'
+  import TopLongPress from '../components/modals/toplongPress'
+  import TopChangeName from '../components/modals/topChageName'
   export default {
     name: 'HelloWorld',
     data() {
       return {
         tour_info: JSON,
+        flag_create_tour: false,
+        flag_long_press: false,
+        flag_change_name: false,
+        tour_id_avoid: '',
+        tour_name_avoid: '',
       }
     },
     created: function () {
@@ -50,12 +83,36 @@
         this.$router.push({
             name: where,
             params: {
-              tour_id: tour_id,
-              tour_name: tour_name,
+              tour_id: this.tour_id_avoid,
+              tour_name: this.tour_name_avoid,
             }
         })
+      },
+      wakeCreateTour: function() {
+        this.closeModal();
+        this.flag_create_tour = true;
+      },
+      wakeChangeName() {
+        this.closeModal();
+        this.flag_change_name = true;
+      },
+      closeModal: function() {
+        this.flag_create_tour = false;
+        this.flag_long_press = false;
+        this.flag_change_name = false;
+        this.get_tour(); //更新を反映
+      },
+      onPlusStart(tour_id, tour_name) {
+        this.tour_id_avoid = tour_id;
+        this.tour_name_avoid = tour_name;
+        this.flag_long_press = true;
       }
     },
+    components: {
+      TopCreateTour: TopCreateTour,
+      TopLongPress: TopLongPress,
+      TopChangeName: TopChangeName
+    }
   }
 
 </script>
@@ -123,7 +180,7 @@
   .o-card {
     padding: 0 0 0 20px;
     position: relative;
-    height: 380px;
+    height: 330px;
     width: 240px;
   }
 
@@ -132,7 +189,7 @@
   }
 
     .o-image_tour {
-      height: 380px;
+      height: 330px;
       width: 240px;
       border-radius: 30px;
       object-fit: cover;
@@ -160,6 +217,25 @@
 
         font-size: 14px;
         color: rgba(255,255,255,.70);
+      }
+
+      .o-button_save_sort, .o-button_create_geosite {
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        height: 50px;
+        width: calc(100% - 40px);
+        border: solid 2px #4B8E8D;
+        border-radius: 10px;
+        background-color: #fff;
+        color: #4B8E8D;
+        font-size: 12px;
+        font-weight: bold;
+      }
+
+      .o-button_create_geosite {
+        background-color: #4B8E8D;
+        color: #fff;
       }
 
 </style>

@@ -1,15 +1,17 @@
 <template>
-  <div id="comaddcomment">
+  <div id="createtour">
     <div class="o-background">
       
       <div class="o-background_black">
         <div class="o-modal">
+            <div class="o-image u-mt20"></div>
             <form class="u-mt20">
-                <textarea type="text" placeholder="ここに説明を入力" v-model="comment"></textarea>
+                <input type="text" placeholder="ここにツアーの名前を入力" v-model="tour_name_updated" />
             </form>
+            <div class="o-border u-mt40"></div>
             <div class="l-button">
-                <button class="o-button_cancel" @click="closeModal()">キャンセル</button>
-                <button class="o-button_save" @click="addComment()">追加する</button>
+                <button class="o-button_cancel" v-on:click="closeModal()">キャンセル</button>
+                <button class="o-button_save" v-on:click="addNewTour()">保存する</button>
             </div>
         </div>
       </div>
@@ -21,57 +23,52 @@
 <script>
 　import axios from 'axios'
   export default {
-    name: 'comaddcomment',
+    name: 'createtour',
     props: {
         tour_id: '',
-        spot_id: '',
     },
     data() {
       return {
-          comment: '',
+          tour_name_updated: '',
       }
     },
     methods: {
         closeModal: function() {
             this.$emit('closeModal');
         },
-        addComment: function() {
-            if(this.comment == '') {
-                return;
-            }
-            const url =　"https://www2.yoslab.net/~nishimura/geotour/PHP/insert_spot_ex.php";
+        addNewTour: function() {
+            const url =
+            "https://www2.yoslab.net/~nishimura/geotour/PHP/add_new_tour.php";
             let params = new URLSearchParams();
-            params.append("tour_id", this.tour_id);
-            params.append("spot_id", this.spot_id);
-            params.append("spot_ex", this.comment);
-            console.log(this.tour_id);
-            console.log(this.spot_id);
-            console.log(this.comment);
+            params.append("tour_name", this.tour_name_updated);
             axios
-                .post(url, params)
-                .then(response => {
-                    this.closeModal();
-                })
-                .catch(error => {
+            .post(url, params)
+            .then(response => {
+                console.log("更新成功");
+                this.tour_name_updated = ''; //リセット
+                this.closeModal();
+            })
+            .catch(error => {
                 // エラーを受け取る
                 console.log(error);
-                });
-        }
+            });
+        },
     },
   }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-  #geochangename {
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-  }
+    #createtour {
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
 
   .o-border {
     height: 1px;
+    width: 100%;
     background-color: rgba(0,0,0, .12);
   }
 
@@ -83,6 +80,7 @@
 
     display: flex;
     align-items: flex-end;
+    z-index: 1;
   }
 
   .o-modal {
@@ -95,27 +93,31 @@
     align-items: center;
   }
 
+  .o-image {
+      height: 80px;
+      width: 80px;
+      border-radius: 100px;
+      object-fit: cover;
+      background-color: rgba(0,0,0,.12);
+  }
+
   .o-text {
     padding: 20px;
     font-size: 16px;
     font-weight: bold;
   }
 
-  textarea {
-      outline: none;
-      margin: 20px 0;
-      resize: vertical;
-      width: calc(100vw - 60px);
-      min-height: 80px;
+  input {
+      width: calc(100vw - 20px);
       font-size: 18px;
+      font-weight: bold;
       color: rgba(0,0,0, .87);
       text-align: center;
-      border: solid 1px rgba(0,0,0, .12);
-      border-radius: 10px;
   }
 
   input::placeholder {
       font-size: 18px;
+      font-weight: bold;
       color: rgba(0,0,0, .12);
       text-align: center;
   }

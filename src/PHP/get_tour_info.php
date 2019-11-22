@@ -4,7 +4,7 @@ require_once("./connect_mysql.php");
 
 function get_tour_info() {
     $pdo = connect_mysql();  //mysqlに接続
-    $sql = "SELECT * FROM tour_name";
+    $sql = "SELECT * FROM tour_name WHERE isDeleted=0 ORDER BY id DESC";
     $stmt = $pdo -> query($sql);
     $result = array();
     foreach($stmt as $row) {

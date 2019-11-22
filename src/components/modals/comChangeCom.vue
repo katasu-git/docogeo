@@ -1,5 +1,5 @@
 <template>
-  <div id="comaddcomment">
+  <div id="comchangecom">
     <div class="o-background">
       
       <div class="o-background_black">
@@ -9,7 +9,7 @@
             </form>
             <div class="l-button">
                 <button class="o-button_cancel" @click="closeModal()">キャンセル</button>
-                <button class="o-button_save" @click="addComment()">追加する</button>
+                <button class="o-button_save" @click="changeCom()">追加する</button>
             </div>
         </div>
       </div>
@@ -21,10 +21,9 @@
 <script>
 　import axios from 'axios'
   export default {
-    name: 'comaddcomment',
+    name: 'comchangecom',
     props: {
-        tour_id: '',
-        spot_id: '',
+        ex_id_avoid: '',
     },
     data() {
       return {
@@ -35,18 +34,14 @@
         closeModal: function() {
             this.$emit('closeModal');
         },
-        addComment: function() {
+        changeCom: function() {
             if(this.comment == '') {
                 return;
             }
-            const url =　"https://www2.yoslab.net/~nishimura/geotour/PHP/insert_spot_ex.php";
+            const url =　"https://www2.yoslab.net/~nishimura/geotour/PHP/update_comment.php";
             let params = new URLSearchParams();
-            params.append("tour_id", this.tour_id);
-            params.append("spot_id", this.spot_id);
-            params.append("spot_ex", this.comment);
-            console.log(this.tour_id);
-            console.log(this.spot_id);
-            console.log(this.comment);
+            params.append("ex_id", this.ex_id_avoid);
+            params.append("spot_explanation", this.comment);
             axios
                 .post(url, params)
                 .then(response => {
@@ -83,6 +78,7 @@
 
     display: flex;
     align-items: flex-end;
+    z-index: 1;
   }
 
   .o-modal {
