@@ -125,7 +125,6 @@ import GeoCreateGeo from '../components/modals/geoCreateGeo'
       },
       update_order_spot_name: function() {
             const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/update_order_spot_name.php';
-            //let arr = [];
             for(let i=0; i<this.spot_info.length; i++) {
               let params = new URLSearchParams();
               let arr= this.spot_info[i].spot_id;

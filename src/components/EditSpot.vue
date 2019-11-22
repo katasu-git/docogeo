@@ -31,6 +31,9 @@
       </div>
 
       <div class="l-slider_images" v-show="!flag_order">
+        <button 
+          class="o-button_add_img"
+          @touchend="addImg()">画像を追加する</button>
         <div class="o-image" v-for="(image, i) in images" :key="i">{{i}}</div>
       </div>
 
@@ -192,6 +195,15 @@ export default {
             }
             this.get_spot_ex();
       },
+      addImg() {
+        this.$router.push({
+            name: 'images',
+            params: {
+              tour_id: this.tour_id,
+              spot_id: this.spot_id
+            }
+        })
+      }
   },
   components: {
     draggable: draggable,
@@ -278,7 +290,7 @@ export default {
     -webkit-overflow-scrolling: touch; /*ios*/
   }
 
-  .o-image {
+  .o-image, .o-button_add_img {
     min-height: 100px;
     min-width: 100px;
     background-color: rgba(0,0,0, .05);
@@ -287,6 +299,13 @@ export default {
 
   .o-image:not(:first-of-type) {
     margin-left: 10px;
+  }
+
+  .o-button_add_img {
+    margin-right: 10px;
+    background-color: #4B8E8D;
+    color: white;
+    font-weight: bold;
   }
 
   .l-border {

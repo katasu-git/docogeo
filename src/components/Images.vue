@@ -34,8 +34,12 @@
 
       <div class="o-img_container">
         <div class="o-img_fit">
-          <img id="o-img" 
-            v-bind:style="{ 'min-height': height}" v-for="(image, i) in images" src="../assets/sample.jpg" :key="i" />
+          <div v-for="image in srcArray" :key="image.id">
+            <img id="o-img"
+            :src="image.imgPath"
+            @touchstart="addImgToSpot(i)"
+            v-bind:style="{ 'min-height': height}" />
+            {{ image.imgName }}:{{ image.imgPath }}
         </div>
       </div>
       
@@ -57,10 +61,17 @@ import { async } from 'q';
         flag_add_img: false,
         height: '',
         images: 20,
+        tour_id: '', //commentから渡ってきた場合
+        spot_id: '', //commentから渡ってきた場合
+        srcArray: [],
       }
     },
     created: function () {
-      this.get_tour();
+      if(this.$route.params.tour_id != undefined && this.$route.params.spot_id != undefined) {
+        this.tour_id = this.$route.params.tour_id;
+        this.spot_id = this.$route.params.spot_id;
+      }
+      this.getAllImage();
     },
     mounted: function() {
       //マウントしてからじゃないとgetElementできない
@@ -68,22 +79,13 @@ import { async } from 'q';
       this.height = h + 'px';
     },
     methods: {
-        get_tour: function () {
-            axios.post('https://www2.yoslab.net/~nishimura/geotour/PHP/get_tour_info.php'
-            ).then(response => {
-            this.tour_info = response.data;
-            }).catch(error => {
-            // エラーを受け取る
-            console.log(error);
-            });
-        },
         jumpPage: function(where, tour_id, tour_name) {
             //console.log(this.avoidParam.tour_id);
             this.$router.push({
                 name: where,
                 params: {
-                tour_id: tour_id,
-                tour_name: tour_name,
+                tour_id: this.tour_id,
+                tour_name: this.tour_name,
                 }
             })
         },
@@ -127,7 +129,6 @@ import { async } from 'q';
             // FormData を利用して File を POST する
                 let formData = new FormData();
                 formData.append('upfile', this.file);
-                //console.log(this.file);
                 axios
                     .post('https://www2.yoslab.net/~nishimura/geotour/PHP/upload.php', 
                         formData, {
@@ -143,6 +144,39 @@ import { async } from 'q';
                         // error 処理
                     })
         },
+        addImgToSpot(index) {
+          if(this.tour_id == '' || this.spot_id == '') {
+            console.log("reject");
+            return; //editページ以外からの遷移時は登録しない
+          }
+          console.log("hello");
+          const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/add_img_spot.php';
+              let params = new URLSearchParams();
+              params.append('tour_id', this.tour_id);
+              params.append('spot_id', this.spot_id);
+              params.append('image_id', index);
+              axios.post(url, params
+              ).then(response => {
+                //ここでeditに戻る処理
+              }).catch(error => {
+                  // エラーを受け取る
+                  console.log(error);
+              });
+        },
+        getAllImage() {
+          const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/GET/get_all_image.php';
+              axios.post(url
+              ).then(response => {
+                this.srcArray = response.data;
+                console.log(response.data[0].id);
+                console.log(response.data[0].imgName);
+                console.log(response.data[0].imgPath);
+                console.log(this.srcArray);
+              }).catch(error => {
+                  // エラーを受け取る
+                  console.log(error);
+              });
+        }
     },
   }
 
