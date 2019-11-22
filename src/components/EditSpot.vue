@@ -34,11 +34,21 @@
         <button 
           class="o-button_add_img"
           @touchend="addImg()">画像を追加する</button>
-        <div class="o-image" v-for="(image, i) in images" :key="i">{{i}}</div>
+        <div class="o-image" 
+          v-for="image in srcArray"
+          :key="image.id"
+        >
+          <img class="img" :src="image.imgPath" :alt="image.imgName" />
+        </div>
       </div>
 
       <draggable class="l-slider_images" :animation="150" v-show="flag_order">
-        <div class="o-image" v-for="(image, i) in images" :key="i">{{i}}</div>
+        <div class="o-image" 
+          v-for="image in srcArray"
+          :key="image.id"
+        >
+          <img class="img" :src="image.imgPath" :alt="image.imgName" />
+        </div>
       </draggable>
 
       <div class="l-border">
@@ -97,8 +107,8 @@ export default {
       tour_name: '',
       spot_name: '',
       spot_ex: [],
+      srcArray: [],
       ex_id_avoid: '',
-      images: 10,
       flag_order: false,
       flag_add_com: false,
       flag_longpress: false,
@@ -114,6 +124,7 @@ export default {
       this.spot_id = this.$route.params.spot_id;
       this.spot_name = this.$route.params.spot_name;
       this.get_spot_ex();
+      this.getSpotImage();
     }
   },
   methods: {
@@ -126,7 +137,6 @@ export default {
         .post(url, params)
         .then(response => {
           this.spot_ex = response.data;
-          //console.log(this.spot_ex);
         })
         .catch(error => {
           // エラーを受け取る
@@ -174,7 +184,6 @@ export default {
       this.flag_change_com = true;
     },
     onPlusStart: function(id) {
-      console.log("hello");
       this.ex_id_avoid = id;  //削除する時の判定に使う
       this.flag_longpress = true;
     },
@@ -203,7 +212,20 @@ export default {
               spot_id: this.spot_id
             }
         })
-      }
+      },
+      getSpotImage() {
+          const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/GET/get_spot_img.php';
+              let params = new URLSearchParams();
+              params.append('tour_id', this.tour_id);
+              params.append('spot_id', this.spot_id);
+              axios.post(url, params
+              ).then(response => {
+                this.srcArray = response.data;
+              }).catch(error => {
+                  // エラーを受け取る
+                  console.log(error);
+              });
+        }
   },
   components: {
     draggable: draggable,
@@ -291,10 +313,17 @@ export default {
   }
 
   .o-image, .o-button_add_img {
-    min-height: 100px;
-    min-width: 100px;
+    height: 100px;
+    width: 100px;
     background-color: rgba(0,0,0, .05);
     border-radius: 10px;
+  }
+
+  .img {
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+    object-fit: cover;
   }
 
   .o-image:not(:first-of-type) {

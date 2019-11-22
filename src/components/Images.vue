@@ -36,7 +36,7 @@
             <img
             class="box"
             :src="image.imgPath"
-            @touchstart="addImgToSpot(i)" />
+            @touchstart="addImgToSpot(image.id)" />
         </div>
       </div>
       
@@ -143,7 +143,9 @@ import { async } from 'q';
             console.log("reject");
             return; //editページ以外からの遷移時は登録しない
           }
-          console.log("hello");
+          console.log(this.tour_id);
+          console.log(this.spot_id);
+          console.log(index);
           const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/add_img_spot.php';
               let params = new URLSearchParams();
               params.append('tour_id', this.tour_id);
