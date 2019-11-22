@@ -33,13 +33,11 @@
       </label>
 
       <div class="o-img_container">
-        <div class="o-img_fit">
-          <div v-for="image in srcArray" :key="image.id">
-            <img id="o-img"
+        <div class="o-img_fit" v-for="image in srcArray" :key="image.id">
+            <img
+            class="box"
             :src="image.imgPath"
-            @touchstart="addImgToSpot(i)"
-            v-bind:style="{ 'min-height': height}" />
-            {{ image.imgName }}:{{ image.imgPath }}
+            @touchstart="addImgToSpot(i)" />
         </div>
       </div>
       
@@ -72,11 +70,6 @@ import { async } from 'q';
         this.spot_id = this.$route.params.spot_id;
       }
       this.getAllImage();
-    },
-    mounted: function() {
-      //マウントしてからじゃないとgetElementできない
-      let h = document.getElementById("o-img").clientWidth;
-      this.height = h + 'px';
     },
     methods: {
         jumpPage: function(where, tour_id, tour_name) {
@@ -168,10 +161,6 @@ import { async } from 'q';
               axios.post(url
               ).then(response => {
                 this.srcArray = response.data;
-                console.log(response.data[0].id);
-                console.log(response.data[0].imgName);
-                console.log(response.data[0].imgPath);
-                console.log(this.srcArray);
               }).catch(error => {
                   // エラーを受け取る
                   console.log(error);
@@ -307,23 +296,28 @@ import { async } from 'q';
     margin: 20px 0 100px 20px;
     width: calc(100vw - 100px);
     display: flex;
+    flex-wrap: wrap;
   }
 
   .o-img_fit {
+    position: relative;
+    width: 50%;
+    height: auto;
+  }
+
+  .o-img_fit:before {
+    content: "";
+    display: flex;
+    padding-top: 100%;
+  }
+
+  .box {
+    position: absolute;
+    top: 0; 
+    left: 0;
     width: 100%;
-  }
-
-  #o-img {
-    width: calc(50% - .5px);
-    object-fit: fill;
-  }
-
-  #o-img:nth-child(even) {
-    margin-left: 1px;
-  }
-
-  #o-img:nth-child(n+3) {
-    margin-top: -4px;
+    height: 100%;
+    object-fit: cover;
   }
 
   .u-mt40 {
