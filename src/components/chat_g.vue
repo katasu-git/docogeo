@@ -120,11 +120,6 @@
                 params.append("posted_ex", ex.spot_ex);
                 axios
                     .post(url, params)
-                    .then(response => {
-                        this.get_spot_name(); //ちゃんとdb叩いてデータ持ってくる
-                        this.getPost(); //ちゃんとdb叩いてデータ持ってくる
-                        //console.log("成功");
-                    })
                     .catch(error => {
                         // エラーを受け取る
                         console.log(error);
@@ -135,6 +130,7 @@
                 params2.append("ex_id", ex.ex_id);
                 axios
                     .post(url2, params2).then(response => {
+                        this.get_spot_name(); //ちゃんとdb叩いてデータ持ってくる
                         this.getPost();
                     })
                     .catch(error => {
@@ -150,6 +146,20 @@
                 params2.append("ex_id", ex.ex_id);
                 axios
                     .post(url2, params2).then(response => {
+                    })
+                    .catch(error => {
+                        // エラーを受け取る
+                        console.log(error);
+                    });
+
+                //配信済みの場合の処理
+                const url3 = 'https://www2.yoslab.net/~nishimura/geotour/PHP/DELETE/delete_posted_post.php';
+                let params3 = new URLSearchParams();
+                params3.append("ex_id", ex.ex_id);
+                console.log(ex.ex_id);
+                axios
+                    .post(url3, params3)
+                    .then(response => {
                         this.getPost();
                     })
                     .catch(error => {

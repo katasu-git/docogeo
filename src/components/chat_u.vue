@@ -4,17 +4,17 @@
       
         <div class="o-header">
             <div class="l-header_above">
-                <div class="o-text_tour">TOUR_NAME</div>
+                <div class="o-text_tour">{{ tour_name }}</div>
             </div>
             <div class="l-header_under u-mb20">
-                <div class="o-text_tour_min"><span class="u-color-green">Spot_name_here</span></div>
+                <div class="o-text_tour_min"><span class="u-color-green">{{ spot_name }}</span></div>
             </div>
         </div>
 
         <div class="l-comment_container">
-            <div class="l-comment_row" v-for="f in hello">
+            <div class="l-comment_row" v-for="ex in spot_ex">
                 <div class="l-flex_end">
-                    <div class="l-comment">世界無形文化遺産の指定を受けた那智の田楽が奉納される場所です。</div>
+                    <div class="l-comment">{{ ex.spot_ex }}</div>
                     <div class="o-send_time">11:22</div>
                 </div>
                 <div class="o-button_hoe">
@@ -50,6 +50,7 @@
     data() {
       return {
           tour_id: 1,
+          tour_name: '',
           spot_id: 1,
           spot_name: '',
           spot_ex: JSON,
@@ -57,16 +58,17 @@
       }
     },
     created: function () {
-        /*if (JSON.stringify(this.$route.params) == "{}") {
+        if (JSON.stringify(this.$route.params) == "{}") {
             // 更新されたときはトップに戻る
             this.jumpPage("top_u");
         } else {
             this.tour_id = this.$route.params.tour_id;
+            this.tour_name = this.$route.params.tour_name;
             this.getPost();
         }
         setInterval(function() {
             this.getPost();
-        }.bind(this), 1000);*/
+        }.bind(this), 1000);
     },
     methods: {
         getPost: function() {
@@ -77,7 +79,6 @@
             axios
                 .post(url, params)
                 .then(response => {
-                    //console.log(response.data);
                     this.spot_ex = response.data;
                     this.get_spot_name();
                 })
@@ -87,7 +88,8 @@
                 });
         },
         get_spot_name: function() {
-            const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/get_spot_info.php';
+            return 'かりの名前';
+            /*const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/get_spot_info.php';
             let params = new URLSearchParams();
             params.append('tour_id', this.tour_id);
             axios
@@ -107,7 +109,7 @@
                 }).catch(error => {
                     // エラーを受け取る
                     console.log(error);
-                });
+                });*/
         },
         jumpPage: function(where) {
             this.$router.push({
