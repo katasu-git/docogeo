@@ -1,13 +1,28 @@
 <template>
   <div id="chat_g">
       <div class="o-background">
+
+        <ChangeSpot
+            :tour_id="tour_id"
+            :spot_id="spot_id"
+            :spot_names="spot_names"
+            @closeModal="closeModal"
+            @change_spot_name="change_spot_name"
+            v-show="flag_change_spot"
+        ></ChangeSpot>
       
         <div class="o-header">
             <div class="l-header_above">
                 <div class="o-text_tour">{{ tour_name }}</div>
             </div>
             <div class="l-header_under u-mb20">
-                <div class="o-text_tour_min"><span class="u-color-green">{{ spot_name }}</span><img class="u-ml5" src="../assets/Polygon 1.svg" /></div>
+                <button 
+                    class="o-text_tour_min"
+                    @click="changeSpot()"
+                >
+                    <span class="u-color-green">{{ spot_name }}</span>
+                    <img class="u-ml5" src="../assets/Polygon 1.svg" />
+                </button>
             </div>
         </div>
 
@@ -48,17 +63,19 @@
 
 <script>
   import axios from 'axios'
+  import ChangeSpot from '../components/modals/chatChangeSpot'
   export default {
     name: 'chat_g',
     data() {
       return {
-          tour_id: 1,
+          tour_id: '',
           tour_name: '',
-          spot_id: 1,
-          spot_id_arr: [],
+          spot_id: '',
+          spot_name: '',
+          spot_names: [],
           spot_count: 0,
           spot_ex: JSON,
-          spot_name: '',
+          flag_change_spot: false,
       }
     },
     created: function () {
@@ -68,7 +85,7 @@
         } else {
             this.tour_id = this.$route.params.tour_id;
             this.tour_name = this.$route.params.tour_name;
-            this.get_spot_id_array();
+            this.get_spot_name_arr();
         }
     },
     methods: {
@@ -76,27 +93,13 @@
             const url ="https://www2.yoslab.net/~nishimura/geotour/PHP/getPost.php";
             let params = new URLSearchParams();
             //スポットの表示順はarrの長さから逆順で引いていけばok
-            params.append("spot_id", this.spot_id_arr[this.spot_count]); //ここを直す
+            params.append("spot_id", this.spot_id); //ここを直す
             axios 
                 .post(url, params)
                 .then(response => {
                     this.spot_ex = response.data;
-                    this.get_spot_name(); //ちゃんとdb叩いてデータ持ってくる
                 })
                 .catch(error => {
-                    // エラーを受け取る
-                    console.log(error);
-                });
-        },
-        get_spot_name: function() {
-            const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/get_spot_info.php';
-            let params = new URLSearchParams();
-            params.append('tour_id', this.tour_id);
-            axios
-                .post(url, params)
-                .then(response => {
-                    this.spot_name = response.data[this.spot_count].spot_name;
-                }).catch(error => {
                     // エラーを受け取る
                     console.log(error);
                 });
@@ -130,7 +133,6 @@
                 params2.append("ex_id", ex.ex_id);
                 axios
                     .post(url2, params2).then(response => {
-                        this.get_spot_name(); //ちゃんとdb叩いてデータ持ってくる
                         this.getPost();
                     })
                     .catch(error => {
@@ -176,42 +178,6 @@
                 return true;
             }
         },
-        get_spot_id_array: function() {
-            const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/get_spot_id_array.php';
-                let params = new URLSearchParams();
-                params.append("tour_id", this.tour_id);
-                axios
-                    .post(url, params)
-                    .then(response => {
-                        const arr = [];
-                        for(let i=0; i<response.data.length; i++) {
-                            arr.push(response.data[i].spot_id);
-                        }
-                        this.spot_id_arr = arr;
-                        this.getPost();
-                    })
-                    .catch(error => {
-                        // エラーを受け取る
-                        console.log(error);
-                    });
-        },
-        showNextSpot: function() {
-            if(this.spot_count < this.spot_id_arr.length - 1) {
-                this.spot_count++;
-                this.getPost();
-            } else {
-                console.log("ここが最後のスポットです");
-                this.finishTour();
-            }
-        },
-        showBeforeSpot: function() {
-            if(this.spot_count > 0) {
-                this.spot_count--;
-                this.getPost();
-            } else {
-                //戻るボタンをグレーアウト
-            }
-        },
         finishTour: function() {
             const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/finish_tour.php';
             let params = new URLSearchParams();
@@ -236,7 +202,51 @@
                 return '1';
             }
             return '0.4';
+        },
+        changeSpot() {
+            this.flag_change_spot = true;
+        },
+        closeModal: function() {
+            setTimeout(() => {
+                this.flag_change_spot = false;
+                //this.get_spot_ex(); //説明の更新を反映
+            }, 200)
+        },
+        get_spot_name_arr: function() {
+            const url =　"https://www2.yoslab.net/~nishimura/geotour/PHP/get_spot_info.php";
+            let params = new URLSearchParams();
+            params.append("tour_id", this.tour_id);
+            axios
+                .post(url, params)
+                .then(response => {
+                    this.spot_names = response.data;
+                    if(this.spot_id == '') {
+                        //初回の処理
+                        this.spot_id = this.spot_names[0].spot_id;
+                        this.spot_name = this.spot_names[0].spot_name;
+                    }
+                    this.getPost();
+                    this.closeModal();
+                })
+                .catch(error => {
+                // エラーを受け取る
+                console.log(error);
+                });
+        },
+        change_spot_name(spot_id_selected) {
+            for(let i=0; i<this.spot_names.length; i++) {
+                this.spot_id = spot_id_selected;
+                if(this.spot_names[i].spot_id == spot_id_selected) {
+                    this.spot_name = this.spot_names[i].spot_name;
+                    break;
+                }
+            }
+            this.getPost();
+            this.closeModal();
         }
+    },
+    components: {
+        ChangeSpot: ChangeSpot,
     }
   }
 

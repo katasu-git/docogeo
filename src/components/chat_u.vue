@@ -89,27 +89,6 @@
         },
         get_spot_name: function() {
             return 'かりの名前';
-            /*const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/get_spot_info.php';
-            let params = new URLSearchParams();
-            params.append('tour_id', this.tour_id);
-            axios
-                .post(url, params)
-                .then(response => {
-                    let spot_id_arr = [];
-                    for(let i=0; i<this.spot_ex.length; i++) {
-                        spot_id_arr.push(this.spot_ex[i].spot_id);
-                    }
-                    this.spot_id = Math.max.apply(null, spot_id_arr);
-                    for(let i=0; i<response.data.length; i++) {
-                        if(response.data[i].spot_id == this.spot_id) {
-                            this.spot_name = response.data[i].spot_name;
-                            break;
-                        }
-                    }
-                }).catch(error => {
-                    // エラーを受け取る
-                    console.log(error);
-                });*/
         },
         jumpPage: function(where) {
             this.$router.push({
