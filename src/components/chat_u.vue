@@ -204,7 +204,7 @@
   .l-comment_row {
       display: flex;
       align-items: center;
-      justify-content: flex-end;
+      justify-content: flex-start;
   }
 
   .l-comment_row:first-of-type {
@@ -212,7 +212,7 @@
   }
 
   .l-comment_row:not(:first-of-type) {
-      margin-top: 10px;
+      margin-top: 20px;
   }
 
   .l-comment_row:last-of-type {
@@ -220,6 +220,7 @@
   }
 
   .l-flex_end {
+      width: 100%;
       display: flex;
   }
 
