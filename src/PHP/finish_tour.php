@@ -26,6 +26,52 @@ function finish_tour() {
     }
 }
 
+function delete_all_posted_post() {
+    $date = date("Y/m/d H:i:s");
+    try {
+
+        $pdo = connect_mysql();  //mysqlに接続
+
+        $sql = "UPDATE dist_post SET isDeleted = :isDeleted, deleted = :deleted";
+    
+        $stmt = $pdo->prepare($sql);
+    
+        $params = array(':isDeleted' => 1, ':deleted' => $date);
+    
+        $stmt->execute($params);
+
+    } catch (PDOException $e) {
+        echo $e;
+    }
+}
+
+function reset_post() {
+    try {
+        $pdo = connect_mysql();  //mysqlに接続
+    
+        // UPDATE文を変数に格納
+        $sql = "UPDATE spot_explanation SET isPosted = :isPosted";
+    
+        // 更新する値と該当のIDは空のまま、SQL実行の準備をする
+        $stmt = $pdo->prepare($sql);
+    
+        // 更新する値と該当のIDを配列に格納する
+        $params = array(':isPosted' => 0);
+    
+        // 更新する値と該当のIDが入った変数をexecuteにセットしてSQLを実行
+        $stmt->execute($params);
+        //return $isPosted;
+        echo "成功！";
+
+    } catch (PDOException $e) {
+        echo $e;
+    }
+}
+
 finish_tour();
+
+delete_all_posted_post();
+
+reset_post();
 
 ?>

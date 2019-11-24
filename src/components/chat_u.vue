@@ -1,23 +1,45 @@
 <template>
   <div id="chat_u">
-    <div class="l-body">
-        <div class="l-header">
-            <div class="o-header">{{ spot_name }}</div>
+      <div class="o-background">
+      
+        <div class="o-header">
+            <div class="l-header_above">
+                <div class="o-text_tour">{{ tour_name }}</div>
+            </div>
+            <div class="l-header_under u-mb20">
+                <div class="o-text_tour_min"><span class="u-color-green">{{ spot_name }}</span></div>
+            </div>
         </div>
-        <div class="l-chat-body">
-            <div class="l-chat">
-                <div class="l-comment">
-                    <div class="o-comment" v-for="ex in spot_ex">{{ ex.spot_ex }}</div>
+
+        <div class="l-comment_container">
+            <div class="l-comment_row" v-for="ex in spot_ex">
+                <div class="l-flex_end">
+                    <div class="l-comment">{{ ex.spot_ex }}</div>
+                    <div class="o-send_time">11:22</div>
+                </div>
+                <div class="o-button_hoe">
+                    <img src="../assets/hoe_button_gray.svg" />
                 </div>
             </div>
         </div>
-        <div class="l-duck-img">
-            <img class="o-duck-img" src="../assets/duck.svg" />
-        </div>
-        <div class="l-input">
 
+        <div class="l-footer">
+            <div class="o-icon">
+                <img class="o-icon_img" src="../assets/camera_button.svg" />
+                <div class="o-footer_text">カメラ</div>
+            </div>
+            <div class="o-icon">
+                <img class="o-icon_img" src="../assets/comment_active.svg" />
+                <div class="o-footer_text u-color-green">説明</div>
+            </div>
+            <div class="o-icon">
+                <img class="o-icon_img" src="../assets/map_button.svg" />
+                <div class="o-footer_text">地図</div>
+            </div>
+            
         </div>
-    </div>
+
+      </div>
   </div>
 </template>
 
@@ -28,9 +50,11 @@
     data() {
       return {
           tour_id: 1,
+          tour_name: '',
           spot_id: 1,
           spot_name: '',
           spot_ex: JSON,
+          hello: 5,
       }
     },
     created: function () {
@@ -39,6 +63,7 @@
             this.jumpPage("top_u");
         } else {
             this.tour_id = this.$route.params.tour_id;
+            this.tour_name = this.$route.params.tour_name;
             this.getPost();
         }
         setInterval(function() {
@@ -54,7 +79,6 @@
             axios
                 .post(url, params)
                 .then(response => {
-                    //console.log(response.data);
                     this.spot_ex = response.data;
                     this.get_spot_name();
                 })
@@ -64,27 +88,7 @@
                 });
         },
         get_spot_name: function() {
-            const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/get_spot_info.php';
-            let params = new URLSearchParams();
-            params.append('tour_id', this.tour_id);
-            axios
-                .post(url, params)
-                .then(response => {
-                    let spot_id_arr = [];
-                    for(let i=0; i<this.spot_ex.length; i++) {
-                        spot_id_arr.push(this.spot_ex[i].spot_id);
-                    }
-                    this.spot_id = Math.max.apply(null, spot_id_arr);
-                    for(let i=0; i<response.data.length; i++) {
-                        if(response.data[i].spot_id == this.spot_id) {
-                            this.spot_name = response.data[i].spot_name;
-                            break;
-                        }
-                    }
-                }).catch(error => {
-                    // エラーを受け取る
-                    console.log(error);
-                });
+            return 'かりの名前';
         },
         jumpPage: function(where) {
             this.$router.push({
@@ -101,84 +105,158 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-  #chat_u,
-  .l-body {
+  #chat_u {
     height: 100%;
     width: 100%;
+
+    background-color: #F5F5F5;
+    color: rgba(0,0,0,.87);
   }
 
-  .l-body {
-    background: #5c9982;
-  }
-
-  .l-header {
-    height: 100px;
-    width: 100%;
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  .o-background {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
   }
 
   .o-header {
-      color: white;
-      font-size: 18px;
+      position: fixed;
+      height: 80px;
+      width: 100%;
+      background-color: #fff;
+      filter: drop-shadow(0 0 5px rgba(0,0,0,.26));
+  }
+
+  .l-header_above {
+    width: 100%;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+
+    .o-text_tour {
+      padding: 10px 0 0 20px;
+
+      font-size: 24px;
       font-weight: bold;
+    }
+
+    .o-image_image_button {
+      padding: 0 20px 0 20px;
+    }
+
+    .o-button_sort {
+      fill: #4B8E8D;
+    }
+
+  .l-header_under {
+    width: 100%;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
 
-  .l-chat-body {
-      height: calc(100% - 200px);
-      width: 100%;
-      background: white;
+    .o-text_tour_min {
+      padding: 0 0 0 20px;
 
-      overflow: scroll;
-      -webkit-overflow-scrolling: touch; /* 惰性でスクロールさせる */
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .o-text_add_image {
+      padding: 0 15px 0 0;
+
+      font-size: 12px;
+      font-weight: bold;
+      color: rgba(0,0,0, .26);
+    }
+
+  .l-comment_container {
+      width: calc(100% - 40px);
   }
 
-    .l-comment {
-        padding: 50px 0 0 20px;
-    }
+  .l-comment_row {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+  }
 
-    .o-comment {
-        min-height: 20px;
-        width: calc(100vw - 110px);
-        font-size: 12px;
+  .l-comment_row:first-of-type {
+      margin-top: 100px;
+  }
 
-        padding: 10px;
+  .l-comment_row:not(:first-of-type) {
+      margin-top: 20px;
+  }
 
-        border-radius: 5px;
-        background-color: #5c9982;
-        color: white;
-    }
+  .l-comment_row:last-of-type {
+      margin-bottom: 120px;
+  }
 
-    .o-comment:not(:first-of-type) {
-        margin-top: 20px;
-    }
-
-    .o-comment:last-of-type {
-        margin-bottom: 20px;
-    }
-
-    .l-input {
-      height: 100px;
+  .l-flex_end {
       width: 100%;
+      display: flex;
+  }
 
-      background-color: white;
-      border-top: solid 1px rgba(0,0,0,.12);
-    }
+  .l-comment {
+      padding: 10px;
+      background-color: #E3E5E5;
+      border-radius: 10px;
+  }
 
-    .l-duck-img {
-        height: 50px;
-        width: 50px;
+  .o-send_time {
+      margin: 0 5px;
+      display: flex;
+      align-items: flex-end;
 
-        position: fixed;
-        right: 0;
-        bottom: 100px;
-    }
+      font-size: 10px;
+      color: #A2A6A5;
+  }
 
-    .o-duck-img {
-        height: 50px;
-        width: 50px;
-    }
+  .l-footer {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      height: 80px;
+      width: calc(100% - 40px);
+      background-color: #fff;
+      border-radius: 100px;
+      filter: drop-shadow(0 3px 10px rgba(0,0,0,.26));
+
+      display: flex;
+      justify-content: space-evenly;
+      align-items: center;
+  }
+
+  .o-icon {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+  }
+
+  .o-icon_img {
+      height: 35px;
+  }
+
+  .o-footer_text {
+      margin-top: 10px;
+      font-size: 12px;
+      color: #C2C7C6;
+  }
+
+  .u-color-green {
+    color: #4B8E8D;
+  }
+
+  .u-color-red {
+    color: #CC544D;
+  }
 
 </style>

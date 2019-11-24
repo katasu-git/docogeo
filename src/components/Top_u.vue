@@ -1,32 +1,33 @@
 <template>
   <div id="top_u">
-    <div class="l-body">
-        
-      <div class="l-logo">
-        <div class="o-logo-text">
-          <div class="o-logo-text-l">DoCoGeo</div>
-          <div class="o-logo-text-s">for User</div>
-        </div>
-        <div class="o-logo-img">
-          <img src="../assets/duck.svg" />
-        </div>
+    <div class="o-background">
+
+      <div class="l-header_above">
+        <div class="o-text_tour">Tour</div>
       </div>
-      <div class="o-text-tour">開催中のツアー</div>
-      <div class="l-justify-center">
-        <div class="l-cardContainer">
-          <div class="o-card" v-for="info in tour_info" v-on:click='jumpPage("chat_u", info.tour_id)'>
-            <div class="o-card-img"></div>
-            <div class="o-card-title">{{ info.tour_name }}</div>
+      <div class="l-header_under">
+        <div class="o-text_tour_min">開催中のツアー</div>
+      </div>
+      <div class="o-slider">
+        <div class="o-card"
+          v-for="info in tour_info"
+          :key="info.tour_id"
+          @click="jumpPage('chat_u', info.tour_id, info.tour_name)"
+        >
+          <img src="../assets/sample.jpg" class="o-image_tour" />
+          <div class="o-transparent">
+            <div class="o-text_tour_title">{{ info.tour_name }}</div>
+            <div class="o-text_update">最終更新 2019.11.7</div>
           </div>
         </div>
       </div>
+
     </div>
   </div>
 </template>
 
 <script>
   import axios from 'axios'
-  import StartTourM from './start_tour_m'
   export default {
     name: 'top_u',
     data() {
@@ -51,11 +52,12 @@
           console.log(error);
         });
       },
-      jumpPage: function(where, tour_id) {
+      jumpPage: function(where, tour_id, tour_name) {
         this.$router.push({
             name: where,
             params: {
-              tour_id: tour_id
+              tour_id: tour_id,
+              tour_name: tour_name
             }
         })
       },
@@ -66,103 +68,103 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-  #top_u,
-  .l-body {
+#top_u, .o-background {
     height: 100%;
     width: 100%;
+
+    background-color: #F5F5F5;
+    color: rgba(0,0,0,.87);
   }
 
-  .l-body {
-    background: #5c9982;
-  }
-
-  .l-justify-center {
-    display: flex;
-    justify-content: center;
-    background: #5c9982;
-    /*中央よせ*/
-  }
-
-  .l-cardContainer {
-    width: calc(100% - 40px);
-    padding: 30px 0 0 0;
+  .l-header_above {
+    width: 100%;
 
     display: flex;
     justify-content: space-between;
-    flex-wrap: wrap;
-    /*折り返しの指定*/
+    align-items: flex-end;
   }
 
-  .o-card, .o-card-create {
-    min-height: calc(50vw - 25px);
-    min-width: calc(50vw - 25px);
+    .o-text_tour {
+      padding: 20px 0 0 20px;
 
-    border: solid 0 white;
-    border-radius: 5px;
-    background: white;
-  }
+      font-size: 36px;
+      font-weight: bold;
+    }
 
-  .o-card:nth-child(n+3) {
-    margin-top: 10px;
-  }
+    .o-image_image_button {
+      padding: 0 20px 0 20px;
+    }
 
-  .o-card-img {
-    height: calc( (50vw - 25px)/5*3 );
-    width: 100%;
-
-    border-radius: 5px 5px 0 0;
-    background-color: #c9c9c9;
-  }
-
-  .o-card-title {
-    font-size: 12px;
-    /*font-weight: bold;*/
-  }
-
-  .l-card-create-text {
-    height: 100%;
+  .l-header_under {
     width: 100%;
 
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
   }
 
-  .o-card-create {
-    border: dashed 1px white;
-    background-color: rgba(0,0,0,0);
-    color: white;
-    font-size: 12px;
-  }
+    .o-text_tour_min {
+      padding: 0 0 0 20px;
 
-  .l-logo {
-    padding: 20px 0 0 20px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .o-text_add_image {
+      padding: 0 10px 0 0;
+
+      font-size: 12px;
+      font-weight: bold;
+      color: rgba(0,0,0, .26);
+    }
+
+  .o-slider {
+    padding: 40px 0 0 0;
     display: flex;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch; /*ios*/
   }
 
-  .o-logo-text {
-    color: white;
+  .o-card {
+    padding: 0 0 0 20px;
+    position: relative;
+    height: 330px;
+    width: 240px;
   }
 
-  .o-logo-text-l {
-    font-size: 36px;
-    font-weight: bold;
+  .o-card:last-of-type {
+    padding: 0 20px 0 20px;
   }
 
-  .o-logo-text-s {
-    font-size: 12px;
-    font-weight: bold;
-  }
+    .o-image_tour {
+      height: 330px;
+      width: 240px;
+      border-radius: 30px;
+      object-fit: cover;
+    }
 
-  .o-logo-img>img {
-    height: 60px;
-  }
+    .o-transparent {
+      height: 80px;
+      width: 240px;
+      position: absolute;
+      bottom: 0;
+      border-radius: 0 0 30px 30px;
+      background-color: rgba(0,0,0,.5);
+    }
 
-  .o-text-tour {
-    padding: 30px 0 0 20px;
-    color: white;
-    font-size: 20px;
-    font-weight: bold;
-  }
+      .o-text_tour_title {
+        padding: 20px 0 0 20px;
 
+        font-size: 18px;
+        font-weight: bold;
+        color: #fff;
+      }
+
+      .o-text_update {
+        padding: 0 0 0 20px;
+
+        font-size: 14px;
+        color: rgba(255,255,255,.70);
+      }
 </style>
