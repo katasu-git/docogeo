@@ -4,6 +4,8 @@
       
       <div class="o-background_black">
         <div class="o-modal">
+          <div class="o-text" @click="startTour()">ツアー開始</div>
+          <div class="o-border u-mt10"></div>
         　<div class="o-text" @click="jumpPage('editTour')">ジオサイト</div>
           <div class="o-border u-mt10"></div>
           <div class="o-text" @click="wakeChangeName">名前の変更</div>
@@ -55,7 +57,32 @@ import axios from 'axios'
               // エラーを受け取る
               console.log(error);
             });
-          }
+        },
+        startTour() {
+
+          ////////////////////////
+
+          //ここに開催中のツアーがある場合はreturnする処理
+          //ツアー終了後でないと次のツアーは開催できない
+
+          ////////////////////////
+
+          console.log("hello");
+
+          //該当ツアー開始処理
+          const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/start_tour.php';
+            let params = new URLSearchParams();
+            params.append('tour_id', this.tour_id);
+            axios
+                .post(url, params).then(response=>{
+                  //配信ページに移動
+                  this.jumpPage("chat_g");
+                })
+                .catch(error => {
+                    // エラーを受け取る
+                    console.log(error);
+                });
+        }
     },
   }
 </script>
@@ -101,6 +128,12 @@ import axios from 'axios'
     font-size: 12px;
     font-weight: bold;
     transition: 100ms;
+  }
+
+  .o-text:first-of-type {
+    border-top-right-radius: 20px;
+    background-color: #4B8E8D;
+    color: #fff;
   }
 
   .o-text:active {

@@ -26,7 +26,6 @@
 
 <script>
   import axios from 'axios'
-  import StartTourM from './start_tour_m'
   export default {
     name: 'top_u',
     data() {
