@@ -1,25 +1,23 @@
 <template>
-  <div id="changespot">
+  <div id="chatfinish">
     <div class="o-background">
       
       <div class="o-background_black">
         <div class="o-modal">
-            <button 
-                v-for="name in spot_names"
-                @click="change_spot_name(name.spot_id)"
-                :key="name.spot_id"
-            >
-                <div 
-                    class="o-text" 
-                    :style="{color:returnCol(name.spot_id)}"
-                >{{ name.spot_name }}</div>
-                
-                <div class="o-border u-mt10"></div>
-            </button>
-            <button
-                class="o-button_cancel"
-                @click="closeModal()"
-            >キャンセル</button>
+            <div class="o-text">
+                <p>ツアーを終了します</p>
+                <p>よろしいですか？</p>
+            </div>
+            <div class="l-button">
+                <button 
+                    class="o-button_cancel"
+                    @click="closeModal()"
+                >キャンセル</button>
+                <button 
+                    class="o-button_finish"
+                    @click="finish_tour()"
+                >終了する</button>
+            </div>
         </div>
       </div>
 
@@ -30,28 +28,27 @@
 <script>
 　import axios from 'axios'
   export default {
-    name: 'changespot',
+    name: 'chatfinish',
     props: {
         tour_id: '',
-        spot_id: '',
-        spot_names: '',
-    },
-    data() {
-      return {
-          comment: '',
-      }
     },
     methods: {
         closeModal: function() {
             this.$emit('closeModal');
         },
-        returnCol(id) {
-            if(this.spot_id == id) {
-                return '#4B8E8D';
-            }
-        },
-        change_spot_name(spot_id_selected) {
-            this.$emit('change_spot_name', spot_id_selected);
+        finish_tour() {
+            const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/finish_tour.php';
+            let params = new URLSearchParams();
+            params.append('tour_id', this.tour_id);
+            axios
+                .post(url, params).then(response => {
+                    this.closeModal();
+                    this.$emit('jumpPage', 'HelloWorld');//トップに戻る
+                })
+                .catch(error => {
+                    // エラーを受け取る
+                    console.log(error);
+                });
         }
     },
   }
@@ -59,7 +56,7 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-  #changespot {
+  #chatfinish {
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
@@ -88,7 +85,7 @@
 
   .o-modal {
     width: calc(100% - 40px);
-    border-radius: 30px;
+    border-radius: 30px 30px 0 0;
     background-color: #fff;
 
     display: flex;
@@ -99,6 +96,9 @@
     padding: 20px;
     font-size: 16px;
     font-weight: bold;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
   textarea {
@@ -125,13 +125,17 @@
       display: flex;
   }
 
-  .o-button_cancel {
+  .o-button_cancel, .o-button_finish {
     padding: 20px;
+    width: 50%;
     font-size: 16px;
     font-weight: bold;
+    color: #4B8E8D;
+  }
+
+  .o-button_finish {
     background: #CC544D;
     color: #fff;
-    border-radius: 0 0 30px 30px;
   }
 
   .u-color-green {

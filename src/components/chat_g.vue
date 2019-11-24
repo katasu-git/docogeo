@@ -10,10 +10,21 @@
             @change_spot_name="change_spot_name"
             v-show="flag_change_spot"
         ></ChangeSpot>
+
+        <FinishTour
+            :tour_id="tour_id"
+            @closeModal="closeModal"
+            @jumpPage="jumpPage"
+            v-show="flag_finish_tour"
+        ></FinishTour>
       
         <div class="o-header">
             <div class="l-header_above">
                 <div class="o-text_tour">{{ tour_name }}</div>
+                <div 
+                    class="o-image_image_button"
+                    v-on:click='finish_tour()'
+                ><img src="../assets/close_button.svg" /></div>
             </div>
             <div class="l-header_under u-mb20">
                 <button 
@@ -23,6 +34,7 @@
                     <span class="u-color-green">{{ spot_name }}</span>
                     <img class="u-ml5" src="../assets/Polygon 1.svg" />
                 </button>
+                <div class="o-text_add_image">ツアー終了</div>
             </div>
         </div>
 
@@ -64,6 +76,7 @@
 <script>
   import axios from 'axios'
   import ChangeSpot from '../components/modals/chatChangeSpot'
+  import FinishTour from '../components/modals/chatFinish'
   export default {
     name: 'chat_g',
     data() {
@@ -76,6 +89,7 @@
           spot_count: 0,
           spot_ex: JSON,
           flag_change_spot: false,
+          flag_finish_tour: false,
       }
     },
     created: function () {
@@ -89,7 +103,7 @@
         }
     },
     methods: {
-        getPost: function() {
+        getPost() {
             const url ="https://www2.yoslab.net/~nishimura/geotour/PHP/getPost.php";
             let params = new URLSearchParams();
             //スポットの表示順はarrの長さから逆順で引いていけばok
@@ -104,7 +118,7 @@
                     console.log(error);
                 });
         },
-        jumpPage: function(where) {
+        jumpPage(where) {
             this.$router.push({
                 name: where,
                 params: {
@@ -112,7 +126,7 @@
                 }
             });
         },
-        postEx: function(ex) {
+        postEx(ex) {
             if(ex.isPosted == 0) {
 
                 const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/post_ex.php';
@@ -171,25 +185,15 @@
 
             }
         },
-        isActive: function(isPosted) {
+        isActive(isPosted) {
             if(isPosted == 1) {
                 return false;
             } else {
                 return true;
             }
         },
-        finishTour: function() {
-            const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/finish_tour.php';
-            let params = new URLSearchParams();
-            params.append('tour_id', this.tour_id);
-            axios
-                .post(url, params).then(response => {
-                    this.jumpPage("HelloWorld");
-                })
-                .catch(error => {
-                    // エラーを受け取る
-                    console.log(error);
-                });
+        finish_tour () {
+            this.flag_finish_tour = true;
         },
         returnTimeCol(isPosted) {
             if(isPosted == 0) {
@@ -206,13 +210,13 @@
         changeSpot() {
             this.flag_change_spot = true;
         },
-        closeModal: function() {
+        closeModal() {
             setTimeout(() => {
                 this.flag_change_spot = false;
-                //this.get_spot_ex(); //説明の更新を反映
+                this.flag_finish_tour = false;
             }, 200)
         },
-        get_spot_name_arr: function() {
+        get_spot_name_arr() {
             const url =　"https://www2.yoslab.net/~nishimura/geotour/PHP/get_spot_info.php";
             let params = new URLSearchParams();
             params.append("tour_id", this.tour_id);
@@ -247,6 +251,7 @@
     },
     components: {
         ChangeSpot: ChangeSpot,
+        FinishTour: FinishTour,
     }
   }
 
@@ -282,7 +287,7 @@
 
     display: flex;
     justify-content: space-between;
-    align-items: flex-end;
+    align-items: flex-start;
 
     -webkit-user-select: none;
     -moz-user-select: none;
@@ -291,14 +296,14 @@
   }
 
     .o-text_tour {
-      padding: 10px 0 0 20px;
-
-      font-size: 24px;
-      font-weight: bold;
+        padding: 10px 20px 0 20px;
+        font-size: 24px;
+        line-height: calc(24px * 1.5);
+        font-weight: bold;
     }
 
     .o-image_image_button {
-      padding: 0 20px 0 20px;
+        padding: 10px 20px 0 0;
     }
 
     .o-button_sort {
@@ -321,7 +326,7 @@
     }
 
     .o-text_add_image {
-      padding: 0 15px 0 0;
+      padding: 0 10px 0 0;
 
       font-size: 12px;
       font-weight: bold;

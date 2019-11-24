@@ -5,7 +5,7 @@ require_once("./connect_mysql.php");
 function get_tour_name() {
     $tour_id = $_POST['tour_id'];
     $pdo = connect_mysql();  //mysqlに接続
-    $sql = "SELECT * FROM tour_name WHERE id=$tour_id";
+    $sql = "SELECT * FROM tour_name WHERE id=$tour_id AND isDeleted=0";
     $stmt = $pdo -> query($sql);
     $result = array();
     foreach($stmt as $row) {
