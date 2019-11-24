@@ -145,7 +145,7 @@
             } else if(ex.isPosted == 1) {
 
                 //配信済みの場合の処理
-                /*const url2 = 'https://www2.yoslab.net/~nishimura/geotour/PHP/isPosted_f.php';
+                const url2 = 'https://www2.yoslab.net/~nishimura/geotour/PHP/isPosted_f.php';
                 let params2 = new URLSearchParams();
                 params2.append("ex_id", ex.ex_id);
                 axios
@@ -155,7 +155,7 @@
                     .catch(error => {
                         // エラーを受け取る
                         console.log(error);
-                    });*/
+                    });
 
             }
         },
@@ -254,6 +254,7 @@
       width: 100%;
       background-color: #fff;
       filter: drop-shadow(0 0 5px rgba(0,0,0,.26));
+      z-index: 1;
   }
 
   .l-header_above {
@@ -363,6 +364,7 @@
       display: flex;
       justify-content: space-evenly;
       align-items: center;
+      z-index: 1;
   }
 
   .o-icon {
