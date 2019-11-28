@@ -28,6 +28,7 @@
       >
         <img class="o-img_kujira" src="../assets/kujira.svg" />
         <p class="o-text_kujira">開催中のツアーはありません</p>
+        <p class="o-text_kujira_min">しばらくお待ちください</p>
       </div>
 
       <div class="l-footer">
@@ -204,6 +205,12 @@
   .o-text_kujira {
     font-size: 18px;
     font-weight: bold;
+  }
+
+  .o-text_kujira_min {
+    margin-top: 5px;
+    font-size: 14px;
+    color: rgba(0,0,0, .54);
   }
 
   .l-footer {
