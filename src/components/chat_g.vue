@@ -210,11 +210,9 @@
                     params.append("spot_id", image.spot_id);
                     params.append("img_id", image.id);
                     params.append("img_path", image.imgPath);
-                    console.log(image);
                     axios
-                        .post(url, params).
-                        then(()=>{
-                            console.log("hello");
+                        .post(url, params).then(()=>{
+                            this.getPost(); //isPostedの値更新処理
                         })
                         .catch(error => {
                             // エラーを受け取る
@@ -224,12 +222,12 @@
                 } else {
                     //配信済みの場合の処理
                     //delete処理もまとめた
-                    console.log("heyhey");
-                    const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/isPosted_img_f.php';
+                    const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/undo_posted_post.php';
                     let params = new URLSearchParams();
                     params.append("img_id", image.id);
                     axios
                         .post(url, params).then(response => {
+                            this.getPost(); //isPostedの値更新処理
                         })
                         .catch(error => {
                             // エラーを受け取る
@@ -309,7 +307,6 @@
                 axios.post(url, params
                 ).then(response => {
                     this.srcArray = response.data;
-                    console.log(this.srcArray);
                 }).catch(error => {
                     // エラーを受け取る
                     console.log(error);

@@ -14,7 +14,7 @@ function isPosted_img_t() {
         $stmt = $pdo->prepare($sql);
     
         // 更新する値と該当のIDを配列に格納する
-        $params = array(':isPosted' => 1, ':id' => $img_id);
+        $params = array(':isPosted' => 0, ':id' => $img_id);
     
         // 更新する値と該当のIDが入った変数をexecuteにセットしてSQLを実行
         $stmt->execute($params);
@@ -26,6 +26,28 @@ function isPosted_img_t() {
     }
 }
 
+function delete_posted_post() {
+    $img_id = $_POST['img_id'];
+    $date = date("Y/m/d H:i:s");
+    try {
+
+        $pdo = connect_mysql();  //mysqlに接続
+
+        $sql = "UPDATE dist_post SET isDeleted = :isDeleted, deleted = :deleted WHERE img_id = $img_id";
+    
+        $stmt = $pdo->prepare($sql);
+    
+        $params = array(':isDeleted' => 1, ':deleted' => $date);
+    
+        $stmt->execute($params);
+
+    } catch (PDOException $e) {
+        echo $e;
+    }
+}
+
 isPosted_img_t();
+
+delete_posted_post();
 
 ?>
