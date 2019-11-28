@@ -12,7 +12,7 @@ function get_spot_image() {
     $result = array();
     foreach($stmt as $row) {
         //帰り値の設定
-        $image = array('id' => $row['id'], 'imgName' => $row['image_name'], 'imgPath' => $row['image_path']);
+        $image = array('id' => $row['id'], 'imgName' => $row['image_name'], 'imgPath' => $row['image_path'], 'isPosted' => $row['isPosted'], 'tour_id' => $row['tour_id'], 'spot_id' => $row['spot_id']);
         array_push($result, $image);
     }
     return $result;

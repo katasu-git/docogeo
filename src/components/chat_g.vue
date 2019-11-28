@@ -38,8 +38,22 @@
             </div>
         </div>
 
+        <div class="l-slider_images" :animation="150">
+            <div class="o-image" 
+                v-for="image in srcArray"
+                :key="image.id"
+                @click="postImg(image)"
+            >
+                <img class="img" :src="image.imgPath" :alt="image.imgName" />
+            </div>
+        </div>
+
+        <div class="l-border">
+            <div class="o-border u-mt20"></div>
+        </div>
+
         <div class="l-comment_container">
-            <div class="l-comment_row" v-for="ex in spot_ex">
+            <div class="l-comment_row" v-for="ex in spot_ex" :key="ex.ex_id">
                 <div class="l-flex_end">
                     <div class="l-comment" :style="{ opacity:returnOpacity(ex.isPosted) }">{{ ex.spot_ex }}</div>
                     <div class="o-send_time" :style="{ color:returnTimeCol(ex.isPosted) }">11:22</div>
@@ -75,6 +89,7 @@
 
 <script>
   import axios from 'axios'
+  import draggable from 'vuedraggable';
   import ChangeSpot from '../components/modals/chatChangeSpot'
   import FinishTour from '../components/modals/chatFinish'
   export default {
@@ -86,7 +101,7 @@
           spot_id: '',
           spot_name: '',
           spot_names: [],
-          spot_count: 0,
+          srcArray: [],
           spot_ex: JSON,
           flag_change_spot: false,
           flag_finish_tour: false,
@@ -112,6 +127,7 @@
                 .post(url, params)
                 .then(response => {
                     this.spot_ex = response.data;
+                    this.getSpotImage();
                 })
                 .catch(error => {
                     // エラーを受け取る
@@ -185,6 +201,43 @@
 
             }
         },
+        postImg(image) {
+
+                if(image.isPosted == 0) {
+                    const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/POST/post_img.php';
+                    let params = new URLSearchParams();
+                    params.append("tour_id", image.tour_id);
+                    params.append("spot_id", image.spot_id);
+                    params.append("img_id", image.id);
+                    params.append("img_path", image.imgPath);
+                    console.log(image);
+                    axios
+                        .post(url, params).
+                        then(()=>{
+                            console.log("hello");
+                        })
+                        .catch(error => {
+                            // エラーを受け取る
+                            console.log(error);
+                        });
+
+                } else {
+                    //配信済みの場合の処理
+                    //delete処理もまとめた
+                    console.log("heyhey");
+                    const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/isPosted_img_f.php';
+                    let params = new URLSearchParams();
+                    params.append("img_id", image.id);
+                    axios
+                        .post(url, params).then(response => {
+                        })
+                        .catch(error => {
+                            // エラーを受け取る
+                            console.log(error);
+                        });
+                }
+
+        },
         isActive(isPosted) {
             if(isPosted == 1) {
                 return false;
@@ -247,11 +300,26 @@
             }
             this.getPost();
             this.closeModal();
+        },
+        getSpotImage() {
+            const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/GET/get_spot_img.php';
+                let params = new URLSearchParams();
+                params.append('tour_id', this.tour_id);
+                params.append('spot_id', this.spot_id);
+                axios.post(url, params
+                ).then(response => {
+                    this.srcArray = response.data;
+                    console.log(this.srcArray);
+                }).catch(error => {
+                    // エラーを受け取る
+                    console.log(error);
+                });
         }
     },
     components: {
         ChangeSpot: ChangeSpot,
         FinishTour: FinishTour,
+        draggable: draggable,
     }
   }
 
@@ -333,6 +401,51 @@
       color: rgba(0,0,0, .26);
     }
 
+.l-slider_images {
+    margin: 100px 0 0 0;
+    width: 100%;
+    display: flex;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch; /*ios*/
+  }
+
+  .o-image {
+    position: relative;
+    min-height: 100px;
+    min-width: 100px;
+    background-color: rgba(0,0,0, .05);
+    border-radius: 10px;
+  }
+
+  .img {
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+    object-fit: cover;
+  }
+
+  .o-image:first-of-type {
+      margin: 0 0 0 20px;
+  }
+
+  .o-image:not(:first-of-type) {
+    margin-left: 10px;
+  }
+
+  .l-border {
+    margin: 20px 0;
+    width: 100vw;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .o-border {
+    height: 1px;
+    width: calc(100% - 20px);
+    background-color: rgba(0,0,0, .12);
+  }
+
   .l-comment_container {
       width: calc(100% - 40px);
   }
@@ -341,10 +454,6 @@
       display: flex;
       align-items: center;
       justify-content: flex-start;
-  }
-
-  .l-comment_row:first-of-type {
-      margin-top: 100px;
   }
 
   .l-comment_row:not(:first-of-type) {

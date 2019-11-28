@@ -31,7 +31,7 @@
       </div>
 
       <div class="l-slider_images" v-show="!flag_order">
-        <button 
+        <button
           class="o-button_add_img"
           @touchend="addImg()">画像を追加する</button>
         <div class="o-image" 

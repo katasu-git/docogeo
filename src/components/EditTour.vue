@@ -141,14 +141,14 @@ import GeoCreateGeo from '../components/modals/geoCreateGeo'
             this.get_spot_info();
       },
       jumpPage: function(where, spot_id, spot_name) {
-        this.$router.push({
-            name: where,
-            params: {
-              tour_id: this.tour_id,
-              spot_id: spot_id,
-              spot_name: spot_name
-            }
-        })
+          this.$router.push({
+              name: where,
+              params: {
+                tour_id: this.tour_id,
+                spot_id: spot_id,
+                spot_name: spot_name
+              }
+          });
       },
       onPlusStart: function(spot_id)  {
         this.spot_id_avoid = spot_id;

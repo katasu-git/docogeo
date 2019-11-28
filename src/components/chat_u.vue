@@ -14,7 +14,14 @@
         <div class="l-comment_container">
             <div class="l-comment_row" v-for="ex in spot_ex">
                 <div class="l-flex_end">
-                    <div class="l-comment">{{ ex.spot_ex }}</div>
+                    <div class="l-comment" 
+                        v-if="returnFlag(ex.spot_ex)"
+                    >{{ return_spot_ex(ex) }}</div>
+                    <img 
+                        class="o-spot_img"
+                        :src="return_spot_img(ex)"
+                        v-if="returnFlag(!ex.spot_ex)" 
+                    />
                     <div class="o-send_time">11:22</div>
                 </div>
                 <div class="o-button_hoe">
@@ -98,6 +105,19 @@
                 }
             });
         },
+        return_spot_ex(ex) {
+            return ex.spot_ex;
+        },
+        return_spot_img(ex) {
+            return ex.imgPath;
+        },
+        returnFlag(contents) {
+            if(contents == '' || contents == undefined || contents == null) {
+                return false;
+            } else {
+                return true;
+            }
+        }
     }
   }
 
@@ -208,6 +228,12 @@
   .l-comment {
       padding: 10px;
       background-color: #E3E5E5;
+      border-radius: 10px;
+  }
+
+  .o-spot_img {
+      width: calc(100% - 35px);
+      max-width: 400px;
       border-radius: 10px;
   }
 

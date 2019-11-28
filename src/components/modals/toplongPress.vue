@@ -6,7 +6,7 @@
         <div class="o-modal">
           <div class="o-text" @click="startTour()">ツアー開始</div>
           <div class="o-border u-mt10"></div>
-        　<div class="o-text" @click="jumpPage('editTour')">ジオサイト</div>
+        　<div class="o-text" @click="jumpPage('editTour')">編集</div>
           <div class="o-border u-mt10"></div>
           <div class="o-text" @click="wakeChangeName">名前の変更</div>
           <div class="o-border u-mt10"></div>
