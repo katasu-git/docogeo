@@ -22,6 +22,18 @@
         </div>
       </div>
 
+      <div 
+        class="o-kujira"
+        v-if="checkActiveTour() && isMounted"
+      >
+        <img class="o-img_kujira" src="../assets/kujira.svg" />
+        <p class="o-text_kujira">開催中のツアーはありません</p>
+      </div>
+
+      <div class="l-footer">
+        <div class="o-text_footer">DoCoGeo for <span class="u-color-green">GUEST</span></div>
+      </div>
+
     </div>
   </div>
 </template>
@@ -33,6 +45,7 @@
     data() {
       return {
         tour_info: [],
+        isMounted: false,
       }
     },
     created: function () {
@@ -47,6 +60,7 @@
                     this.tour_info.push(response.data[i]);
                 }
             }
+            this.isMounted = true;
         }).catch(error => {
           // エラーを受け取る
           console.log(error);
@@ -61,6 +75,13 @@
             }
         })
       },
+      checkActiveTour() {
+        if(this.tour_info.length < 1 || this.tour_info == []) {
+          return true;
+        } else {
+          return false;
+        }
+      }
     }
   }
 
@@ -167,4 +188,42 @@
         font-size: 14px;
         color: rgba(255,255,255,.70);
       }
+
+  .o-kujira {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .o-img_kujira {
+    width: calc(100% - 80px);
+  }
+
+  .o-text_kujira {
+    font-size: 18px;
+    font-weight: bold;
+  }
+
+  .l-footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    height: 30px;
+    background-color: #fff;
+
+    display: flex;
+    align-items: center;
+  }
+
+  .o-text_footer {
+    margin-left: 20px; 
+    font-size: 12px;
+    font-weight: bold;
+  }
+
+  .u-color-green {
+    color: #4B8E8D;
+  }
 </style>
