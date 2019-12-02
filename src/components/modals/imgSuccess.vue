@@ -30,6 +30,7 @@
     methods: {
         closeModal: function() {
             this.$emit('closeModal');
+            this.$emit('jumpPage', 'editSpot');
         },
     },
   }

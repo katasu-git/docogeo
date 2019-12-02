@@ -5,6 +5,7 @@
     　　 <div id="comuppic" v-show="flag_add_img">
             <div class="o-background_black">
                 <div class="o-modal">
+                    <input type="file" @change="onFileChange" name="upfile" id="upfile"/>
                     <img class="o-preview_img" v-show="uploadedImage" :src="uploadedImage" alt="preview_img" />
                     <div class="l-button u-mt40">
                         <button class="o-button_cancel" @click="closeModal()">キャンセル</button>
@@ -16,7 +17,8 @@
 
         <Success
           v-show="flag_success"
-          @closeModal="closeModal"></Success>
+          @closeModal="closeModal"
+          @jumpPage=jumpPage></Success>
 
       <div class="l-header_above">
         <div class="o-text_tour">Images</div>
@@ -45,7 +47,6 @@
         v-show="!flag_add"
       >
         <img src="../assets/upload_button.svg" @click="wakeAddImg()"/>
-        <input class="u-disp_none" type="file" @change="onFileChange" name="upfile" id="upfile"/>
       </label>
 
       <div class="o-img_container">
@@ -103,6 +104,7 @@ import Success from '../components/modals/imgSuccess'
         closeModal: function() {
             console.log("発火");
             this.flag_add_img = false;
+            this.flag_success = false;
             this.getAllImage();
         },
         wakeAddImg() {
@@ -138,7 +140,8 @@ import Success from '../components/modals/imgSuccess'
             reader.readAsDataURL(file);
         },
         postFile: function() {
-            // FormData を利用して File を POST する
+          console.log(this.file.type);
+          if(this.file.type == 'image/jpeg' || this.file.type == 'image/png') {
                 let formData = new FormData();
                 formData.append('upfile', this.file);
                 axios
@@ -156,6 +159,9 @@ import Success from '../components/modals/imgSuccess'
                     .catch(function(error) {
                         // error 処理
                     })
+          } else {
+            console.log("だめ");
+          }
         },
         addImgToSpot(index, isAdded) {
           if(this.tour_id == '' || this.spot_id == '' || isAdded == 1) {
@@ -188,12 +194,6 @@ import Success from '../components/modals/imgSuccess'
                   // エラーを受け取る
                   console.log(error);
               });
-        },
-        closeModal: function() {
-          setTimeout(() => {
-            this.flag_success = false;
-            this.jumpPage('editSpot', );
-          }, 200)
         },
         returnOpacity(isAdded) {
           if(isAdded == 1 && this.flag_add) {
