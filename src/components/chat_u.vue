@@ -22,7 +22,7 @@
                         :src="return_spot_img(ex)"
                         v-if="returnFlag(!ex.spot_ex)" 
                     />
-                    <div class="o-send_time">11:22</div>
+                    <div class="o-send_time">{{returnSended(ex.created)}}</div>
                 </div>
                 <div class="o-button_hoe">
                     <img src="../assets/hoe_button_gray.svg" />
@@ -117,6 +117,9 @@
             } else {
                 return true;
             }
+        },
+        returnSended(sended) {
+            return sended.substr(10, 6);
         }
     }
   }

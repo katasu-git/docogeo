@@ -24,6 +24,28 @@ function post_ex() {
 
 }
 
+function update_sended() {
+    $ex_id = $_POST['ex_id'];
+    $date = date("Y/m/d H:i:s");
+    try {
+
+        $pdo = connect_mysql();  //mysqlに接続
+
+        $sql = "UPDATE spot_explanation SET sended = :sended WHERE id = $ex_id";
+    
+        $stmt = $pdo->prepare($sql);
+    
+        $params = array(':sended' => $date);
+    
+        $stmt->execute($params);
+
+    } catch (PDOException $e) {
+        echo $e;
+    }
+}
+
 post_ex();
+
+update_sended();
 
 ?>

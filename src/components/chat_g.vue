@@ -56,7 +56,10 @@
             <div class="l-comment_row" v-for="ex in spot_ex" :key="ex.ex_id">
                 <div class="l-flex_end">
                     <div class="l-comment" :style="{ opacity:returnOpacity(ex.isPosted) }">{{ ex.spot_ex }}</div>
-                    <div class="o-send_time" :style="{ color:returnTimeCol(ex.isPosted) }">11:22</div>
+                    <div 
+                        class="o-send_time"
+                        :style="{ color:returnTimeCol(ex.isPosted) }"
+                    >{{returnSended(ex.sended)}}</div>
                 </div>
                 <div class="o-button_hoe"
                     :style="{ opacity:returnOpacity(ex.isPosted) }"
@@ -311,6 +314,9 @@
                     // エラーを受け取る
                     console.log(error);
                 });
+        },
+        returnSended(sended) {
+            return sended.substr(10, 6);
         }
     },
     components: {
