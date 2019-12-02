@@ -4,15 +4,18 @@
         <div class="o-img-area">
             <img
               v-show="photo_flag"
-              class="o-img_sample"
+              id="o-img_sample"
               src="../assets/sample2.jpg" 
             />
-            <video 
-              class="video"
+            <video
               ref="video" 
               id="video"
               autoplay muted playsinline
             ></video>
+            <canvas
+              ref="canvas"
+              id="canvas"
+            ></canvas>
             <div class="l-img_right_bottom">
               <img
                 v-show="bottom_flag" 
@@ -32,6 +35,11 @@
             class="o-button"
             @click="turnBottom()"
           >右下ON/OFF</button>
+
+          <button 
+            class="o-button"
+            @click="capture()"
+          >撮影</button>
         </div>
       
     </div>
@@ -50,18 +58,19 @@ import { async } from 'q';
         captures: [],
         photo_flag: false,
         bottom_flag: false,
+        video_width: '',
+        video_height: ''
       }
     },
-    mounted () {
+    mounted() {
         this.video = this.$refs.video
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
             const constraints = {
                 audio: false,
                 video: {
-                    width: 300,
-                    height: 200,
-                    //facingMode: "user",   // フロントカメラを利用する
-                    facingMode: { exact: "environment" }  // リアカメラを利用する場合
+                  width: this.returnVideoWidth(),
+                  height: this.returnVideoHeight(),
+                  facingMode: { ideal: "environment" }  // リアカメラを利用する場合
                 }
             };
             navigator.mediaDevices.getUserMedia(constraints)
@@ -70,6 +79,7 @@ import { async } from 'q';
                 this.video.play()
             })
         }
+
     },
     methods: {
       turnCam() {
@@ -85,6 +95,19 @@ import { async } from 'q';
         } else {
           this.bottom_flag = true;
         }
+      },
+      capture() {
+        this.canvas = this.$refs.canvas
+        this.canvas.getContext('2d').drawImage(this.video, 0, 0, this.returnVideoWidth(), 300);
+        this.captures.push(this.canvas.toDataURL('image/png'))
+        console.log(this.captures)
+      },
+      returnVideoWidth() {
+        return '300';
+      },
+      returnVideoHeight() {
+        //let height = document.getElementById('video').clientHeight;
+        return '300';
       }
     }
   }
@@ -101,9 +124,9 @@ import { async } from 'q';
     color: rgba(0,0,0,.87);
   }
 
-  .o-img-area {
+  #o-img-area {
     position: relative;
-    width: calc(100% - 40px);
+    width: calc(100% - 20px);
     height: calc(100% - 80px - 20px);
     padding: 10px;
   }
@@ -116,10 +139,12 @@ import { async } from 'q';
     object-fit: cover;
   }
 
-  .video {
-    object-fit: cover;
-    width: calc(100vw - 20px);
-    height: 100%;
+  #video {
+    object-fit: contain;
+  }
+
+  #canvas {
+    /*object-fit: contain;*/
   }
 
   .l-button {
@@ -136,7 +161,7 @@ import { async } from 'q';
   .l-img_right_bottom {
     position: absolute;
     bottom: 10px;
-    right: -10px;
+    right: 10px;
     width: 30%;
     height: 30%;
 

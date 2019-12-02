@@ -4,9 +4,11 @@
 
       <ComLongPress v-show="flag_longpress"
         :ex_id_avoid="ex_id_avoid"
+        :flag_press_img="flag_press_img"
         @closeModal="closeModal"
         @get_spot_ex="get_spot_ex"
         @changeCom="changeCom"
+        @getSpotImage="getSpotImage"
       ></ComLongPress>
 
       <ComAddComment @closeModal="closeModal"
@@ -37,6 +39,8 @@
         <div class="o-image" 
           v-for="image in srcArray"
           :key="image.id"
+          v-long-press="500"
+          @long-press-start="onPlusStart(image.id, true)"
         >
           <img class="img" :src="image.imgPath" :alt="image.imgName" />
         </div>
@@ -60,8 +64,11 @@
           <div class="l-image_text_burger">
               <div class="l-image_text">
                 <div class="l-list_text">
-                  <div class="o-list_text_geosite"
-                    v-long-press="500" @long-press-start="onPlusStart(ex.id)">{{ ex.spot_ex }}</div>
+                  <div
+                    class="o-list_text_geosite"
+                    v-long-press="500"
+                    @long-press-start="onPlusStart(ex.id, false)"
+                  >{{ ex.spot_ex }}</div>
                   <div class="o-list_text_update">2019.11.7</div>
                 </div>
               </div>
@@ -83,8 +90,11 @@
         </div>
       </draggable>
 
-      <button class="o-button_save_sort" v-on:click="startSort()" 
-        v-show="flag_order && !flag_add_com &&!flag_longpress">並び替えを終了する</button>
+      <button 
+        class="o-button_save_sort"
+        v-on:click="startSort()" 
+        v-show="flag_order && !flag_add_com &&!flag_longpress"
+      >並び替えを終了する</button>
 
       <button class="o-button_create_geosite" v-on:click="addComment()" 
         v-show="!flag_order && !flag_add_com &&!flag_longpress">新しく説明を追加する</button>
@@ -113,6 +123,7 @@ export default {
       flag_add_com: false,
       flag_longpress: false,
       flag_change_com: false,
+      flag_press_img: false,
     };
   },
   created: function() {
@@ -183,8 +194,13 @@ export default {
       //this.closeModal();
       this.flag_change_com = true;
     },
-    onPlusStart: function(id) {
+    onPlusStart: function(id, flag_press_img) {
       this.ex_id_avoid = id;  //削除する時の判定に使う
+      if(flag_press_img) {
+        this.flag_press_img = true;
+      } else {
+        this.flag_press_img = false;
+      }
       this.flag_longpress = true;
     },
     update_order_spot_ex: function() {
@@ -315,6 +331,8 @@ export default {
   .o-image, .o-button_add_img {
     height: 100px;
     width: 100px;
+    min-height: 100px;
+    min-width: 100px;
     background-color: rgba(0,0,0, .05);
     border-radius: 10px;
   }

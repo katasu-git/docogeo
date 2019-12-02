@@ -14,19 +14,36 @@
             </div>
         </div>
 
+        <Success
+          v-show="flag_success"
+          @closeModal="closeModal"></Success>
+
       <div class="l-header_above">
         <div class="o-text_tour">Images</div>
-        <div class="o-image_image_button">
+        <div 
+          class="o-image_image_button"
+          v-show="!flag_add"
+        >
             <img @click="startSort()" v-show="!flag_order" src="../assets/sort_button.svg" />
             <img @click="startSort()" v-show="flag_order" src="../assets/sort_button_active.svg" />
         </div>
       </div>
       <div class="l-header_under">
-        <div class="o-text_tour_min">画像</div>
-        <div class="o-text_add_image" v-bind:style="{ color: returnSortColor()}">並べ替え</div>
+        <div class="o-text_tour_min">
+          <p v-show="!flag_add">画像</p>
+          <p v-show="flag_add">追加する画像を選択</p>
+        </div>
+        <div 
+          class="o-text_add_image" 
+          v-bind:style="{ color: returnSortColor()}"
+          v-show="!flag_add"
+        >並べ替え</div>
       </div>
 
-      <label class="o-upload_button">
+      <label 
+        class="o-upload_button"
+        v-show="!flag_add"
+      >
         <img src="../assets/upload_button.svg" @click="wakeAddImg()"/>
         <input class="u-disp_none" type="file" @change="onFileChange" name="upfile" id="upfile"/>
       </label>
@@ -36,7 +53,8 @@
             <img
             class="box"
             :src="image.imgPath"
-            @touchstart="addImgToSpot(image.id)" />
+            :style="{opacity: returnOpacity(image.isAdded)}"
+            @touchstart="addImgToSpot(image.id, image.isAdded)" />
         </div>
       </div>
       
@@ -45,8 +63,9 @@
 </template>
 
 <script>
-  import axios from 'axios'
+import axios from 'axios'
 import { async } from 'q';
+import Success from '../components/modals/imgSuccess'
   export default {
     name: 'images',
     data() {
@@ -56,6 +75,8 @@ import { async } from 'q';
         img_name: '',
         flag_order: false,
         flag_add_img: false,
+        flag_success: false,
+        flag_add: false,
         height: '',
         images: 20,
         tour_id: '', //commentから渡ってきた場合
@@ -67,17 +88,17 @@ import { async } from 'q';
       if(this.$route.params.tour_id != undefined && this.$route.params.spot_id != undefined) {
         this.tour_id = this.$route.params.tour_id;
         this.spot_id = this.$route.params.spot_id;
+        this.flag_add = true;
       }
       this.getAllImage();
     },
     methods: {
-        jumpPage: function(where, tour_id, tour_name) {
-            //console.log(this.avoidParam.tour_id);
+        jumpPage: function(where) {
             this.$router.push({
                 name: where,
                 params: {
                 tour_id: this.tour_id,
-                tour_name: this.tour_name,
+                spot_id: this.spot_id,
                 }
             })
         },
@@ -138,8 +159,8 @@ import { async } from 'q';
                         // error 処理
                     })
         },
-        addImgToSpot(index) {
-          if(this.tour_id == '' || this.spot_id == '') {
+        addImgToSpot(index, isAdded) {
+          if(this.tour_id == '' || this.spot_id == '' || isAdded == 1) {
             console.log("reject");
             return; //editページ以外からの遷移時は登録しない
           }
@@ -154,6 +175,7 @@ import { async } from 'q';
               axios.post(url, params
               ).then(response => {
                 //ここでeditに戻る処理
+                this.flag_success = true;
               }).catch(error => {
                   // エラーを受け取る
                   console.log(error);
@@ -168,8 +190,24 @@ import { async } from 'q';
                   // エラーを受け取る
                   console.log(error);
               });
+        },
+        closeModal: function() {
+          setTimeout(() => {
+            this.flag_success = false;
+            this.jumpPage('editSpot', );
+          }, 200)
+        },
+        returnOpacity(isAdded) {
+          if(isAdded == 0) {
+            return '1';
+          } else {
+            return '0.3';
+          }
         }
     },
+    components: {
+      Success: Success,
+    }
   }
 
 </script>
