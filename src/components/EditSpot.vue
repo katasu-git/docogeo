@@ -59,7 +59,7 @@
         <div class="o-border u-mt20"></div>
       </div>
 
-      <div　class="l-comment" v-show="!flag_order">
+      <!-- <div　class="l-comment" v-show="!flag_order">
         <div v-for="ex in spot_ex" :key="ex.id">
           <div class="l-image_text_burger">
               <div class="l-image_text">
@@ -74,6 +74,19 @@
               </div>
           </div>
         </div>
+      </div>-->
+      
+      <div class="l-comment_container">
+            <div class="l-comment_row" v-for="ex in spot_ex">
+                <div class="l-flex_end">
+                    <div
+                      class="l-comment"
+                      v-long-press="500"
+                      @long-press-start="onPlusStart(ex.id, false)"
+                    >{{ ex.spot_ex }}</div>
+                    <div class="o-send_time">11:22</div>
+                </div>
+            </div>
       </div>
 
       <draggable @update="update_order_spot_ex()" class="l-comment" v-model="spot_ex" :animation="150" v-show="flag_order">
@@ -262,6 +275,7 @@ export default {
   color: rgba(0,0,0,.87);
 }
 
+
 .l-header_above {
     width: 100%;
 
@@ -335,6 +349,10 @@ export default {
     min-width: 100px;
     background-color: rgba(0,0,0, .05);
     border-radius: 10px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
   }
 
   .img {
@@ -367,55 +385,6 @@ export default {
     background-color: rgba(0,0,0, .12);
   }
 
-  .l-comment {
-    margin-bottom: 80px;
-    width: calc(100% - 40px);
-  }
-
-  .o-list {
-    padding: 20px 0 0 20px;
-  }
-
-  .l-image_text_burger {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .o-burger {
-    margin: 0 20px;
-  }
-  
-  .l-image_text {
-    display: flex;
-    margin-right: 20px;
-  }
-
-  .l-list_text {
-    margin: 20px 0 0 20px;
-    background-color: rgba(0,0,0, .05);
-    border-radius: 10px;
-  }
-
-  .o-list_text_geosite {
-    padding: 20px 20px 10px 20px;
-    font-size: 14px;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-  }
-
-  .o-list_text_update {
-    padding: 0 20px 20px 20px;
-    font-size: 12px;
-    color: rgba(0,0,0, .26);
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-  }
-
   .o-button_create_geosite, .o-button_save_sort {
     position: fixed;
     bottom: 20px;
@@ -437,6 +406,50 @@ export default {
 
   .o-button_create_geosite:acitve {
     opacity: .7;
+  }
+
+  .l-comment_container {
+      width: calc(100% - 40px);
+      margin-left: 20px;
+  }
+
+  .l-comment_row {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+  }
+
+  .l-comment_row:first-of-type {
+      margin-top: 20px;
+  }
+
+  .l-comment_row:not(:first-of-type) {
+      margin-top: 20px;
+  }
+
+  .l-comment_row:last-of-type {
+      margin-bottom: 120px;
+  }
+
+  .l-flex_end {
+      width: 100%;
+      display: flex;
+      align-items: flex-end;
+  }
+
+  .l-comment {
+      padding: 10px;
+      background-color: #E3E5E5;
+      border-radius: 10px;
+  }
+
+  .o-send_time {
+      margin: 0 5px;
+      display: flex;
+      align-items: flex-end;
+
+      font-size: 10px;
+      color: #A2A6A5;
   }
 
   .u-mt10 {

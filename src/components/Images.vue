@@ -77,8 +77,6 @@ import Success from '../components/modals/imgSuccess'
         flag_add_img: false,
         flag_success: false,
         flag_add: false,
-        height: '',
-        images: 20,
         tour_id: '', //commentから渡ってきた場合
         spot_id: '', //commentから渡ってきた場合
         srcArray: [],
