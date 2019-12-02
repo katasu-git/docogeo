@@ -32,7 +32,10 @@
       <div class="o-slider">
         <div class="o-card" v-for="info in tour_info"
           @click="onPlusStart(info.tour_id, info.tour_name)" :key="info.tour_id">
-          <img src="../assets/sample.jpg" class="o-image_tour" />
+          <img 
+            src="../assets/kujira.svg"
+            class="o-image_tour"
+          />
           <div class="o-transparent">
             <div class="o-text_tour_title">{{ info.tour_name }}</div>
             <div class="o-text_update">最終更新 2019.11.7</div>
@@ -63,6 +66,7 @@
         flag_change_name: false,
         tour_id_avoid: '',
         tour_name_avoid: '',
+        srcArray: [],
       }
     },
     created: function () {
@@ -106,7 +110,7 @@
         this.tour_id_avoid = tour_id;
         this.tour_name_avoid = tour_name;
         this.flag_long_press = true;
-      }
+      },
     },
     components: {
       TopCreateTour: TopCreateTour,
@@ -170,6 +174,7 @@
     }
 
   .o-slider {
+    height: calc(100% - 100px - 90px - 60px);
     padding: 40px 0 0 0;
     display: flex;
     overflow-x: scroll;
@@ -180,8 +185,8 @@
   .o-card {
     padding: 0 0 0 20px;
     position: relative;
-    height: 330px;
-    width: 240px;
+    height: 100%;
+    width: calc(100vw - 80px);
   }
 
   .o-card:last-of-type {
@@ -189,15 +194,16 @@
   }
 
     .o-image_tour {
-      height: 330px;
-      width: 240px;
+      height: 100%;
+      width: calc(100vw - 80px);
       border-radius: 30px;
       object-fit: cover;
+      border: solid 1px rgba(0,0,0, .12);
     }
 
     .o-transparent {
       height: 80px;
-      width: 240px;
+      width: calc(100vw - 80px);
       position: absolute;
       bottom: 0;
       border-radius: 0 0 30px 30px;

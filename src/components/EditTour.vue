@@ -45,7 +45,7 @@
             v-for="(info) in spot_info" v-on:click='jumpPage("editSpot", info.spot_id, info.spot_name)' :key="info.spot_id">
           <div class="l-image_text_burger">
             <div class="l-image_text">
-              <div class="o-list_image"><img class="o-image_circle" src="../assets/sample.jpg" /></div>
+              <div class="o-list_image"><img class="o-image_circle" src="../assets/kujira.svg" /></div>
               <div class="l-list_text">
                 <div class="o-list_text_geosite" 
                   v-long-press="300" @long-press-start="onPlusStart(info.spot_id)">{{ info.spot_name }}</div>
@@ -269,6 +269,7 @@ import GeoCreateGeo from '../components/modals/geoCreateGeo'
     width: 50px;
     border-radius: 100px;
     object-fit: cover;
+    border: solid 1px rgba(0,0,0, .12);
   }
 
   .o-list {

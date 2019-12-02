@@ -58,8 +58,11 @@
         <div class="o-border u-mt20"></div>
       </div>
       
-      <div class="l-comment_container">
-            <div class="l-comment_row" v-for="ex in spot_ex">
+      <div
+        class="l-comment_container"
+        v-show="!flag_order"
+      >
+            <div class="l-comment_row" v-for="ex in spot_ex" :key="ex.id">
                 <div class="l-flex_end">
                     <div
                       class="l-comment"
@@ -71,18 +74,24 @@
             </div>
       </div>
 
-      <draggable @update="update_order_spot_ex()" class="l-comment" v-model="spot_ex" :animation="150" v-show="flag_order">
-        <div v-for="ex in spot_ex" :key="ex.id">
-        <div class="l-image_text_burger">
-            <div class="l-image_text">
-              <div class="l-list_text">
-                <div class="o-list_text_geosite">{{ ex.spot_ex }}</div>
-                <div class="o-list_text_update">2019.11.7</div>
-              </div>
+      <draggable 
+        class="l-comment_container"
+        v-show="flag_order"
+        @update="update_order_spot_ex()"
+        v-model="spot_ex" 
+        :animation="150"
+      >
+            <div class="l-comment_row" v-for="ex in spot_ex" :key="ex.id">
+                <div class="l-flex_end">
+                    <div
+                      class="l-comment"
+                      v-long-press="500"
+                      @long-press-start="onPlusStart(ex.id, false)"
+                    >{{ ex.spot_ex }}</div>
+                    <div class="o-send_time">{{returnSended(ex.created)}}</div>
+                </div>
+                <div class="o-burger u-mt20"><img src="../assets/burger_button.svg" /></div>
             </div>
-            <div class="o-burger u-mt20"><img src="../assets/burger_button.svg" /></div>
-          </div>
-        </div>
       </draggable>
 
       <button 
