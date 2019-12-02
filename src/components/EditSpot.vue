@@ -39,8 +39,7 @@
         <div class="o-image" 
           v-for="image in srcArray"
           :key="image.id"
-          v-long-press="500"
-          @long-press-start="onPlusStart(image.id, true)"
+          @click="onPlusStart(image.id, true)"
         >
           <img class="img" :src="image.imgPath" :alt="image.imgName" />
         </div>
@@ -58,23 +57,6 @@
       <div class="l-border">
         <div class="o-border u-mt20"></div>
       </div>
-
-      <!-- <div　class="l-comment" v-show="!flag_order">
-        <div v-for="ex in spot_ex" :key="ex.id">
-          <div class="l-image_text_burger">
-              <div class="l-image_text">
-                <div class="l-list_text">
-                  <div
-                    class="o-list_text_geosite"
-                    v-long-press="500"
-                    @long-press-start="onPlusStart(ex.id, false)"
-                  >{{ ex.spot_ex }}</div>
-                  <div class="o-list_text_update">2019.11.7</div>
-                </div>
-              </div>
-          </div>
-        </div>
-      </div>-->
       
       <div class="l-comment_container">
             <div class="l-comment_row" v-for="ex in spot_ex">
@@ -84,7 +66,7 @@
                       v-long-press="500"
                       @long-press-start="onPlusStart(ex.id, false)"
                     >{{ ex.spot_ex }}</div>
-                    <div class="o-send_time">11:22</div>
+                    <div class="o-send_time">{{returnSended(ex.created)}}</div>
                 </div>
             </div>
       </div>
@@ -254,6 +236,12 @@ export default {
                   // エラーを受け取る
                   console.log(error);
               });
+        },
+        returnSended(sended) {
+            let month = sended.substr(5, 2) + '月';
+            let day = sended.substr(8, 2) + '日';
+            let time = ' ' + sended.substr(10, 6);
+            return month + day + time;
         }
   },
   components: {
@@ -444,9 +432,10 @@ export default {
   }
 
   .o-send_time {
-      margin: 0 5px;
+      margin: 0 25px 0 5px;
       display: flex;
       align-items: flex-end;
+      white-space: nowrap;
 
       font-size: 10px;
       color: #A2A6A5;
