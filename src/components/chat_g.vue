@@ -44,7 +44,12 @@
                 :key="image.id"
                 @click="postImg(image)"
             >
-                <img class="img" :src="image.imgPath" :alt="image.imgName" />
+                <img 
+                    class="img"
+                    :src="image.imgPath"
+                    :alt="image.imgName"
+                    :style="{ opacity:returnOpacity(image.isPosted) }"
+                />
             </div>
         </div>
 
@@ -256,10 +261,12 @@
             return '#4B8E8D';
         },
         returnOpacity(isPosted) {
+            console.log(isPosted);
             if(isPosted == 0) {
                 return '1';
+            } else {
+                return '0.4';
             }
-            return '0.4';
         },
         changeSpot() {
             this.flag_change_spot = true;
@@ -417,6 +424,8 @@
     position: relative;
     min-height: 100px;
     min-width: 100px;
+    max-height: 100px;
+    max-width: 100px;
     background-color: rgba(0,0,0, .05);
     border-radius: 10px;
   }
