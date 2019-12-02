@@ -57,7 +57,7 @@ import axios from 'axios'
               });
         },
         reset_img_bind() {
-          const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP//reset_img_bind.php';
+          const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/RESET/reset_img_bind.php';
               let params = new URLSearchParams();
               params.append('img_id', this.ex_id_avoid);
               axios.post(url, params

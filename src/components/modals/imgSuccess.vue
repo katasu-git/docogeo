@@ -56,7 +56,7 @@
     height: 100%;
     width: 100%;
     position: fixed;
-    background-color: rgba(0,0,0, .75);
+    background-color: rgba(0,0,0, .50);
 
     display: flex;
     align-items: center;

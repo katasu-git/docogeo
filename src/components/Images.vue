@@ -198,10 +198,10 @@ import Success from '../components/modals/imgSuccess'
           }, 200)
         },
         returnOpacity(isAdded) {
-          if(isAdded == 0) {
-            return '1';
+          if(isAdded == 1 && this.flag_add) {
+            return '0.2';
           } else {
-            return '0.3';
+            return '1';
           }
         }
     },
