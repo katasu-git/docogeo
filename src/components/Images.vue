@@ -5,7 +5,13 @@
     　　 <div id="comuppic" v-show="flag_add_img">
             <div class="o-background_black">
                 <div class="o-modal">
-                    <input type="file" @change="onFileChange" name="upfile" id="upfile"/>
+                    <input 
+                      type="file"
+                      @change="onFileChange"
+                      name="upfile" 
+                      id="upfile"
+                      class="u-mt40"
+                    />
                     <img class="o-preview_img" v-show="uploadedImage" :src="uploadedImage" alt="preview_img" />
                     <div class="l-button u-mt40">
                         <button class="o-button_cancel" @click="closeModal()">キャンセル</button>
@@ -105,6 +111,9 @@ import Success from '../components/modals/imgSuccess'
             console.log("発火");
             this.flag_add_img = false;
             this.flag_success = false;
+            this.file = '';
+            this.uploadedImage = '';
+            this.img_name = '';
             this.getAllImage();
         },
         wakeAddImg() {
@@ -327,7 +336,8 @@ import Success from '../components/modals/imgSuccess'
 
   .o-preview_img {
       padding: 20px;
-      width: calc(100% - 50px);
+      max-width: calc(100% - 50px);
+      max-height: 200px;
       border-radius: 30px;
   }
 
