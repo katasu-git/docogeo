@@ -8,6 +8,7 @@ import ChatUser from '@/components/chat_u'
 import TopU from '@/components/top_u'
 import Images from '@/components/Images.vue'
 import Camera from '@/components/Camera'
+import FreeDrawing from '@/components/FreeDrawing'
 
 Vue.use(Router)
 
@@ -32,6 +33,11 @@ export default new Router({
       path: '/camera',
       name: 'camera',
       component: Camera
+    },
+    {
+      path: '/draw',
+      name: 'draw',
+      component: FreeDrawing
     },
     {
       path: '/editTour',

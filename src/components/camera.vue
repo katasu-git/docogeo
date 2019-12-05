@@ -10,8 +10,6 @@
             <div class="wrapper">
               <canvas
                 v-show="photo_flag"
-                width="200"
-                height="200"
                 ref="canvas"
                 id="canvas"
               ></canvas>
@@ -23,11 +21,6 @@
             class="o-button"
             @click="turnCam()"
           >重ね合わせON/OFF</button>
-
-          <button 
-            class="o-button"
-            @click="turnBottom()"
-          >右下ON/OFF</button>
 
           <button 
             class="o-button"
@@ -84,13 +77,6 @@ import { async } from 'q';
           this.photo_flag = true;
         }
       },
-      turnBottom() {
-        if(this.bottom_flag) {
-          this.bottom_flag = false;
-        } else {
-          this.bottom_flag = true;
-        }
-      },
       capture() {
 
         //canvs再描画
@@ -101,7 +87,22 @@ import { async } from 'q';
         let w = this.video_h;
         this.canvas.getContext('2d').drawImage(this.video, 0, 0, this.video_w, this.video_h);
         this.captures.push(this.canvas.toDataURL('image/png'))
-        console.log(this.captures)
+
+        // 画像の各ピクセルをグレースケールに変換する //
+
+        var pixels = this.canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height);
+        for (var y = 0; y < pixels.height; y++) {
+            for (var x = 0; x < pixels.width; x++) {
+                var i = (y * 4) * pixels.width + x * 4;
+                var rgb = parseInt((pixels.data[i] + pixels.data[i + 1] + pixels.data[i + 2]) / 3, 10);
+                pixels.data[i] = rgb;
+                pixels.data[i + 1] = rgb;
+                pixels.data[i + 2] = rgb;
+            }
+        }
+        this.canvas.getContext('2d').putImageData(pixels, 0, 0, 0, 0, pixels.width, pixels.height);
+
+        /////////////////////////////////////
       },
       setCanvas() {
         //canvasのサイズ変更
@@ -111,7 +112,7 @@ import { async } from 'q';
         console.log(this.video_h);
         canvas.width = this.video_w;
         canvas.height = this.video_h;
-      }
+      },
     }
   }
 
