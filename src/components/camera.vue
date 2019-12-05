@@ -2,26 +2,19 @@
   <div id="camera">
 
         <div class="o-img-area">
-            <img
-              v-show="photo_flag"
-              id="o-img_sample"
-              src="../assets/sample2.jpg" 
-            />
             <video
               ref="video" 
               id="video"
               autoplay muted playsinline
             ></video>
-            <canvas
-              ref="canvas"
-              id="canvas"
-            ></canvas>
-            <div class="l-img_right_bottom">
-              <img
-                v-show="bottom_flag" 
-                class="o-img_right_bottom"
-                src="../assets/sample2.jpg" 
-              />
+            <div class="wrapper">
+              <canvas
+                v-show="photo_flag"
+                width="200"
+                height="200"
+                ref="canvas"
+                id="canvas"
+              ></canvas>
             </div>
         </div>
 
@@ -56,10 +49,10 @@ import { async } from 'q';
         video: {},
         canvas: {},
         captures: [],
-        photo_flag: false,
+        photo_flag: true,
         bottom_flag: false,
-        video_width: '',
-        video_height: ''
+        video_w: '200',
+        video_h: '200'
       }
     },
     mounted() {
@@ -68,8 +61,8 @@ import { async } from 'q';
             const constraints = {
                 audio: false,
                 video: {
-                  width: this.returnVideoWidth(),
-                  height: this.returnVideoHeight(),
+                  /*width: 300,
+                  height: 300,*/
                   facingMode: { ideal: "environment" }  // リアカメラを利用する場合
                 }
             };
@@ -79,6 +72,8 @@ import { async } from 'q';
                 this.video.play()
             })
         }
+
+        this.setCanvas();
 
     },
     methods: {
@@ -97,17 +92,25 @@ import { async } from 'q';
         }
       },
       capture() {
+
+        //canvs再描画
+        this.setCanvas();
+
+        console.log("hello");
         this.canvas = this.$refs.canvas
-        this.canvas.getContext('2d').drawImage(this.video, 0, 0, this.returnVideoWidth(), 300);
+        let w = this.video_h;
+        this.canvas.getContext('2d').drawImage(this.video, 0, 0, this.video_w, this.video_h);
         this.captures.push(this.canvas.toDataURL('image/png'))
         console.log(this.captures)
       },
-      returnVideoWidth() {
-        return '300';
-      },
-      returnVideoHeight() {
-        //let height = document.getElementById('video').clientHeight;
-        return '300';
+      setCanvas() {
+        //canvasのサイズ変更
+        let canvas = document.getElementById("canvas");
+        this.video_w = document.getElementById("video").clientWidth;
+        this.video_h = document.getElementById("video").clientHeight;
+        console.log(this.video_h);
+        canvas.width = this.video_w;
+        canvas.height = this.video_h;
       }
     }
   }
@@ -140,11 +143,19 @@ import { async } from 'q';
   }
 
   #video {
-    object-fit: contain;
+    object-fit: cover;
+    width: 100%;
   }
 
   #canvas {
-    /*object-fit: contain;*/
+    position: absolute;
+    top: 0;
+    opacity: .3;
+  }
+
+  .wrapper{
+    width: 100%;
+    height: 100%;
   }
 
   .l-button {
