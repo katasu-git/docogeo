@@ -2,11 +2,12 @@
   <div>
     <div ref="container">
       <canvas
-        :width="width/2"
-        :height="height/2"
+        :width="width"
+        :height="height"
         ref="canvas">
       </canvas>
     </div>
+    <canvas id="cvs1" width="200" height="200"></canvas>
   </div>
 </template>
 
@@ -23,12 +24,15 @@ export default {
     },
     brushColor: {
       type: String,
-      default: ''
+      default: 'rgba(255, 20, 147, 1)' //ペンの色
     },
     backgroundImage: {
       type: String,
       default: ''
-    }
+    },
+    get_width: '',
+    get_height: '',
+    get_captures: ''
   },
   data: () => ({
     width: window.innerWidth,
@@ -44,8 +48,19 @@ export default {
       y: 0
     },
     pos: null,
-    isPaint: false
+    isPaint: false,
+    imageObj: null,
+    backgroundLayer: null,
+    backgroundImageScope: null
   }),
+  created() {
+    //ルータから受け取った画像の縦横を指定
+    this.width = this.get_width;
+    this.height = this.get_height;
+    console.log(this.get_width);
+    console.log(this.get_height);
+    console.log(this.get_captures);
+  },
   mounted: function () {
     var container = this.$refs.container;
     this.stage = new Konva.Stage({
@@ -59,9 +74,14 @@ export default {
     this.canvas = this.$refs.canvas
     this.drawingScope = new Konva.Image({
       image: this.canvas,
+      /*
+      描画する位置を指定
       x: this.width / 4,
       y: 5,
-      stroke: 'black'
+      */
+      x: 0,
+      y: 0,
+      //stroke: 'pink'
     })
     this.drawingLayer.add(this.drawingScope)
     this.stage.draw()
@@ -78,6 +98,11 @@ export default {
     this.drawingScope.on('touchstart', this.mousedown)
     this.stage.addEventListener('touchend', this.mouseup)
     this.stage.addEventListener('touchmove', this.mousemove)
+
+    //追加
+    this.imageObj = new Image()
+    this.imageObj.addEventListener('load', this.imageOnload)
+    this.imageObj.src = this.backgroundImage
   },
   methods: {
     mousedown: function () {
@@ -132,7 +157,36 @@ export default {
     // 現在のモードが指定されたモードと一致するかどうか
     isTargetMode: function (targetMode) {
       return this.mode === targetMode
-    }
+    },
+    /** 追加 */
+    imageOnload: function () {
+      // 背景レイヤ
+      this.backgroundLayer = new Konva.Layer()
+
+      // 背景イメージ（xとy座標はthis.drawingScopeと同じにする）
+      this.backgroundImageScope = new Konva.Image({
+        image: this.imageObj,
+        /*
+        x: this.width / 4,
+        y: 5,
+        */
+        x: 0,
+        y: 0,
+        width: this.canvas.width, //キャンバスと同じサイズに設定
+        height: this.canvas.height
+      })
+
+      // 背景レイヤに背景イメージを追加
+      this.backgroundLayer.add(this.backgroundImageScope)
+      this.stage.add(this.backgroundLayer)
+
+      // 背景イメージを最背面に移動。これをしないとペンの描画が画像の下に潜ってしまう。
+      this.backgroundLayer.moveToBottom()
+    },
+    test() {
+        let test = document.getElementById("hiddenImg").clientHeight;
+        console.log(test);
+    },
   },
   watch: {
     // ペンの色変更
@@ -142,3 +196,17 @@ export default {
   }
 }
 </script>
+<style scoped>
+
+div {
+    margin: 0;
+    padding: 0;
+}
+#container_img {
+    width: 100vw;
+}
+
+#hiddenImg {
+    width: 100%;
+}
+</style>

@@ -26,6 +26,11 @@
             class="o-button"
             @click="capture()"
           >撮影</button>
+
+          <button 
+            class="o-button"
+            @click="jump()"
+          >ページ移動</button>
         </div>
       
     </div>
@@ -54,8 +59,6 @@ import { async } from 'q';
             const constraints = {
                 audio: false,
                 video: {
-                  /*width: 300,
-                  height: 300,*/
                   facingMode: { ideal: "environment" }  // リアカメラを利用する場合
                 }
             };
@@ -82,14 +85,16 @@ import { async } from 'q';
         //canvs再描画
         this.setCanvas();
 
-        console.log("hello");
         this.canvas = this.$refs.canvas
         let w = this.video_h;
         this.canvas.getContext('2d').drawImage(this.video, 0, 0, this.video_w, this.video_h);
         this.captures.push(this.canvas.toDataURL('image/png'))
 
+        console.log(this.captures);
+
         // 画像の各ピクセルをグレースケールに変換する //
 
+        /*
         var pixels = this.canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height);
         for (var y = 0; y < pixels.height; y++) {
             for (var x = 0; x < pixels.width; x++) {
@@ -102,6 +107,8 @@ import { async } from 'q';
         }
         this.canvas.getContext('2d').putImageData(pixels, 0, 0, 0, 0, pixels.width, pixels.height);
 
+        */
+
         /////////////////////////////////////
       },
       setCanvas() {
@@ -109,10 +116,23 @@ import { async } from 'q';
         let canvas = document.getElementById("canvas");
         this.video_w = document.getElementById("video").clientWidth;
         this.video_h = document.getElementById("video").clientHeight;
-        console.log(this.video_h);
+
         canvas.width = this.video_w;
         canvas.height = this.video_h;
       },
+      jump() {
+        if(this.captures == '' || this.captures == undefined || this.captures == null) {
+          return;
+        }
+         this.$router.push({
+            name: 'draw',
+            params: {
+              width: this.video_w,
+              height: this.video_h,
+              captures: this.captures
+            }
+        })
+      }
     }
   }
 

@@ -8,7 +8,7 @@ import ChatUser from '@/components/chat_u'
 import TopU from '@/components/top_u'
 import Images from '@/components/Images.vue'
 import Camera from '@/components/Camera'
-import FreeDrawing from '@/components/FreeDrawing'
+import CallCanvas from '@/components/CallCanvas'
 
 Vue.use(Router)
 
@@ -37,7 +37,7 @@ export default new Router({
     {
       path: '/draw',
       name: 'draw',
-      component: FreeDrawing
+      component: CallCanvas
     },
     {
       path: '/editTour',
