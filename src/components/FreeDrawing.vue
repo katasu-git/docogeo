@@ -1,17 +1,31 @@
 <template>
   <div>
+    <button @click="capture">save</button>
     <div ref="container">
       <canvas
         :width="width"
         :height="height"
-        ref="canvas">
+        ref="canvas"
+        id="canvas">
       </canvas>
     </div>
-    <canvas id="cvs1" width="200" height="200"></canvas>
+
+    <!--消す-->
+
+    <canvas 
+      id="cvs1"
+      ref="cvs1"
+      :width="width"
+      :height="height"
+    ></canvas>
+
+    <!---->
+
   </div>
 </template>
 
 <script>
+import axios from 'axios'
 import Konva from 'konva';
 
 export default {
@@ -28,7 +42,7 @@ export default {
     },
     backgroundImage: {
       type: String,
-      default: ''
+      default: '' //CallCanvasないのcapture[0]を指定して受け渡してる
     },
     get_width: '',
     get_height: '',
@@ -39,6 +53,7 @@ export default {
     height: window.innerHeight,
     stage: null,
     canvas: null,
+    cvs1: null,
     context: null,
     drawingLayer: null,
     drawingScope: null,
@@ -51,15 +66,13 @@ export default {
     isPaint: false,
     imageObj: null,
     backgroundLayer: null,
-    backgroundImageScope: null
+    backgroundImageScope: null,
+    file: '',
   }),
   created() {
     //ルータから受け取った画像の縦横を指定
     this.width = this.get_width;
     this.height = this.get_height;
-    console.log(this.get_width);
-    console.log(this.get_height);
-    console.log(this.get_captures);
   },
   mounted: function () {
     var container = this.$refs.container;
@@ -74,11 +87,6 @@ export default {
     this.canvas = this.$refs.canvas
     this.drawingScope = new Konva.Image({
       image: this.canvas,
-      /*
-      描画する位置を指定
-      x: this.width / 4,
-      y: 5,
-      */
       x: 0,
       y: 0,
       //stroke: 'pink'
@@ -166,10 +174,6 @@ export default {
       // 背景イメージ（xとy座標はthis.drawingScopeと同じにする）
       this.backgroundImageScope = new Konva.Image({
         image: this.imageObj,
-        /*
-        x: this.width / 4,
-        y: 5,
-        */
         x: 0,
         y: 0,
         width: this.canvas.width, //キャンバスと同じサイズに設定
@@ -183,30 +187,49 @@ export default {
       // 背景イメージを最背面に移動。これをしないとペンの描画が画像の下に潜ってしまう。
       this.backgroundLayer.moveToBottom()
     },
-    test() {
-        let test = document.getElementById("hiddenImg").clientHeight;
-        console.log(test);
-    },
-  },
-  watch: {
-    // ペンの色変更
-    brushColor: function () {
-      this.context.strokeStyle = this.brushColor
-    }
+    capture() {
+        this.cvs1 = this.$refs.cvs1
+        this.cvs1.getContext('2d').drawImage(this.canvas, 0, 0, this.width, this.height);
+        this.file = this.cvs1.toDataURL('image/png');
+
+       this.$nextTick(function(){
+          this.postFile();
+       })
+      },
+      postFile: function() {
+        console.log(this.backgroundImage);
+          const url =
+            "https://www2.yoslab.net/~nishimura/geotour/PHP/upload_draw.php";
+          //var formData = new FormData();
+          //formData.append("selectImage", this.file);
+          let params = new URLSearchParams();
+          params.append('canvasData', this.file);
+          params.append('backImage', this.backgroundImage);
+          axios
+            .post(url, params)
+            .then(response => {
+              console.log(response.data);
+            })
+            .catch(error => {
+              // エラーを受け取る
+              console.log(error);
+            });
+        },
+        base64ToBlob(base64) {
+            var base64Data = base64.split(',')[1], // Data URLからBase64のデータ部分のみを取得
+                  data = window.atob(base64Data), // base64形式の文字列をデコード
+                  buff = new ArrayBuffer(data.length),
+                  arr = new Uint8Array(buff),
+                  blob,
+                  i,
+                  dataLen;
+            // blobの生成
+            for (i = 0, dataLen = data.length; i < dataLen; i++) {
+                arr[i] = data.charCodeAt(i);
+            }
+            blob = new Blob([arr], {type: 'image/png'});
+            return blob;
+        }
   }
 }
 </script>
-<style scoped>
-
-div {
-    margin: 0;
-    padding: 0;
-}
-#container_img {
-    width: 100vw;
-}
-
-#hiddenImg {
-    width: 100%;
-}
-</style>
