@@ -1,19 +1,16 @@
 <template>
     <div>
-        <select 
+        <!-- <select 
             v-model="mode"
             name="mode" 
             id="mode"
         >
             <option value="brush">ペン</option>
             <option value="eraser">消しゴム</option>
-        </select>
-        <button
-          @click="clearCanvas"
-        >リセット</button>
-        <button>保存</button>
+        </select> -->
         
         <FreeDrawing
+            class="freeDrawing"
             ref="freeDrawing"
             :backgroundImage="captures[0]"
             :mode="mode"
@@ -21,6 +18,10 @@
             :get_height="height"
             :get_captures="captures"
         />
+        <div class="l_button">
+          <img src="../assets/pen.svg" />
+          <img class="u-ml10" src="../assets/el.svg" />
+        </div>
     </div>
 </template>
 
@@ -64,7 +65,20 @@ export default {
 </script>
 
 <style scoped>
-  .md-field {
-    max-width: 110px;
+  .freeDrawing {
+    height: 100%;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+  }
+
+  .l_button {
+    position: absolute;
+    bottom: 20px;
+    left: 10px;
+  }
+
+  .u-ml10 {
+    margin-left: 10px;
   }
 </style>

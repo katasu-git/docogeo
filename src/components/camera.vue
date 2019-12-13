@@ -2,6 +2,7 @@
   <div id="camera">
 
         <div class="o-img-area">
+
             <video
               ref="video" 
               id="video"
@@ -14,23 +15,12 @@
                 id="canvas"
               ></canvas>
             </div>
-        </div>
 
-        <div class="l-button">
-          <button 
-            class="o-button"
-            @click="turnCam()"
-          >重ね合わせON/OFF</button>
+            <button 
+              class="button_capture"
+              @click="capture"
+            ></button>
 
-          <button 
-            class="o-button"
-            @click="capture()"
-          >撮影</button>
-
-          <button 
-            class="o-button"
-            @click="jump()"
-          >ページ移動</button>
         </div>
       
     </div>
@@ -90,7 +80,8 @@ import { async } from 'q';
         this.canvas.getContext('2d').drawImage(this.video, 0, 0, this.video_w, this.video_h);
         this.captures.push(this.canvas.toDataURL('image/png'))
 
-        console.log(this.captures);
+        //お絵かきページに移動
+        this.jump();
 
         // 画像の各ピクセルをグレースケールに変換する //
 
@@ -148,24 +139,11 @@ import { async } from 'q';
     color: rgba(0,0,0,.87);
   }
 
-  #o-img-area {
-    position: relative;
-    width: calc(100% - 20px);
-    height: calc(100% - 80px - 20px);
-    padding: 10px;
-  }
-
-  .o-img_sample {
-    position: absolute;
-    opacity: .3;
-    width: 100%;
-    height: calc(100% - 20px);
-    object-fit: cover;
-  }
-
   #video {
-    object-fit: cover;
-    width: 100%;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: calc(100% - 20px);
   }
 
   #canvas {
@@ -174,38 +152,16 @@ import { async } from 'q';
     opacity: .3;
   }
 
-  .wrapper{
-    width: 100%;
-    height: 100%;
-  }
-
-  .l-button {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .o-button {
-    margin: 20px 0;
-    width: 50%;
-  }
-
-  .l-img_right_bottom {
+  .button_capture {
     position: absolute;
-    bottom: 10px;
-    right: 10px;
-    width: 30%;
-    height: 30%;
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .o-img_right_bottom {
-    height: 100%;
-    width: 100%;
-    object-fit: cover;
+    bottom: 20px;
+    right: 0;
+    left: 0;
+    margin: auto;
+    width: 60px;
+    height: 60px;
+    border-radius: 100px;
+    background-color: rgba(0,0,0,.26);
   }
 
 </style>
