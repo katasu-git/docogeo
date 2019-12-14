@@ -1,5 +1,5 @@
 <template>
-  <div class="">
+  <div>
     <div ref="container">
       <canvas
         :width="width"
@@ -8,6 +8,17 @@
         id="canvas">
       </canvas>
     </div>
+
+    <!--消す-->
+
+    <canvas 
+      id="cvs1"
+      ref="cvs1"
+      :width="width"
+      :height="height"
+    ></canvas>
+
+    <!---->
 
   </div>
 </template>
@@ -221,9 +232,3 @@ export default {
   }
 }
 </script>
-<style scoped>
-  .button_save {
-    position: absolute;
-    bottom: 20px;
-  }
-</style>

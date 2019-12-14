@@ -15,6 +15,8 @@ function add_img_db($data) {
     imagepng($image, $path);
 
 
+    $path = "/~nishimura/docogeo/pic_draw/" . $dir;
+
     $pdo = connect_mysql();  //mysqlに接続
 
     $stmt = $pdo -> prepare("INSERT INTO 

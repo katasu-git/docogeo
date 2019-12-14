@@ -21,6 +21,7 @@
         <div class="l_button">
           <img src="../assets/pen.svg" />
           <img class="u-ml10" src="../assets/el.svg" />
+          <button class="button_capture" @click="capture">配信</button>
         </div>
     </div>
 </template>
@@ -56,6 +57,10 @@ export default {
     clearCanvas: function () {
       this.$refs.freeDrawing.onClearCanvas()
       this.init()
+    },
+    capture() {
+      //子コンポーネントの関数呼び出し
+      this.$refs.freeDrawing.capture();
     }
   },
   components: {
@@ -76,6 +81,15 @@ export default {
     position: absolute;
     bottom: 20px;
     left: 10px;
+    width: calc(100% - 20px);
+  }
+
+  .button_capture {
+    position: absolute;
+    width: 120px;
+    height: 60px;
+    right: 0;
+    background-color: 
   }
 
   .u-ml10 {
