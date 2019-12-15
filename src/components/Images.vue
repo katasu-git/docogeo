@@ -2,6 +2,11 @@
   <div id="images">
     <div class="o-background">
 
+      <PopupImage
+        @closeModal="closeModal"
+        :image="image_avoid"
+        v-show="flag_popup_image"></PopupImage>
+
     　　 <div id="comuppic" v-show="flag_add_img">
             <div class="o-background_black">
                 <div class="o-modal">
@@ -28,6 +33,8 @@
 
       <div class="l-header_above">
         <div class="o-text_tour">Images</div>
+
+        <!--
         <div 
           class="o-image_image_button"
           v-show="!flag_add"
@@ -35,17 +42,23 @@
             <img @click="startSort()" v-show="!flag_order" src="../assets/sort_button.svg" />
             <img @click="startSort()" v-show="flag_order" src="../assets/sort_button_active.svg" />
         </div>
+        -->
+
       </div>
       <div class="l-header_under">
         <div class="o-text_tour_min">
           <p v-show="!flag_add">画像</p>
           <p v-show="flag_add">追加する画像を選択</p>
         </div>
+        
+        <!-- 
         <div 
           class="o-text_add_image" 
           v-bind:style="{ color: returnSortColor()}"
           v-show="!flag_add"
         >並べ替え</div>
+        -->
+
       </div>
 
       <label 
@@ -58,6 +71,7 @@
       <div class="o-img_container">
         <div class="o-img_fit" v-for="image in srcArray" :key="image.id">
             <img
+            @click="popup_image(image)"
             class="box"
             :src="image.imgPath"
             :style="{opacity: returnOpacity(image.isAdded)}"
@@ -73,6 +87,7 @@
 import axios from 'axios'
 import { async } from 'q';
 import Success from '../components/modals/imgSuccess'
+import PopupImage from "../components/modals/imgPopup"
   export default {
     name: 'images',
     data() {
@@ -84,9 +99,11 @@ import Success from '../components/modals/imgSuccess'
         flag_add_img: false,
         flag_success: false,
         flag_add: false,
+        flag_popup_image: false,
         tour_id: '', //commentから渡ってきた場合
         spot_id: '', //commentから渡ってきた場合
         srcArray: [],
+        image_avoid: ''
       }
     },
     created: function () {
@@ -111,6 +128,7 @@ import Success from '../components/modals/imgSuccess'
             console.log("発火");
             this.flag_add_img = false;
             this.flag_success = false;
+            this.flag_popup_image = false;
             this.file = '';
             this.uploadedImage = '';
             this.img_name = '';
@@ -210,10 +228,15 @@ import Success from '../components/modals/imgSuccess'
           } else {
             return '1';
           }
+        },
+        popup_image(image) {
+          this.image_avoid = image;
+          this.flag_popup_image = true;
         }
     },
     components: {
       Success: Success,
+      PopupImage: PopupImage
     }
   }
 
