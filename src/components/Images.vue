@@ -348,10 +348,21 @@ import Success from '../components/modals/imgSuccess'
     flex-wrap: wrap;
   }
 
+  /*ここを30%にすればデスクトップでいい感じ*/
+
   .o-img_fit {
     position: relative;
     width: 50%;
     height: auto;
+  }
+
+  @media screen and (min-width:1024px) { 
+    /*　画面サイズが480pxからはここを読み込む　*/
+    .o-img_fit {
+      position: relative;
+      width: 20%;
+      height: auto;
+    }
   }
 
   .o-img_fit:before {
