@@ -45,18 +45,8 @@ import axios from 'axios'
             })
         },
         deleteTour() {
-            const url =　"https://www2.yoslab.net/~nishimura/geotour/PHP/delete_tour.php";
-            let params = new URLSearchParams();
-            params.append("tour_id", this.tour_id);
-            axios
-            .post(url, params)
-            .then(response => {
-              this.closeModal();
-            })
-            .catch(error => {
-              // エラーを受け取る
-              console.log(error);
-            });
+            this.$emit('closeModal');
+            this.$emit('conf_delete');
         },
         startTour() {
 

@@ -2,11 +2,18 @@
   <div id="hello">
     <div class="o-background">
 
+      <TopDelete
+        :tour_id="tour_id_avoid"
+        :tour_name="tour_name_avoid"
+        @closeModal="closeModal"
+        v-show="flag_delete"></TopDelete>
+
       <TopCreateTour
         @closeModal="closeModal"
         v-show="flag_create_tour"></TopCreateTour>
 
       <TopLongPress
+        @conf_delete="conf_delete"
         @closeModal="closeModal"
         @wakeChangeName="wakeChangeName"
         :tour_id="tour_id_avoid"
@@ -56,6 +63,7 @@
   import TopCreateTour from '../components/modals/topCreateTour'
   import TopLongPress from '../components/modals/toplongPress'
   import TopChangeName from '../components/modals/topChageName'
+  import TopDelete from "../components/modals/topDelete"
   export default {
     name: 'HelloWorld',
     data() {
@@ -64,6 +72,7 @@
         flag_create_tour: false,
         flag_long_press: false,
         flag_change_name: false,
+        flag_delete: false,
         tour_id_avoid: '',
         tour_name_avoid: '',
         srcArray: [],
@@ -104,6 +113,7 @@
         this.flag_create_tour = false;
         this.flag_long_press = false;
         this.flag_change_name = false;
+        this.flag_delete = false;
         this.get_tour(); //更新を反映
       },
       onPlusStart(tour_id, tour_name) {
@@ -111,11 +121,15 @@
         this.tour_name_avoid = tour_name;
         this.flag_long_press = true;
       },
+      conf_delete() {
+        this.flag_delete = true;
+      }
     },
     components: {
       TopCreateTour: TopCreateTour,
       TopLongPress: TopLongPress,
-      TopChangeName: TopChangeName
+      TopChangeName: TopChangeName,
+      TopDelete: TopDelete
     }
   }
 
