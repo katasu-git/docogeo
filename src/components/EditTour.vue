@@ -49,7 +49,7 @@
               <div class="l-list_text">
                 <div class="o-list_text_geosite" 
                   v-long-press="300" @long-press-start="onPlusStart(info.spot_id)">{{ info.spot_name }}</div>
-                <div class="o-list_text_update">最終更新 2019.11.7</div>
+                <div class="o-list_text_update">最終更新 {{returnSended(info.updated)}}</div>
               </div>
             </div>
           </div>
@@ -183,6 +183,12 @@ import GeoCreateGeo from '../components/modals/geoCreateGeo'
       },
       wakeCreateGeo: function() {
         this.flag_create = true;
+      },
+      returnSended(sended) {
+            let month = sended.substr(5, 2) + '月';
+            let day = sended.substr(8, 2) + '日';
+            let time = ' ' + sended.substr(10, 6);
+            return month + day + time;
       }
     },
     components: {

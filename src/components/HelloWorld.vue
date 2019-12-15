@@ -45,7 +45,7 @@
           />
           <div class="o-transparent">
             <div class="o-text_tour_title">{{ info.tour_name }}</div>
-            <div class="o-text_update">最終更新 2019.11.7</div>
+            <div class="o-text_update">最終更新 {{returnUpdated(info.updated)}}</div>
           </div>
         </div>
       </div>
@@ -123,6 +123,12 @@
       },
       conf_delete() {
         this.flag_delete = true;
+      },
+      returnUpdated(sended) {
+            let month = sended.substr(5, 2) + '月';
+            let day = sended.substr(8, 2) + '日';
+            let time = ' ' + sended.substr(10, 6);
+            return month + day + time;
       }
     },
     components: {
