@@ -187,6 +187,7 @@
     position: relative;
     height: 100%;
     width: calc(100vw - 80px);
+    max-width: 400px;
   }
 
   .o-card:last-of-type {
@@ -196,6 +197,7 @@
     .o-image_tour {
       height: 100%;
       width: calc(100vw - 80px);
+      max-width: 400px;
       border-radius: 30px;
       object-fit: cover;
       border: solid 1px rgba(0,0,0, .12);
@@ -204,6 +206,7 @@
     .o-transparent {
       height: 80px;
       width: calc(100vw - 80px);
+      max-width: 400px;
       position: absolute;
       bottom: 0;
       border-radius: 0 0 30px 30px;

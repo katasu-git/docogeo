@@ -45,9 +45,11 @@ export default {
     },
     get_width: '',
     get_height: '',
-    get_captures: ''
+    get_captures: '',
+    tour_id: '',
   },
   data: () => ({
+    tour_id: '',
     width: window.innerWidth,
     height: window.innerHeight,
     stage: null,
@@ -70,6 +72,7 @@ export default {
   }),
   created() {
     //ルータから受け取った画像の縦横を指定
+    this.tour_id = this.$route.params.tour_id;
     this.width = this.get_width;
     this.height = this.get_height;
   },
@@ -207,7 +210,8 @@ export default {
           axios
             .post(url, params)
             .then(response => {
-              console.log(response.data);
+              //console.log(response.data);
+              this.jump();
             })
             .catch(error => {
               // エラーを受け取る
@@ -228,7 +232,20 @@ export default {
             }
             blob = new Blob([arr], {type: 'image/png'});
             return blob;
-        }
+        },
+        jump() {
+         this.$router.push({
+            name: 'cameraInit',
+            params: {
+                tour_id: this.tour_id
+            }
+        })
+      },
   }
 }
 </script>
+<style scoped>
+#cvs1 {
+  opacity: 0;
+}
+</style>

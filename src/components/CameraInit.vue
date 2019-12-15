@@ -14,6 +14,11 @@
         class="image_photo" 
         :src="photoImage.image_path" />
 
+    <button 
+        class="button_recapture"
+        @click="jump()"
+    >もう一度撮影する</button>
+
 </div>
 </template>
 
@@ -27,9 +32,11 @@ import { async } from 'q';
           images:[],
           lineImage: '',
           photoImage: '',
+          tour_id: '',
       }
     },
     created() {
+        this.tour_id = this.$route.params.tour_id;
         this.getImage();
     },
     mounted() {
@@ -53,6 +60,7 @@ import { async } from 'q';
          this.$router.push({
             name: 'camera',
             params: {
+                tour_id: this.tour_id
             }
         })
       },
@@ -102,6 +110,21 @@ import { async } from 'q';
   .image_line {
       opacity: .8;
       z-index: 3;
+  }
+
+  .button_recapture {
+      position: absolute;
+      bottom: 20px;
+      right: 0;
+      left: 0;
+      margin: auto;
+
+      width: 200px;
+      height: 60px;
+      color: #fff;
+      font-size: 20px;
+      background-color: #4B8E8D;
+      border-radius: 10px;
   }
 
 </style>

@@ -76,7 +76,10 @@
         </div>
 
         <div class="l-footer">
-            <div class="o-icon">
+            <div 
+                class="o-icon"
+                @click="jumpPage('cameraInit')"
+            >
                 <img class="o-icon_img" src="../assets/camera_button.svg" />
                 <div class="o-footer_text">カメラ</div>
             </div>

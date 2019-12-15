@@ -34,6 +34,7 @@ import { async } from 'q';
     name: 'camera',
     data() {
       return {
+        tour_id: '',
         video: {},
         canvas: {},
         captures: [],
@@ -42,6 +43,9 @@ import { async } from 'q';
         video_w: '200',
         video_h: '200'
       }
+    },
+    created() {
+      this.tour_id = this.$route.params.tour_id;
     },
     mounted() {
         this.video = this.$refs.video
@@ -101,7 +105,8 @@ import { async } from 'q';
             params: {
               width: this.video_w,
               height: this.video_h,
-              captures: this.captures
+              captures: this.captures,
+              tour_id: this.tour_id
             }
         })
       }
