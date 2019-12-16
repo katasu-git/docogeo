@@ -44,9 +44,11 @@ button, input {
 
 @keyframes slideIn {
   0% {
+    display:none;
     transform: translateY(100%);
   }
   100% {
+    display:flex;
     transform: translateY(0);
   }
 }
@@ -58,6 +60,7 @@ button, input {
 }
 @keyframes slideOut {
     0% {
+      display:flex;
       transform: translateY(0);
     }
     100% {

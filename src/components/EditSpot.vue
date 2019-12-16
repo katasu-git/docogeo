@@ -66,8 +66,7 @@
                 <div class="l-flex_end">
                     <div
                       class="l-comment"
-                      v-long-press="500"
-                      @long-press-start="onPlusStart(ex.id, false)"
+                      @click="onPlusStart(ex.id, false)"
                     >{{ ex.spot_ex }}</div>
                     <div class="o-send_time">{{returnSended(ex.created)}}</div>
                 </div>
@@ -85,8 +84,6 @@
                 <div class="l-flex_end">
                     <div
                       class="l-comment"
-                      v-long-press="500"
-                      @long-press-start="onPlusStart(ex.id, false)"
                     >{{ ex.spot_ex }}</div>
                     <div class="o-send_time">{{returnSended(ex.created)}}</div>
                 </div>

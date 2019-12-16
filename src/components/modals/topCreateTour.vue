@@ -53,8 +53,12 @@
 <style scoped>
   #createtour {
     position: absolute;
+    right: 0;
+    left: 0;
     bottom: 0;
+    margin: auto;
     width: 100%;
+    max-width: 400px;
     border-radius: 30px 30px 0 0;
     background-color: #fff;
     z-index: 1;

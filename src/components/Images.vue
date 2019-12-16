@@ -14,21 +14,6 @@
           v-if="flag_uploading"></Uploading>
       </transition>
 
-      <div class="o-modal" v-bind:class="{ slideIn: flag_add_img, slideOut: !flag_add_img }">
-          <input 
-            type="file"
-            @change="onFileChange"
-            name="upfile" 
-            id="upfile"
-            class="u-mt40"
-          />
-          <img class="o-preview_img" v-show="uploadedImage" :src="uploadedImage" alt="preview_img" />
-          <div class="l-button u-mt40">
-              <button class="o-button_cancel" @click="closeModal()">キャンセル</button>
-              <button class="o-button_save" type="submit" @click="postFile(file)">追加する</button>
-          </div>
-      </div>
-
         <Success
           v-show="flag_success"
           @closeModal="closeModal"
@@ -65,6 +50,22 @@
       </div>
       
     </div>
+    <div class="o-modal"
+        v-show="flag_add_img"
+        v-bind:class="{ slideIn: flag_add_img, slideOut: !flag_add_img }">
+          <input 
+            type="file"
+            @change="onFileChange"
+            name="upfile" 
+            id="upfile"
+            class="u-mt40"
+          />
+          <img class="o-preview_img" v-show="uploadedImage" :src="uploadedImage" alt="preview_img" />
+          <div class="l-button u-mt40">
+              <button class="o-button_cancel" @click="closeModal()">キャンセル</button>
+              <button class="o-button_save" type="submit" @click="postFile(file)">追加する</button>
+          </div>
+      </div>
   </div>
 </template>
 
@@ -113,7 +114,6 @@ import Uploading from "../components/modals/imgUploading"
             })
         },
         closeModal: function() {
-            console.log("発火");
             this.flag_add_img = false;
             this.flag_success = false;
             this.flag_popup_image = false;
@@ -265,6 +265,9 @@ import Uploading from "../components/modals/imgUploading"
 
     background-color: #F5F5F5;
     color: rgba(0,0,0,.87);
+
+    position: fixed;
+    overflow: auto;
   }
 
   .l-header_above {
@@ -337,8 +340,12 @@ import Uploading from "../components/modals/imgUploading"
 
   .o-modal {
     position: absolute;
+    right: 0;
+    left: 0;
     bottom: 0;
+    margin: auto;
     width: 100%;
+    max-width: 400px;
     border-radius: 30px 30px 0 0;
     background-color: #fff;
     z-index: 1;
