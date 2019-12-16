@@ -10,27 +10,25 @@
           v-show="flag_popup_image"></PopupImage>
       </transition>
 
+      <transition name="fade">
         <Uploading
           v-if="flag_uploading"></Uploading>
+      </transition>
 
-    　　 <div id="comuppic" v-show="flag_add_img">
-            <div class="o-background_black">
-                <div class="o-modal">
-                    <input 
-                      type="file"
-                      @change="onFileChange"
-                      name="upfile" 
-                      id="upfile"
-                      class="u-mt40"
-                    />
-                    <img class="o-preview_img" v-show="uploadedImage" :src="uploadedImage" alt="preview_img" />
-                    <div class="l-button u-mt40">
-                        <button class="o-button_cancel" @click="closeModal()">キャンセル</button>
-                        <button class="o-button_save" type="submit" @click="postFile(file)">追加する</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+      <div class="o-modal" v-bind:class="{ slideIn: flag_add_img, slideOut: !flag_add_img }">
+          <input 
+            type="file"
+            @change="onFileChange"
+            name="upfile" 
+            id="upfile"
+            class="u-mt40"
+          />
+          <img class="o-preview_img" v-show="uploadedImage" :src="uploadedImage" alt="preview_img" />
+          <div class="l-button u-mt40">
+              <button class="o-button_cancel" @click="closeModal()">キャンセル</button>
+              <button class="o-button_save" type="submit" @click="postFile(file)">追加する</button>
+          </div>
+      </div>
 
         <Success
           v-show="flag_success"
@@ -323,13 +321,6 @@ import Uploading from "../components/modals/imgUploading"
         display: none;
     }
 
-    #comuppic {
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-  }
-
   .o-border {
     height: 1px;
     background-color: rgba(0,0,0, .12);
@@ -339,17 +330,19 @@ import Uploading from "../components/modals/imgUploading"
     height: 100%;
     width: 100%;
     position: fixed;
-    background-color: rgba(0,0,0, .54);
 
     display: flex;
     align-items: flex-end;
-    z-index: 1;
+    z-index: 2;
   }
 
   .o-modal {
+    position: absolute;
+    bottom: 0;
     width: 100%;
     border-radius: 30px 30px 0 0;
     background-color: #fff;
+    z-index: 1;
 
     display: flex;
     flex-direction: column;
@@ -424,4 +417,12 @@ import Uploading from "../components/modals/imgUploading"
   .u-mt40 {
     margin-top: 40px;
   }
+
+  .timeup {
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    z-index: 2;
+  }
+
 </style>

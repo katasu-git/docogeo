@@ -36,10 +36,36 @@ button, input {
 }
 
 .fade-enter-active, .fade-leave-active {
-    transition: opacity .25s;
+  transition: opacity .25s;
 }
 .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
   opacity: 0;
+}
+
+@keyframes slideIn {
+  0% {
+    transform: translateY(100%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+.slideIn, .slideOut {
+  animation-name: slideIn;
+  animation-duration: .2s;
+  animation-timing-function: ease;
+  animation-fill-mode: forwards;
+}
+@keyframes slideOut {
+    0% {
+      transform: translateY(0);
+    }
+    100% {
+      transform: translateY(100%);
+    }
+}
+.slideOut {
+  animation-name: slideOut;
 }
 
 </style>
