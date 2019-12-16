@@ -2,13 +2,16 @@
   <div id="images">
     <div class="o-background">
 
-      <PopupImage
-        @closeModal="closeModal"
-        :image="image_avoid"
-        v-show="flag_popup_image"></PopupImage>
+      <transition name="fade">
+        <PopupImage
+          class="fadeIn"
+          @closeModal="closeModal"
+          :image="image_avoid"
+          v-show="flag_popup_image"></PopupImage>
+      </transition>
 
         <Uploading
-          v-show="flag_uploading"></Uploading>
+          v-if="flag_uploading"></Uploading>
 
     　　 <div id="comuppic" v-show="flag_add_img">
             <div class="o-background_black">
@@ -91,8 +94,7 @@ import Uploading from "../components/modals/imgUploading"
         tour_id: '', //commentから渡ってきた場合
         spot_id: '', //commentから渡ってきた場合
         srcArray: [],
-        image_avoid: '',
-        test_text: "heeey"
+        image_avoid: ''
       }
     },
     created: function () {
@@ -201,7 +203,6 @@ import Uploading from "../components/modals/imgUploading"
             axios
               .post(url, params)
               .then(response => {
-                  console.log(this.test_text)
                   this.closeModal();
               })
               .catch(error => {
@@ -214,9 +215,6 @@ import Uploading from "../components/modals/imgUploading"
             console.log("reject");
             return; //editページ以外からの遷移時は登録しない
           }
-          console.log(this.tour_id);
-          console.log(this.spot_id);
-          console.log(index);
           const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/add_img_spot.php';
               let params = new URLSearchParams();
               params.append('tour_id', this.tour_id);
@@ -426,5 +424,4 @@ import Uploading from "../components/modals/imgUploading"
   .u-mt40 {
     margin-top: 40px;
   }
-
 </style>
