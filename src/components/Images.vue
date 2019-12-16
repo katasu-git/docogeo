@@ -20,7 +20,7 @@
                     <img class="o-preview_img" v-show="uploadedImage" :src="uploadedImage" alt="preview_img" />
                     <div class="l-button u-mt40">
                         <button class="o-button_cancel" @click="closeModal()">キャンセル</button>
-                        <button class="o-button_save" type="submit" @click="postFile()">追加する</button>
+                        <button class="o-button_save" type="submit" @click="postFile(file)">追加する</button>
                     </div>
                 </div>
             </div>
@@ -85,7 +85,8 @@
 
 <script>
 import axios from 'axios'
-import { async } from 'q';
+import { async, resolve, reject } from 'q';
+import Compressor from 'compressorjs'
 import Success from '../components/modals/imgSuccess'
 import PopupImage from "../components/modals/imgPopup"
   export default {
@@ -103,7 +104,8 @@ import PopupImage from "../components/modals/imgPopup"
         tour_id: '', //commentから渡ってきた場合
         spot_id: '', //commentから渡ってきた場合
         srcArray: [],
-        image_avoid: ''
+        image_avoid: '',
+        test_text: "heeey"
       }
     },
     created: function () {
@@ -153,42 +155,68 @@ import PopupImage from "../components/modals/imgPopup"
         },
         onFileChange(e) {
             const files = e.target.files || e.dataTransfer.files;
-            //console.log(files[0]);
             this.file = files[0];
             this.createImage(files[0]);
             this.img_name = files[0].name;
+            
+            //圧縮の処理
+            this.comp_file(this.file)
+              .then((value) => {
+                this.comp_file2(value)
+                  .then((value) => {
+                    this.file = value;
+                    console.log("圧縮完了")
+                  })
+              })
+        },
+        comp_file(file) {
+          return new Promise(function(resolve) {
+            new Compressor(file, {
+              quality: .2,
+              mimeType: 'image/jpeg',
+              success(result) {
+                resolve(result);
+              },
+              error(err) {
+                //エラー処理
+                console.log(err);
+              }
+            });
+          })
+        },
+        comp_file2(file) {
+          return new Promise(function(resolve) {
+            
+            const reader = new FileReader();
+            reader.onload = function(){
+              let file_post = reader.result;
+              resolve(file_post)
+            };
+            reader.readAsDataURL(file);
+
+          })
         },
         createImage(file) {
             const reader = new FileReader();
             reader.onload = e => {
                 this.uploadedImage = e.target.result;
             };
-
             reader.readAsDataURL(file);
         },
-        postFile: function() {
-          console.log(this.file.type);
-          if(this.file.type == 'image/jpeg' || this.file.type == 'image/png') {
-                let formData = new FormData();
-                formData.append('upfile', this.file);
-                axios
-                    .post('https://www2.yoslab.net/~nishimura/geotour/PHP/upload.php', 
-                        formData, {
-                            headers: {
-                                 'Content-Type': 'multipart/form-data',
-                            }
-                        })
-                    .then(function(response) {
-                        // response 処理
-                        console.log(response.data);
-                        this.closeModal();
-                    })
-                    .catch(function(error) {
-                        // error 処理
-                    })
-          } else {
-            console.log("だめ");
-          }
+        postFile(file) {
+            const url = "https://www2.yoslab.net/~nishimura/geotour/PHP/upload.php";
+            let params = new URLSearchParams();
+            params.append('image_data', file);
+            axios
+              .post(url, params)
+              .then(response => {
+                  console.log(this.test_text)
+                  this.closeModal();
+              })
+              .catch(error => {
+                // エラーを受け取る
+                console.log(error);
+              });
         },
         addImgToSpot(index, isAdded) {
           if(this.tour_id == '' || this.spot_id == '' || isAdded == 1) {

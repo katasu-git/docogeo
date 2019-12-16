@@ -200,10 +200,7 @@ export default {
       },
       postFile: function() {
         console.log(this.backgroundImage);
-          const url =
-            "https://www2.yoslab.net/~nishimura/geotour/PHP/upload_draw.php";
-          //var formData = new FormData();
-          //formData.append("selectImage", this.file);
+          const url = "https://www2.yoslab.net/~nishimura/geotour/PHP/upload_draw.php";
           let params = new URLSearchParams();
           params.append('canvasData', this.file);
           params.append('backImage', this.backgroundImage);
