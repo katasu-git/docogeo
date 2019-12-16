@@ -2,7 +2,8 @@
   <div id="editSpot">
     <div class="o-background">
 
-      <ComLongPress v-show="flag_longpress"
+      <ComLongPress 
+        v-show="flag_longpress && !flag_change_com"
         :ex_id_avoid="ex_id_avoid"
         :flag_press_img="flag_press_img"
         @closeModal="closeModal"
@@ -13,7 +14,9 @@
 
       <ComChangeCom
         v-show="flag_change_com"
+        v-bind:class="{ slideIn: flag_change_com, slideOut: !flag_change_com }"
         :ex_id_avoid="ex_id_avoid"
+        :ex_avoid="ex_avoid"
         @closeModal="closeModal"></ComChangeCom>
       
       <div class="l-header_above">
@@ -62,7 +65,7 @@
                 <div class="l-flex_end">
                     <div
                       class="l-comment"
-                      @click="onPlusStart(ex.id, false)"
+                      @click="onPlusStart(ex.id, false, ex.spot_ex)"
                     >{{ ex.spot_ex }}</div>
                     <div class="o-send_time">{{returnSended(ex.created)}}</div>
                 </div>
@@ -123,6 +126,7 @@ export default {
       spot_ex: [],
       srcArray: [],
       ex_id_avoid: '',
+      ex_avoid: '',
       flag_order: false,
       flag_add_com: false,
       flag_longpress: false,
@@ -196,8 +200,10 @@ export default {
       //this.closeModal();
       this.flag_change_com = true;
     },
-    onPlusStart: function(id, flag_press_img) {
+    onPlusStart: function(id,flag_press_img, comment) {
       this.ex_id_avoid = id;  //削除する時の判定に使う
+      this.ex_avoid = comment;
+      console.log(this.ex_avoid);
       if(flag_press_img) {
         this.flag_press_img = true;
       } else {

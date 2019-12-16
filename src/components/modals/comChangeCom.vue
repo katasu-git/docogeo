@@ -1,19 +1,11 @@
 <template>
   <div id="comchangecom">
-    <div class="o-background">
-      
-      <div class="o-background_black">
-        <div class="o-modal">
-            <form class="u-mt20">
-                <textarea type="text" placeholder="ここに説明を入力" v-model="comment"></textarea>
-            </form>
-            <div class="l-button">
-                <button class="o-button_cancel" @click="closeModal()">キャンセル</button>
-                <button class="o-button_save" @click="changeCom()">保存する</button>
-            </div>
-        </div>
-      </div>
-
+    <form class="u-mt20">
+        <textarea type="text" placeholder="ここに説明を入力" v-model="comment"></textarea>
+    </form>
+    <div class="l-button">
+        <button class="o-button_cancel" @click="closeModal()">キャンセル</button>
+        <button class="o-button_save" @click="changeCom()">保存する</button>
     </div>
   </div>
 </template>
@@ -24,10 +16,17 @@
     name: 'comchangecom',
     props: {
         ex_id_avoid: '',
+        ex_avoid: ''
     },
     data() {
       return {
           comment: '',
+      }
+    },
+    watch: {
+      ex_avoid: function() {
+        console.log("発火");
+        this.comment = this.ex_avoid;
       }
     },
     methods: {
@@ -58,37 +57,26 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-  #geochangename {
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
+  #comchangecom {
+    position: absolute;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    margin: auto;
+    width: 100%;
+    max-width: 400px;
+    border-radius: 30px 30px 0 0;
+    background-color: #fff;
+    z-index: 1;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
   .o-border {
     height: 1px;
     background-color: rgba(0,0,0, .12);
-  }
-
-  .o-background_black {
-    height: 100%;
-    width: 100%;
-    position: fixed;
-    background-color: rgba(0,0,0, .54);
-
-    display: flex;
-    align-items: flex-end;
-    z-index: 1;
-  }
-
-  .o-modal {
-    width: 100%;
-    border-radius: 30px 30px 0 0;
-    background-color: #fff;
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
   }
 
   .o-text {
