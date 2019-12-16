@@ -7,6 +7,9 @@
         :image="image_avoid"
         v-show="flag_popup_image"></PopupImage>
 
+        <Uploading
+          v-show="flag_uploading"></Uploading>
+
     　　 <div id="comuppic" v-show="flag_add_img">
             <div class="o-background_black">
                 <div class="o-modal">
@@ -34,30 +37,12 @@
       <div class="l-header_above">
         <div class="o-text_tour">Images</div>
 
-        <!--
-        <div 
-          class="o-image_image_button"
-          v-show="!flag_add"
-        >
-            <img @click="startSort()" v-show="!flag_order" src="../assets/sort_button.svg" />
-            <img @click="startSort()" v-show="flag_order" src="../assets/sort_button_active.svg" />
-        </div>
-        -->
-
       </div>
       <div class="l-header_under">
         <div class="o-text_tour_min">
           <p v-show="!flag_add">画像</p>
           <p v-show="flag_add">追加する画像を選択</p>
         </div>
-        
-        <!-- 
-        <div 
-          class="o-text_add_image" 
-          v-bind:style="{ color: returnSortColor()}"
-          v-show="!flag_add"
-        >並べ替え</div>
-        -->
 
       </div>
 
@@ -89,6 +74,7 @@ import { async, resolve, reject } from 'q';
 import Compressor from 'compressorjs'
 import Success from '../components/modals/imgSuccess'
 import PopupImage from "../components/modals/imgPopup"
+import Uploading from "../components/modals/imgUploading"
   export default {
     name: 'images',
     data() {
@@ -101,6 +87,7 @@ import PopupImage from "../components/modals/imgPopup"
         flag_success: false,
         flag_add: false,
         flag_popup_image: false,
+        flag_uploading: false,
         tour_id: '', //commentから渡ってきた場合
         spot_id: '', //commentから渡ってきた場合
         srcArray: [],
@@ -131,6 +118,7 @@ import PopupImage from "../components/modals/imgPopup"
             this.flag_add_img = false;
             this.flag_success = false;
             this.flag_popup_image = false;
+            this.flag_uploading = false;
             this.file = '';
             this.uploadedImage = '';
             this.img_name = '';
@@ -174,6 +162,7 @@ import PopupImage from "../components/modals/imgPopup"
             new Compressor(file, {
               quality: .2,
               mimeType: 'image/jpeg',
+              maxWidth: 2000,
               success(result) {
                 resolve(result);
               },
@@ -204,6 +193,8 @@ import PopupImage from "../components/modals/imgPopup"
             reader.readAsDataURL(file);
         },
         postFile(file) {
+            this.closeModal();
+            this.flag_uploading = true;
             const url = "https://www2.yoslab.net/~nishimura/geotour/PHP/upload.php";
             let params = new URLSearchParams();
             params.append('image_data', file);
@@ -264,7 +255,8 @@ import PopupImage from "../components/modals/imgPopup"
     },
     components: {
       Success: Success,
-      PopupImage: PopupImage
+      PopupImage: PopupImage,
+      Uploading: Uploading
     }
   }
 
