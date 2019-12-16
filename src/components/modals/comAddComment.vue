@@ -97,7 +97,7 @@
       outline: none;
       margin: 20px 0;
       resize: vertical;
-      width: calc(100vw - 60px);
+      width: 100%;
       min-height: 80px;
       font-size: 18px;
       color: rgba(0,0,0, .87);

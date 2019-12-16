@@ -14,17 +14,10 @@
         @closeModal="closeModal"
         v-bind:class="{ slideIn: flag_create_tour, slideOut: !flag_create_tour }"></TopCreateTour>
 
-      <TopLongPress
-        @conf_delete="conf_delete"
-        @closeModal="closeModal"
-        @wakeChangeName="wakeChangeName"
-        :tour_id="tour_id_avoid"
-        :tour_name="tour_name_avoid"
-        v-show="flag_long_press"></TopLongPress>
-
       <TopChangeName
         @closeModal="closeModal"
         :tour_id="tour_id_avoid"
+        :tour_name_avoid="tour_name_avoid"
         v-bind:class="{ slideIn: flag_change_name, slideOut: !flag_change_name }"
       ></TopChangeName>
 
@@ -40,8 +33,12 @@
         <div class="o-text_add_image">画像をみる</div>
       </div>
       <div class="o-slider">
-        <div class="o-card" v-for="info in tour_info"
-          @click="onPlusStart(info.tour_id, info.tour_name)" :key="info.tour_id">
+        <div 
+          class="o-card" 
+          v-for="info in tour_info"
+          @click="onPlusStart(info.tour_id, info.tour_name)" 
+          :key="info.tour_id"
+        >
           <img 
             src="../assets/kujira.svg"
             class="o-image_tour"
@@ -58,6 +55,16 @@
         @click="wakeCreateTour()">新しくツアーを作成する</button>
 
     </div>
+    <transition name="fade">
+        <TopLongPress
+          @conf_delete="conf_delete"
+          @closeModal="closeModal"
+          @wakeChangeName="wakeChangeName"
+          :tour_id="tour_id_avoid"
+          :tour_name_avoid="tour_name_avoid"
+          v-show="flag_long_press"
+        ></TopLongPress>
+      </transition>
   </div>
 </template>
 
@@ -78,21 +85,28 @@
         flag_delete: false,
         tour_id_avoid: '',
         tour_name_avoid: '',
-        srcArray: [],
+      }
+    },
+    watch: {
+      tour_name_avoid() {
+        console.log(this.tour_name_avoid)
       }
     },
     created: function () {
-      this.get_tour();
+      this.get_tour()
     },
     methods: {
       get_tour: function () {
-        axios.post('https://www2.yoslab.net/~nishimura/geotour/PHP/get_tour_info.php'
-        ).then(response => {
-          this.tour_info = response.data;
-        }).catch(error => {
-          // エラーを受け取る
-          console.log(error);
-        });
+        return new Promise((resolve) => {
+          axios.post('https://www2.yoslab.net/~nishimura/geotour/PHP/get_tour_info.php'
+          ).then(response => {
+            this.tour_info = response.data;
+            resolve()
+          }).catch(error => {
+            // エラーを受け取る
+            console.log(error);
+          });
+        })
       },
       jumpPage: function(where, tour_id, tour_name) {
         //console.log(this.avoidParam.tour_id);

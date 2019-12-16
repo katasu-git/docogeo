@@ -4,6 +4,8 @@
       
       <div class="o-background_black">
         <div class="o-modal">
+          <div class="o-text-first">{{tour_name}}</div>
+          <div class="o-border u-mt10"></div>
           <div class="o-text" @click="startTour()">ツアー開始</div>
           <div class="o-border u-mt10"></div>
         　<div class="o-text" @click="jumpPage('editTour')">編集</div>
@@ -25,7 +27,17 @@ import axios from 'axios'
     name: 'toplongpress',
     props: {
         tour_id: '',
-        tour_name: '',
+        tour_name_avoid: '',
+    },
+    data() {
+      return {
+        tour_name: ''
+      }
+    },
+    watch: {
+      tour_name_avoid: function() {
+        this.tour_name = this.tour_name_avoid;
+      }
     },
     methods: {
         closeModal: function() {
@@ -56,8 +68,6 @@ import axios from 'axios'
           //ツアー終了後でないと次のツアーは開催できない
 
           ////////////////////////
-
-          console.log("hello");
 
           //該当ツアー開始処理
           const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/start_tour.php';
@@ -100,12 +110,14 @@ import axios from 'axios'
 
     display: flex;
     align-items: center;
+    justify-content: center;
     z-index: 1;
   }
 
   .o-modal {
-    width: 100px;
-    border-radius: 0 30px 30px 0;
+    width: calc(100% - 80px);
+    max-width: 400px;
+    border-radius: 30px;
     background-color: #fff;
 
     display: flex;
@@ -113,17 +125,23 @@ import axios from 'axios'
     align-items: center;
   }
 
-  .o-text {
+  .o-text, .o-text-first {
     padding: 20px;
     font-size: 12px;
     font-weight: bold;
     transition: 100ms;
   }
 
-  .o-text:first-of-type {
-    border-top-right-radius: 20px;
+  .o-text:nth-child(3) {
+    width: calc(100% - 40px);
+    max-width: 400px;
+    text-align: center;
     background-color: #4B8E8D;
     color: #fff;
+  }
+
+  .o-text-first {
+    font-size: 30px;
   }
 
   .o-text:active {

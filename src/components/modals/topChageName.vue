@@ -2,7 +2,7 @@
   <div id="changename">
     <div class="o-image u-mt20"></div>
     <form class="u-mt20">
-        <input type="text" placeholder="ここにツアーの名前を入力" v-model="tour_name_updated" />
+        <input type="text" placeholder="ここにツアーの名前を入力" v-model="tour_name" />
     </form>
     <div class="o-border u-mt40"></div>
     <div class="l-button">
@@ -18,10 +18,16 @@
     name: 'changename',
     props: {
         tour_id: '',
+        tour_name_avoid: '',
     },
     data() {
       return {
-          tour_name_updated: '',
+          tour_name: ''
+      }
+    },
+    watch: {
+      tour_name_avoid: function() {
+        this.tour_name = this.tour_name_avoid;
       }
     },
     methods: {
@@ -34,12 +40,12 @@
             let params = new URLSearchParams();
             console.log(this.tour_id);
             params.append("tour_id", this.tour_id);
-            params.append("tour_name_updated", this.tour_name_updated);
+            params.append("tour_name_updated", this.tour_name);
             axios
             .post(url, params)
             .then(response => {
                 console.log("更新成功");
-                this.tour_name_updated = ''; //リセット
+                this.tour_name = ''; //リセット
                 this.closeModal();
             })
             .catch(error => {
