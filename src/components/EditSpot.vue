@@ -11,10 +11,6 @@
         @getSpotImage="getSpotImage"
       ></ComLongPress>
 
-      <ComAddComment @closeModal="closeModal"
-        :tour_id="tour_id" :spot_id="spot_id"
-        v-show="flag_add_com"></ComAddComment>
-
       <ComChangeCom
         v-show="flag_change_com"
         :ex_id_avoid="ex_id_avoid"
@@ -100,6 +96,13 @@
       <button class="o-button_create_geosite" v-on:click="addComment()" 
         v-show="!flag_order && !flag_add_com &&!flag_longpress">新しく説明を追加する</button>
     </div>
+    <ComAddComment 
+        @closeModal="closeModal"
+        :tour_id="tour_id" 
+        :spot_id="spot_id"
+        v-show="flag_add_com"
+        v-bind:class="{ slideIn: flag_add_com, slideOut: !flag_add_com }"
+    ></ComAddComment>
   </div>
 </template>
 
@@ -163,12 +166,10 @@ export default {
         })
     },
     closeModal: function() {
-      setTimeout(() => {
         this.flag_add_com = false;
         this.flag_longpress = false;
         this.flag_change_com = false;
         this.get_spot_ex(); //説明の更新を反映
-      }, 200)
     },
     startSort: function() {
         if(this.flag_order) {
@@ -265,22 +266,16 @@ export default {
   height: 100%;
   width: 100%;
   background-color: #F5F5F5;
-  
   color: rgba(0,0,0,.87);
+  overflow: auto;
 }
 
 
 .l-header_above {
     width: 100%;
-
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
-
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
   }
 
     .o-text_tour {
