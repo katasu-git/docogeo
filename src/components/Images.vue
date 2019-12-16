@@ -4,7 +4,6 @@
 
       <transition name="fade">
         <PopupImage
-          class="fadeIn"
           @closeModal="closeModal"
           :image="image_avoid"
           v-show="flag_popup_image"></PopupImage>

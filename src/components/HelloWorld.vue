@@ -2,15 +2,17 @@
   <div id="hello">
     <div class="o-background">
 
-      <TopDelete
-        :tour_id="tour_id_avoid"
-        :tour_name="tour_name_avoid"
-        @closeModal="closeModal"
-        v-show="flag_delete"></TopDelete>
+      <transition name="fade">
+        <TopDelete
+          :tour_id="tour_id_avoid"
+          :tour_name="tour_name_avoid"
+          @closeModal="closeModal"
+          v-show="flag_delete"></TopDelete>
+      </transition>
 
       <TopCreateTour
         @closeModal="closeModal"
-        v-show="flag_create_tour"></TopCreateTour>
+        v-bind:class="{ slideIn: flag_create_tour, slideOut: !flag_create_tour }"></TopCreateTour>
 
       <TopLongPress
         @conf_delete="conf_delete"
@@ -21,9 +23,10 @@
         v-show="flag_long_press"></TopLongPress>
 
       <TopChangeName
-        v-show="flag_change_name"
         @closeModal="closeModal"
-        :tour_id="tour_id_avoid"></TopChangeName>
+        :tour_id="tour_id_avoid"
+        v-bind:class="{ slideIn: flag_change_name, slideOut: !flag_change_name }"
+      ></TopChangeName>
 
       <div class="l-header_above">
         <div class="o-text_tour">Tour</div>
@@ -149,6 +152,9 @@
 
     background-color: #F5F5F5;
     color: rgba(0,0,0,.87);
+
+    position: fixed;
+    overflow: hidden;
   }
 
   .l-header_above {

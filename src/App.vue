@@ -62,6 +62,7 @@ button, input {
     }
     100% {
       transform: translateY(100%);
+      display:none;
     }
 }
 .slideOut {
