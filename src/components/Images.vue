@@ -41,11 +41,11 @@
       <div class="o-img_container">
         <div class="o-img_fit" v-for="image in srcArray" :key="image.id">
             <img
-            @click="popup_image(image)"
-            class="box"
-            :src="image.imgPath"
-            :style="{opacity: returnOpacity(image.isAdded)}"
-            @touchstart="addImgToSpot(image.id, image.isAdded)" />
+              @click="popup_image(image, image.id, image.isAdded)"
+              class="box"
+              :src="image.imgPath"
+              :style="{opacity: returnOpacity(image.isAdded)}"
+            />
         </div>
       </div>
       
@@ -243,9 +243,13 @@ import Uploading from "../components/modals/imgUploading"
             return '1';
           }
         },
-        popup_image(image) {
-          this.image_avoid = image;
-          this.flag_popup_image = true;
+        popup_image(image, index, isAdded) {
+          if(this.flag_add) {
+            this.addImgToSpot(index, isAdded)
+          } else {
+            this.image_avoid = image;
+            this.flag_popup_image = true;
+          }
         }
     },
     components: {
