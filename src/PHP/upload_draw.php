@@ -35,7 +35,8 @@ function base64url_decode($data) {
 
 try {
     add_img_db($_POST['canvasData']); //偶数が線画像
-    add_img_db($_POST['backImage']); //奇数が背景画像
+    //add_img_db($_POST['backImage']); //奇数が背景画像
+    return "成功";
 } catch(PDOException $e) {
     echo $e;
     return $e;

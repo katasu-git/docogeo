@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="drawing">
     <div ref="container">
       <canvas
         :width="width"
@@ -9,8 +9,6 @@
       </canvas>
     </div>
 
-    <!--消す-->
-
     <canvas 
       id="cvs1"
       ref="cvs1"
@@ -18,7 +16,7 @@
       :height="height"
     ></canvas>
 
-    <!---->
+    <img id="back_image_hidden" :src="backgroundImage" />
 
   </div>
 </template>
@@ -49,7 +47,6 @@ export default {
     tour_id: '',
   },
   data: () => ({
-    tour_id: '',
     width: window.innerWidth,
     height: window.innerHeight,
     stage: null,
@@ -190,20 +187,23 @@ export default {
       this.backgroundLayer.moveToBottom()
     },
     capture() {
-        this.cvs1 = this.$refs.cvs1
-        this.cvs1.getContext('2d').drawImage(this.canvas, 0, 0, this.width, this.height);
-        this.file = this.cvs1.toDataURL('image/png');
 
-       this.$nextTick(function(){
-          this.postFile();
-       })
+      let image = document.getElementById("back_image_hidden")
+      this.cvs1 = this.$refs.cvs1;
+      this.cvs1.getContext('2d').drawImage(image, 0, 0, this.width, this.height); //背景
+      this.cvs1.getContext('2d').drawImage(this.canvas, 0, 0, this.width, this.height); //線
+      this.file = this.cvs1.toDataURL('image/png');
+
+      console.log(this.file)
+      this.$nextTick(function(){
+        this.postFile();
+      })
       },
       postFile: function() {
         console.log(this.backgroundImage);
           const url = "https://www2.yoslab.net/~nishimura/geotour/PHP/upload_draw.php";
           let params = new URLSearchParams();
           params.append('canvasData', this.file);
-          params.append('backImage', this.backgroundImage);
           axios
             .post(url, params)
             .then(response => {
@@ -242,7 +242,21 @@ export default {
 }
 </script>
 <style scoped>
+
+#drawing {
+  position: fixed;
+  left: 10px;
+  width: 100%;
+  height: 100%;
+}
+
 #cvs1 {
+  /*消す
   opacity: 0;
+  */
+}
+
+#back_image_hidden {
+  visibility: hidden;
 }
 </style>
