@@ -26,6 +26,15 @@ function add_img_db($data) {
 
     $stmt->execute();
 
+    $pdo = connect_mysql();  //mysqlに接続
+
+    $stmt = $pdo -> prepare("INSERT INTO 
+    images (image_path) 
+    VALUES (:image_path)");
+    $stmt->bindParam(':image_path', $path, PDO::PARAM_STR);
+
+    $stmt->execute();
+
 }
 
 function base64url_decode($data) { 
