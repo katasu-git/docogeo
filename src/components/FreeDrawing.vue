@@ -16,7 +16,10 @@
       :height="height"
     ></canvas>
 
+
     <img id="back_image_hidden" :src="backgroundImage" />
+    
+    <Footer></Footer>
 
   </div>
 </template>
@@ -24,6 +27,7 @@
 <script>
 import axios from 'axios'
 import Konva from 'konva';
+import Footer from '../components/parts/Footer'
 
 export default {
   name: 'FreeDrawing',
@@ -238,6 +242,9 @@ export default {
             }
         })
       },
+  },
+  components: {
+    Footer: Footer
   }
 }
 </script>

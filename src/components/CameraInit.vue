@@ -14,7 +14,7 @@
         class="image_photo" 
         :src="photoImage.image_path" />
 
-    <button 
+    <button
         class="button_recapture"
         @click="jump()"
     >もう一度撮影する</button>
@@ -95,9 +95,6 @@ import { async } from 'q';
   }
 
   #video, img {
-    position: absolute;
-    top: 10px;
-    right: 10px;
     width: calc(100% - 20px);
     z-index: 1;
   }

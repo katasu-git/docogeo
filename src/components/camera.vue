@@ -1,35 +1,35 @@
 <template>
   <div id="camera">
 
-        <div class="o-img-area">
-
-            <video
-              ref="video" 
-              id="video"
-              autoplay muted playsinline
-            ></video>
-            <div class="wrapper">
-              <canvas
-                v-show="photo_flag"
-                ref="canvas"
-                id="canvas"
-              ></canvas>
-            </div>
-
-            <button 
-              class="button_capture"
-              @click="capture"
-            ></button>
-
-        </div>
-      
+    <div class="video_wrapper">
+      <video
+        ref="video" 
+        id="video"
+        autoplay muted playsinline
+      ></video>
+      <button 
+        class="button_capture"
+        @click="capture"
+      ></button>
     </div>
 
+    <div class="wrapper">
+      <canvas
+        v-show="photo_flag"
+        ref="canvas"
+        id="canvas"
+      ></canvas>
+    </div>
+
+    <Footer></Footer>
+
+  </div>
 </template>
 
 <script>
 import axios from 'axios'
 import { async } from 'q';
+import Footer from '../components/parts/Footer'
   export default {
     name: 'camera',
     data() {
@@ -110,6 +110,9 @@ import { async } from 'q';
             }
         })
       }
+    },
+    components: {
+      Footer: Footer
     }
   }
 
@@ -117,7 +120,7 @@ import { async } from 'q';
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-  #camera, .o-background {
+  #camera, .o-img-area{
     height: 100%;
     width: 100%;
 
@@ -125,10 +128,13 @@ import { async } from 'q';
     color: rgba(0,0,0,.87);
   }
 
-  #video {
+  .video_wrapper {
     position: absolute;
     top: 10px;
-    right: 10px;
+    left: 10px;
+  }
+
+  #video {
     width: calc(100% - 20px);
   }
 
@@ -139,8 +145,9 @@ import { async } from 'q';
   }
 
   .button_capture {
+    z-index: 2;
     position: absolute;
-    bottom: 20px;
+    bottom: 10px;
     right: 0;
     left: 0;
     margin: auto;

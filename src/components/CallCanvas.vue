@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div id="callcanvas">
         <!-- <select 
             v-model="mode"
             name="mode" 
@@ -8,7 +8,6 @@
             <option value="brush">ペン</option>
             <option value="eraser">消しゴム</option>
         </select> -->
-        
         <FreeDrawing
             class="freeDrawing"
             ref="freeDrawing"
@@ -73,16 +72,21 @@ export default {
 </script>
 
 <style scoped>
+
+  #callcanvas {
+    position: relative;
+    top: 0;
+  }
+
   .freeDrawing {
     height: 100%;
-    position: absolute;
     top: 10px;
     right: 10px;
   }
 
   .l_button {
     position: absolute;
-    bottom: 20px;
+    top: 20px;
     left: 10px;
     width: calc(100% - 20px);
   }

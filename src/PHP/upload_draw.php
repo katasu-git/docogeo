@@ -40,7 +40,30 @@ function add_img_db($data) {
 function base64url_decode($data) { 
     // = 埋めしなくてもいける
     return base64_decode(str_pad(strtr($data, '-_', '+/'), strlen($data) % 4, '=', STR_PAD_RIGHT)); 
-} 
+}
+
+//撮影した画像を配信する
+function post_image() {
+    //必要な引数を用意
+    $tour_id = $_POST['tour_id'];
+    $spot_id = $_POST['spot_id'];
+    $img_id = $_POST['img_id'];
+    $img_path = $_POST['img_path'];
+
+    $pdo = connect_mysql();  //mysqlに接続
+
+    $stmt = $pdo -> prepare("INSERT INTO 
+    dist_post (tour_id, spot_id, img_id, img_path) 
+    VALUES (:tour_id, :spot_id, :img_id, :img_path)");
+    $stmt->bindValue(':tour_id', $tour_id, PDO::PARAM_INT);
+    $stmt->bindValue(':spot_id', $spot_id, PDO::PARAM_INT);
+    $stmt->bindValue(':img_id', $img_id, PDO::PARAM_INT);
+    $stmt->bindParam(':img_path', $img_path, PDO::PARAM_STR);
+
+    $stmt->execute();
+    echo "成功！";
+
+}
 
 try {
     add_img_db($_POST['canvasData']); //偶数が線画像
