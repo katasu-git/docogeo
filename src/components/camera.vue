@@ -16,6 +16,7 @@
       />
 
       <button 
+        v-show="!user_flag"
         class="button_capture"
         @click="capture"
       ></button>
@@ -56,6 +57,7 @@ import Footer from '../components/parts/Footer'
         photo_flag: true,
         bottom_flag: false,
         pile_flag: true,
+        user_flag: '',
         video_w: '200',
         video_h: '200',
         pile_image: '',
@@ -64,6 +66,7 @@ import Footer from '../components/parts/Footer'
     created() {
       this.tour_id = this.$route.params.tour_id;
       this.tour_name = this.$route.params.tour_name;
+      this.user_flag = this.$route.params.user_flag;
     },
     mounted() {
         this.video = this.$refs.video
@@ -129,9 +132,13 @@ import Footer from '../components/parts/Footer'
             }
         })
       },
-      backToExPage(where) {
+      backToExPage() {
+        let where = "chat_g"
+        if(this.user_flag) {
+          where = "chat_u";
+        }
          this.$router.push({
-            name: 'chat_g',
+            name: where,
             params: {
               tour_id: this.tour_id,
               tour_name: this.tour_name

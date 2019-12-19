@@ -30,21 +30,8 @@
             </div>
         </div>
 
-        <div class="l-footer">
-            <div class="o-icon">
-                <img class="o-icon_img" src="../assets/camera_button.svg" />
-                <div class="o-footer_text">カメラ</div>
-            </div>
-            <div class="o-icon">
-                <img class="o-icon_img" src="../assets/comment_active.svg" />
-                <div class="o-footer_text u-color-green">説明</div>
-            </div>
-            <div class="o-icon">
-                <img class="o-icon_img" src="../assets/map_button.svg" />
-                <div class="o-footer_text">地図</div>
-            </div>
-            
-        </div>
+        <Footer
+            @jumpPage="jumpPage"></Footer>
 
       </div>
   </div>
@@ -52,6 +39,7 @@
 
 <script>
   import axios from 'axios'
+  import Footer from '../components/parts/Footer'
   export default {
     name: 'chat_u',
     data() {
@@ -61,7 +49,6 @@
           spot_id: 1,
           spot_name: '',
           spot_ex: JSON,
-          hello: 5,
       }
     },
     created: function () {
@@ -101,7 +88,9 @@
             this.$router.push({
                 name: where,
                 params: {
-                    tour_id: this.tour_id
+                    tour_id: this.tour_id,
+                    tour_name: this.tour_name,
+                    user_flag: true,
                 }
             });
         },
@@ -121,6 +110,9 @@
         returnSended(sended) {
             return sended.substr(10, 6);
         }
+    },
+    components: {
+        Footer: Footer
     }
   }
 
