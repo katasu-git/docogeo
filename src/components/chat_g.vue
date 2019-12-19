@@ -75,24 +75,8 @@
             </div>
         </div>
 
-        <div class="l-footer">
-            <div 
-                class="o-icon"
-                @click="jumpPage('cameraInit')"
-            >
-                <img class="o-icon_img" src="../assets/camera_button.svg" />
-                <div class="o-footer_text">カメラ</div>
-            </div>
-            <div class="o-icon">
-                <img class="o-icon_img" src="../assets/comment_active.svg" />
-                <div class="o-footer_text u-color-green">説明</div>
-            </div>
-            <div class="o-icon">
-                <img class="o-icon_img" src="../assets/map_button.svg" />
-                <div class="o-footer_text">地図</div>
-            </div>
-            
-        </div>
+        <Footer
+            @jumpPage="jumpPage"></Footer>
 
       </div>
   </div>
@@ -100,9 +84,9 @@
 
 <script>
   import axios from 'axios'
-  import draggable from 'vuedraggable';
   import ChangeSpot from '../components/modals/chatChangeSpot'
   import FinishTour from '../components/modals/chatFinish'
+  import Footer from '../components/parts/Footer'
   export default {
     name: 'chat_g',
     data() {
@@ -149,7 +133,8 @@
             this.$router.push({
                 name: where,
                 params: {
-                    tour_id: this.tour_id
+                    tour_id: this.tour_id,
+                    tour_name: this.tour_name
                 }
             });
         },
@@ -199,7 +184,6 @@
                 const url3 = 'https://www2.yoslab.net/~nishimura/geotour/PHP/DELETE/delete_posted_post.php';
                 let params3 = new URLSearchParams();
                 params3.append("ex_id", ex.ex_id);
-                console.log(ex.ex_id);
                 axios
                     .post(url3, params3)
                     .then(response => {
@@ -264,7 +248,6 @@
             return '#4B8E8D';
         },
         returnOpacity(isPosted) {
-            console.log(isPosted);
             if(isPosted == 0) {
                 return '1';
             } else {
@@ -332,7 +315,7 @@
     components: {
         ChangeSpot: ChangeSpot,
         FinishTour: FinishTour,
-        draggable: draggable,
+        Footer: Footer
     }
   }
 

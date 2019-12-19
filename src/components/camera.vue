@@ -33,7 +33,9 @@
         id="canvas"
       ></canvas>
 
-    <Footer></Footer>
+    <Footer
+      @backToExPage="backToExPage"
+    ></Footer>
 
   </div>
 </template>
@@ -47,6 +49,7 @@ import Footer from '../components/parts/Footer'
     data() {
       return {
         tour_id: '',
+        tour_name: '',
         video: {},
         canvas: {},
         captures: [],
@@ -55,11 +58,12 @@ import Footer from '../components/parts/Footer'
         pile_flag: true,
         video_w: '200',
         video_h: '200',
-        pile_image: ''
+        pile_image: '',
       }
     },
     created() {
       this.tour_id = this.$route.params.tour_id;
+      this.tour_name = this.$route.params.tour_name;
     },
     mounted() {
         this.video = this.$refs.video
@@ -120,7 +124,17 @@ import Footer from '../components/parts/Footer'
               width: this.video_w,
               height: this.video_h,
               captures: this.captures,
-              tour_id: this.tour_id
+              tour_id: this.tour_id,
+              tour_name: this.tour_name
+            }
+        })
+      },
+      backToExPage(where) {
+         this.$router.push({
+            name: 'chat_g',
+            params: {
+              tour_id: this.tour_id,
+              tour_name: this.tour_name
             }
         })
       },
@@ -130,7 +144,8 @@ import Footer from '../components/parts/Footer'
               .post(url)
               .then(response => {
               //画像を受け取ったときの処理
-                this.pile_image = response.data.image_path;
+                this.pile_image = response.data[0].image_path;
+                console.log(response.data[0].image_path);
               })
               .catch(error => {
               // エラーを受け取る
@@ -143,6 +158,7 @@ import Footer from '../components/parts/Footer'
         } else {
           this.pile_flag = true;
         }
+        console.log(this.pile_flag)
       }
     },
     components: {
@@ -173,9 +189,12 @@ import Footer from '../components/parts/Footer'
   }
 
   .pile_image {
+    width: calc(100% - 10px);
     position: absolute;
     top: 0;
     left: 0;
+    z-index: 2;
+    opacity: .3;
   }
 
   #canvas {
@@ -185,7 +204,7 @@ import Footer from '../components/parts/Footer'
   }
 
   .button_capture {
-    z-index: 2;
+    z-index: 3;
     position: absolute;
     bottom: 10px;
     right: 0;
@@ -199,7 +218,7 @@ import Footer from '../components/parts/Footer'
   }
 
   .button_turnoff {
-    z-index: 2;
+    z-index: 3;
     position: absolute;
     bottom: 25px;
     right: 40px;

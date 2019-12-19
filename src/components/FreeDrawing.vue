@@ -1,12 +1,32 @@
 <template>
   <div id="drawing">
-    <div ref="container">
+
+    <img 
+      class="button_gear"
+      src="../assets/gear_icon.svg" />
+
+    <div
+      class="container" 
+      ref="container">
+      
       <canvas
         :width="width"
         :height="height"
         ref="canvas"
         id="canvas">
       </canvas>
+
+    </div>
+
+    <div class="l-button">
+      <button @click="jump('camera')">撮影し直す</button>
+      <button 
+        class="button_capture"
+        @click="capture"
+      >OK</button>
+      <img
+        class="button_pen" 
+        src="../assets/pen_icon.svg" />
     </div>
 
     <canvas 
@@ -16,10 +36,7 @@
       :height="height"
     ></canvas>
 
-
     <img id="back_image_hidden" :src="backgroundImage" />
-    
-    <Footer></Footer>
 
   </div>
 </template>
@@ -49,6 +66,7 @@ export default {
     get_height: '',
     get_captures: '',
     tour_id: '',
+    tour_name: ''
   },
   data: () => ({
     width: window.innerWidth,
@@ -212,7 +230,7 @@ export default {
             .post(url, params)
             .then(response => {
               //console.log(response.data);
-              this.jump();
+              this.jump("camera");
             })
             .catch(error => {
               // エラーを受け取る
@@ -234,11 +252,12 @@ export default {
             blob = new Blob([arr], {type: 'image/png'});
             return blob;
         },
-        jump() {
+        jump(where) {
          this.$router.push({
-            name: 'cameraInit',
+            name: where,
             params: {
-                tour_id: this.tour_id
+                tour_id: this.tour_id,
+                tour_name: this.tour_name
             }
         })
       },
@@ -252,18 +271,54 @@ export default {
 
 #drawing {
   position: fixed;
-  left: 10px;
   width: 100%;
   height: 100%;
 }
 
 #cvs1 {
-  /*消す
-  opacity: 0;
-  */
+  visibility: hidden;
 }
 
 #back_image_hidden {
   visibility: hidden;
+}
+
+.container {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+}
+
+.l-button {
+  width: 100%;
+  position: absolute;
+  bottom: 20px;
+  right: 0;
+  left: 0;
+  margin: auto;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.button_capture {
+  width: 60px;
+  height: 60px;
+  border-radius: 100px;
+  background-color: #C4C4C4;
+  border: solid 3px #fff;
+
+  font-size: 18px;
+  font-weight: bold;
+  color: #fff;
+  margin: 0 40px;
+}
+
+.button_gear {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 2;
 }
 </style>

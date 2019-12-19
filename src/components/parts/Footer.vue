@@ -9,9 +9,11 @@
     </div>
     <div 
         class="o-icon"
-        @click="jump('')"
+        @click="jump('expage')"
     >
-        <img class="o-icon_img" src="../../assets/comment_active.svg" />
+        <div>
+          <img class="o-icon_img" :src='changeColor("camera")' />
+        </div>
         <div class="o-footer_text u-color-green">説明</div>
     </div>
     <div 
@@ -35,13 +37,22 @@
     },
     methods: {
         jump(where) {
-            this.$router.push({
-                name: where,
-                params: {
-                    tour_id: this.tour_id
-                }
-            })
+          this.where = where;
+          if(where == 'camera') {
+            this.$emit("jumpPage", "camera");
+          } else if (where == 'expage') {
+            this.$emit("backToExPage");
+          }
         },
+        changeColor(dom) {
+          if(dom === "camera") {
+            if(this.where == "camera") {
+              return require("../../assets/comment_active.svg")
+            } else {
+              return require("../../assets/comment_button.svg")
+            }
+          }
+        }
     }
   }
 
