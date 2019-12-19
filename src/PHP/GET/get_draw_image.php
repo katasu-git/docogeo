@@ -12,10 +12,7 @@ function get_draw_image() {
         //帰り値の設定
         $image = array('id' => $row['id'], 'image_path' => $row['image_path']);
         array_push($result, $image);
-        $i++;
-        if($i > 1) {
-            break;
-        }
+        break;
     }
     return $result;
 }

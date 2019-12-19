@@ -2,24 +2,36 @@
   <div id="camera">
 
     <div class="video_wrapper">
+
       <video
         ref="video" 
         id="video"
         autoplay muted playsinline
       ></video>
+
+      <img
+        :src="pile_image"
+        class="pile_image"
+        v-show="pile_flag"
+      />
+
       <button 
         class="button_capture"
         @click="capture"
       ></button>
+
+      <img
+        class="button_turnoff"
+        @click="turnOffPile()"
+        src="../assets/turnoff.svg"
+      />
+
     </div>
 
-    <div class="wrapper">
       <canvas
-        v-show="photo_flag"
         ref="canvas"
         id="canvas"
       ></canvas>
-    </div>
 
     <Footer></Footer>
 
@@ -40,8 +52,10 @@ import Footer from '../components/parts/Footer'
         captures: [],
         photo_flag: true,
         bottom_flag: false,
+        pile_flag: true,
         video_w: '200',
-        video_h: '200'
+        video_h: '200',
+        pile_image: ''
       }
     },
     created() {
@@ -62,7 +76,7 @@ import Footer from '../components/parts/Footer'
                 this.video.play()
             })
         }
-
+        this.getImage();
         this.setCanvas();
 
     },
@@ -109,6 +123,26 @@ import Footer from '../components/parts/Footer'
               tour_id: this.tour_id
             }
         })
+      },
+      getImage() {
+          const url ="https://www2.yoslab.net/~nishimura/geotour/PHP/GET/get_draw_image.php";
+          axios
+              .post(url)
+              .then(response => {
+              //画像を受け取ったときの処理
+                this.pile_image = response.data.image_path;
+              })
+              .catch(error => {
+              // エラーを受け取る
+              console.log(error);
+              });
+      },
+      turnOffPile() {
+        if(this.pile_flag) {
+          this.pile_flag = false;
+        } else {
+          this.pile_flag = true;
+        }
       }
     },
     components: {
@@ -135,13 +169,19 @@ import Footer from '../components/parts/Footer'
   }
 
   #video {
-    width: calc(100% - 20px);
+    width: calc(100% - 10px);
+  }
+
+  .pile_image {
+    position: absolute;
+    top: 0;
+    left: 0;
   }
 
   #canvas {
     position: absolute;
     top: 0;
-    opacity: .3;
+    visibility: hidden;
   }
 
   .button_capture {
@@ -154,7 +194,17 @@ import Footer from '../components/parts/Footer'
     width: 60px;
     height: 60px;
     border-radius: 100px;
-    background-color: rgba(0,0,0,.26);
+    background-color: #C4C4C4;
+    border: solid 3px #fff;
+  }
+
+  .button_turnoff {
+    z-index: 2;
+    position: absolute;
+    bottom: 25px;
+    right: 40px;
+    width: 40px;
+    height: 30px;
   }
 
 </style>

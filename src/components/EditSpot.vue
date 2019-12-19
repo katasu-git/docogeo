@@ -406,6 +406,7 @@ export default {
   .l-comment_container {
       width: calc(100% - 40px);
       margin-left: 20px;
+      word-wrap: break-word;
   }
 
   .l-comment_row {
