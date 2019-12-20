@@ -13,7 +13,7 @@
         :tour_id="tour_id" @closeModal="closeModal"></GeoCreateGeo>
       
       <div class="l-header_above">
-        <div class="o-text_tour">Geosite</div>
+        <div class="o-text_tour">Spot</div>
         <div class="o-image_image_button">
           <img v-on:click="startSort()" v-show="!flag_order" src="../assets/sort_button.svg" />
           <img v-on:click="startSort()" v-show="flag_order" src="../assets/sort_button_active.svg" />
@@ -45,11 +45,11 @@
             v-for="(info) in spot_info" v-on:click='jumpPage("editSpot", info.spot_id, info.spot_name)' :key="info.spot_id">
           <div class="l-image_text_burger">
             <div class="l-image_text">
-              <div class="o-list_image"><img class="o-image_circle" src="../assets/sample.jpg" /></div>
+              <div class="o-list_image"><img class="o-image_circle" src="../assets/kujira.svg" /></div>
               <div class="l-list_text">
                 <div class="o-list_text_geosite" 
                   v-long-press="300" @long-press-start="onPlusStart(info.spot_id)">{{ info.spot_name }}</div>
-                <div class="o-list_text_update">最終更新 2019.11.7</div>
+                <div class="o-list_text_update">最終更新 {{returnSended(info.updated)}}</div>
               </div>
             </div>
           </div>
@@ -183,6 +183,12 @@ import GeoCreateGeo from '../components/modals/geoCreateGeo'
       },
       wakeCreateGeo: function() {
         this.flag_create = true;
+      },
+      returnSended(sended) {
+            let month = sended.substr(5, 2) + '月';
+            let day = sended.substr(8, 2) + '日';
+            let time = ' ' + sended.substr(10, 6);
+            return month + day + time;
       }
     },
     components: {
@@ -269,6 +275,7 @@ import GeoCreateGeo from '../components/modals/geoCreateGeo'
     width: 50px;
     border-radius: 100px;
     object-fit: cover;
+    border: solid 1px rgba(0,0,0, .12);
   }
 
   .o-list {

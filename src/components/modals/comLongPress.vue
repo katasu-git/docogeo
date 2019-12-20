@@ -4,9 +4,22 @@
       
       <div class="o-background_black">
         <div class="o-modal">
-          <div class="o-text" @click="changeCom">編集</div>
+          <div 
+            class="o-text"
+            @click="changeCom"
+            v-show="!flag_press_img"
+          >編集</div>
           <div class="o-border u-mt10"></div>
-          <div class="o-text u-color-red" @click="deleteEx()">削除</div>
+          <div 
+            class="o-text u-color-red" 
+            @click="deleteEx()"
+            v-show="!flag_press_img"
+          >削除</div>
+          <div 
+            class="o-text u-color-red" 
+            @click="reset_img_bind()"
+            v-show="flag_press_img"
+          >削除</div>
           <div class="o-border u-mt10"></div>
           <div class="o-text u-color-green" @click='closeModal()'>キャンセル</div>
         </div>
@@ -21,6 +34,7 @@ import axios from 'axios'
     name: 'comlongpress',
     props: {
       ex_id_avoid: '',
+      flag_press_img: Boolean
     },
     methods: {
         closeModal: function() {
@@ -36,6 +50,19 @@ import axios from 'axios'
               axios.post(url, params
               ).then(response => {
                 this.$emit('get_spot_ex');
+                this.closeModal();
+              }).catch(error => {
+                  // エラーを受け取る
+                  console.log(error);
+              });
+        },
+        reset_img_bind() {
+          const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/RESET/reset_img_bind.php';
+              let params = new URLSearchParams();
+              params.append('img_id', this.ex_id_avoid);
+              axios.post(url, params
+              ).then(response => {
+                this.$emit('getSpotImage');
                 this.closeModal();
               }).catch(error => {
                   // エラーを受け取る

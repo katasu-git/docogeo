@@ -3,10 +3,10 @@
     <div class="o-background">
 
       <div class="l-header_above">
-        <div class="o-text_tour">Tour</div>
+        <div class="o-text_tour">Event</div>
       </div>
       <div class="l-header_under">
-        <div class="o-text_tour_min">開催中のツアー</div>
+        <div class="o-text_tour_min">開催中のイベント</div>
       </div>
       <div class="o-slider">
         <div class="o-card"

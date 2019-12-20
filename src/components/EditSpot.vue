@@ -2,20 +2,21 @@
   <div id="editSpot">
     <div class="o-background">
 
-      <ComLongPress v-show="flag_longpress"
+      <ComLongPress 
+        v-show="flag_longpress && !flag_change_com"
         :ex_id_avoid="ex_id_avoid"
+        :flag_press_img="flag_press_img"
         @closeModal="closeModal"
         @get_spot_ex="get_spot_ex"
         @changeCom="changeCom"
+        @getSpotImage="getSpotImage"
       ></ComLongPress>
-
-      <ComAddComment @closeModal="closeModal"
-        :tour_id="tour_id" :spot_id="spot_id"
-        v-show="flag_add_com"></ComAddComment>
 
       <ComChangeCom
         v-show="flag_change_com"
+        v-bind:class="{ slideIn: flag_change_com, slideOut: !flag_change_com }"
         :ex_id_avoid="ex_id_avoid"
+        :ex_avoid="ex_avoid"
         @closeModal="closeModal"></ComChangeCom>
       
       <div class="l-header_above">
@@ -33,10 +34,11 @@
       <div class="l-slider_images" v-show="!flag_order">
         <button
           class="o-button_add_img"
-          @touchend="addImg()">画像を追加する</button>
+          @click="addImg()">画像を追加する</button>
         <div class="o-image" 
           v-for="image in srcArray"
           :key="image.id"
+          @click="onPlusStart(image.id, true)"
         >
           <img class="img" :src="image.imgPath" :alt="image.imgName" />
         </div>
@@ -54,41 +56,56 @@
       <div class="l-border">
         <div class="o-border u-mt20"></div>
       </div>
-
-      <div　class="l-comment" v-show="!flag_order">
-        <div v-for="ex in spot_ex" :key="ex.id">
-          <div class="l-image_text_burger">
-              <div class="l-image_text">
-                <div class="l-list_text">
-                  <div class="o-list_text_geosite"
-                    v-long-press="500" @long-press-start="onPlusStart(ex.id)">{{ ex.spot_ex }}</div>
-                  <div class="o-list_text_update">2019.11.7</div>
+      
+      <div
+        class="l-comment_container"
+        v-show="!flag_order"
+      >
+            <div class="l-comment_row" v-for="ex in spot_ex" :key="ex.id">
+                <div class="l-flex_end">
+                    <div
+                      class="l-comment"
+                      @click="onPlusStart(ex.id, false, ex.spot_ex)"
+                    >{{ ex.spot_ex }}</div>
+                    <div class="o-send_time">{{returnSended(ex.created)}}</div>
                 </div>
-              </div>
-          </div>
-        </div>
+            </div>
       </div>
 
-      <draggable @update="update_order_spot_ex()" class="l-comment" v-model="spot_ex" :animation="150" v-show="flag_order">
-        <div v-for="ex in spot_ex" :key="ex.id">
-        <div class="l-image_text_burger">
-            <div class="l-image_text">
-              <div class="l-list_text">
-                <div class="o-list_text_geosite">{{ ex.spot_ex }}</div>
-                <div class="o-list_text_update">2019.11.7</div>
-              </div>
+      <draggable 
+        class="l-comment_container"
+        v-show="flag_order"
+        @update="update_order_spot_ex()"
+        v-model="spot_ex" 
+        :animation="150"
+      >
+            <div class="l-comment_row" v-for="ex in spot_ex" :key="ex.id">
+                <div class="l-flex_end">
+                    <div
+                      class="l-comment"
+                    >{{ ex.spot_ex }}</div>
+                    <div class="o-send_time">{{returnSended(ex.created)}}</div>
+                </div>
+                <div class="o-burger u-mt20"><img src="../assets/burger_button.svg" /></div>
             </div>
-            <div class="o-burger u-mt20"><img src="../assets/burger_button.svg" /></div>
-          </div>
-        </div>
       </draggable>
 
-      <button class="o-button_save_sort" v-on:click="startSort()" 
-        v-show="flag_order && !flag_add_com &&!flag_longpress">並び替えを終了する</button>
+      <button 
+        class="o-button_save_sort"
+        v-on:click="startSort()" 
+        v-show="flag_order && !flag_add_com &&!flag_longpress"
+      >並び替えを終了する</button>
 
       <button class="o-button_create_geosite" v-on:click="addComment()" 
         v-show="!flag_order && !flag_add_com &&!flag_longpress">新しく説明を追加する</button>
     </div>
+    <ComAddComment 
+        @closeModal="closeModal"
+        :tour_id="tour_id" 
+        :spot_id="spot_id"
+        v-show="flag_add_com"
+        v-bind:class="{ slideIn: flag_add_com, slideOut: !flag_add_com }"
+    ></ComAddComment>
   </div>
 </template>
 
@@ -109,10 +126,12 @@ export default {
       spot_ex: [],
       srcArray: [],
       ex_id_avoid: '',
+      ex_avoid: '',
       flag_order: false,
       flag_add_com: false,
       flag_longpress: false,
       flag_change_com: false,
+      flag_press_img: false,
     };
   },
   created: function() {
@@ -151,12 +170,10 @@ export default {
         })
     },
     closeModal: function() {
-      setTimeout(() => {
         this.flag_add_com = false;
         this.flag_longpress = false;
         this.flag_change_com = false;
         this.get_spot_ex(); //説明の更新を反映
-      }, 200)
     },
     startSort: function() {
         if(this.flag_order) {
@@ -183,8 +200,15 @@ export default {
       //this.closeModal();
       this.flag_change_com = true;
     },
-    onPlusStart: function(id) {
+    onPlusStart: function(id,flag_press_img, comment) {
       this.ex_id_avoid = id;  //削除する時の判定に使う
+      this.ex_avoid = comment;
+      console.log(this.ex_avoid);
+      if(flag_press_img) {
+        this.flag_press_img = true;
+      } else {
+        this.flag_press_img = false;
+      }
       this.flag_longpress = true;
     },
     update_order_spot_ex: function() {
@@ -225,6 +249,12 @@ export default {
                   // エラーを受け取る
                   console.log(error);
               });
+        },
+        returnSended(sended) {
+            let month = sended.substr(5, 2) + '月';
+            let day = sended.substr(8, 2) + '日';
+            let time = ' ' + sended.substr(10, 6);
+            return month + day + time;
         }
   },
   components: {
@@ -242,21 +272,16 @@ export default {
   height: 100%;
   width: 100%;
   background-color: #F5F5F5;
-  
   color: rgba(0,0,0,.87);
+  overflow: auto;
 }
+
 
 .l-header_above {
     width: 100%;
-
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
-
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
   }
 
     .o-text_tour {
@@ -315,8 +340,14 @@ export default {
   .o-image, .o-button_add_img {
     height: 100px;
     width: 100px;
+    min-height: 100px;
+    min-width: 100px;
     background-color: rgba(0,0,0, .05);
     border-radius: 10px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
   }
 
   .img {
@@ -349,55 +380,6 @@ export default {
     background-color: rgba(0,0,0, .12);
   }
 
-  .l-comment {
-    margin-bottom: 80px;
-    width: calc(100% - 40px);
-  }
-
-  .o-list {
-    padding: 20px 0 0 20px;
-  }
-
-  .l-image_text_burger {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .o-burger {
-    margin: 0 20px;
-  }
-  
-  .l-image_text {
-    display: flex;
-    margin-right: 20px;
-  }
-
-  .l-list_text {
-    margin: 20px 0 0 20px;
-    background-color: rgba(0,0,0, .05);
-    border-radius: 10px;
-  }
-
-  .o-list_text_geosite {
-    padding: 20px 20px 10px 20px;
-    font-size: 14px;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-  }
-
-  .o-list_text_update {
-    padding: 0 20px 20px 20px;
-    font-size: 12px;
-    color: rgba(0,0,0, .26);
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-  }
-
   .o-button_create_geosite, .o-button_save_sort {
     position: fixed;
     bottom: 20px;
@@ -419,6 +401,52 @@ export default {
 
   .o-button_create_geosite:acitve {
     opacity: .7;
+  }
+
+  .l-comment_container {
+      width: calc(100% - 40px);
+      margin-left: 20px;
+      word-wrap: break-word;
+  }
+
+  .l-comment_row {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+  }
+
+  .l-comment_row:first-of-type {
+      margin-top: 20px;
+  }
+
+  .l-comment_row:not(:first-of-type) {
+      margin-top: 20px;
+  }
+
+  .l-comment_row:last-of-type {
+      margin-bottom: 120px;
+  }
+
+  .l-flex_end {
+      width: 100%;
+      display: flex;
+      align-items: flex-end;
+  }
+
+  .l-comment {
+      padding: 10px;
+      background-color: #E3E5E5;
+      border-radius: 10px;
+  }
+
+  .o-send_time {
+      margin: 0 25px 0 5px;
+      display: flex;
+      align-items: flex-end;
+      white-space: nowrap;
+
+      font-size: 10px;
+      color: #A2A6A5;
   }
 
   .u-mt10 {

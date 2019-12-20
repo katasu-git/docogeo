@@ -44,7 +44,12 @@
                 :key="image.id"
                 @click="postImg(image)"
             >
-                <img class="img" :src="image.imgPath" :alt="image.imgName" />
+                <img 
+                    class="img"
+                    :src="image.imgPath"
+                    :alt="image.imgName"
+                    :style="{ opacity:returnOpacity(image.isPosted) }"
+                />
             </div>
         </div>
 
@@ -56,7 +61,10 @@
             <div class="l-comment_row" v-for="ex in spot_ex" :key="ex.ex_id">
                 <div class="l-flex_end">
                     <div class="l-comment" :style="{ opacity:returnOpacity(ex.isPosted) }">{{ ex.spot_ex }}</div>
-                    <div class="o-send_time" :style="{ color:returnTimeCol(ex.isPosted) }">11:22</div>
+                    <div 
+                        class="o-send_time"
+                        :style="{ color:returnTimeCol(ex.isPosted) }"
+                    >{{returnSended(ex.sended)}}</div>
                 </div>
                 <div class="o-button_hoe"
                     :style="{ opacity:returnOpacity(ex.isPosted) }"
@@ -67,21 +75,8 @@
             </div>
         </div>
 
-        <div class="l-footer">
-            <div class="o-icon">
-                <img class="o-icon_img" src="../assets/camera_button.svg" />
-                <div class="o-footer_text">カメラ</div>
-            </div>
-            <div class="o-icon">
-                <img class="o-icon_img" src="../assets/comment_active.svg" />
-                <div class="o-footer_text u-color-green">説明</div>
-            </div>
-            <div class="o-icon">
-                <img class="o-icon_img" src="../assets/map_button.svg" />
-                <div class="o-footer_text">地図</div>
-            </div>
-            
-        </div>
+        <Footer
+            @jumpPage="jumpPage"></Footer>
 
       </div>
   </div>
@@ -89,9 +84,9 @@
 
 <script>
   import axios from 'axios'
-  import draggable from 'vuedraggable';
   import ChangeSpot from '../components/modals/chatChangeSpot'
   import FinishTour from '../components/modals/chatFinish'
+  import Footer from '../components/parts/Footer'
   export default {
     name: 'chat_g',
     data() {
@@ -138,7 +133,9 @@
             this.$router.push({
                 name: where,
                 params: {
-                    tour_id: this.tour_id
+                    tour_id: this.tour_id,
+                    tour_name: this.tour_name,
+                    spot_id: this.spot_id
                 }
             });
         },
@@ -188,7 +185,6 @@
                 const url3 = 'https://www2.yoslab.net/~nishimura/geotour/PHP/DELETE/delete_posted_post.php';
                 let params3 = new URLSearchParams();
                 params3.append("ex_id", ex.ex_id);
-                console.log(ex.ex_id);
                 axios
                     .post(url3, params3)
                     .then(response => {
@@ -255,8 +251,9 @@
         returnOpacity(isPosted) {
             if(isPosted == 0) {
                 return '1';
+            } else {
+                return '0.4';
             }
-            return '0.4';
         },
         changeSpot() {
             this.flag_change_spot = true;
@@ -311,12 +308,15 @@
                     // エラーを受け取る
                     console.log(error);
                 });
+        },
+        returnSended(sended) {
+            return sended.substr(10, 6);
         }
     },
     components: {
         ChangeSpot: ChangeSpot,
         FinishTour: FinishTour,
-        draggable: draggable,
+        Footer: Footer
     }
   }
 
@@ -411,6 +411,8 @@
     position: relative;
     min-height: 100px;
     min-width: 100px;
+    max-height: 100px;
+    max-width: 100px;
     background-color: rgba(0,0,0, .05);
     border-radius: 10px;
   }

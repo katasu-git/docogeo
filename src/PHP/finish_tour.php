@@ -68,10 +68,35 @@ function reset_post() {
     }
 }
 
+function reset_post_img() {
+    try {
+        $pdo = connect_mysql();  //mysqlに接続
+    
+        // UPDATE文を変数に格納
+        $sql = "UPDATE images SET isPosted = :isPosted";
+    
+        // 更新する値と該当のIDは空のまま、SQL実行の準備をする
+        $stmt = $pdo->prepare($sql);
+    
+        // 更新する値と該当のIDを配列に格納する
+        $params = array(':isPosted' => 0);
+    
+        // 更新する値と該当のIDが入った変数をexecuteにセットしてSQLを実行
+        $stmt->execute($params);
+        //return $isPosted;
+        echo "成功！";
+
+    } catch (PDOException $e) {
+        echo $e;
+    }
+}
+
 finish_tour();
 
 delete_all_posted_post();
 
 reset_post();
+
+reset_post_img();
 
 ?>

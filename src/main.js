@@ -4,7 +4,9 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import LongPress from 'vue-directive-long-press'
+import { VLazyImagePlugin } from "v-lazy-image";
 
+Vue.use(VLazyImagePlugin);
 Vue.config.productionTip = false
 Vue.directive('long-press', LongPress)
 

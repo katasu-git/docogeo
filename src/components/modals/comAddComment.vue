@@ -1,9 +1,5 @@
 <template>
   <div id="comaddcomment">
-    <div class="o-background">
-      
-      <div class="o-background_black">
-        <div class="o-modal">
             <form class="u-mt20">
                 <textarea type="text" placeholder="ここに説明を入力" v-model="comment"></textarea>
             </form>
@@ -11,10 +7,6 @@
                 <button class="o-button_cancel" @click="closeModal()">キャンセル</button>
                 <button class="o-button_save" @click="addComment()">追加する</button>
             </div>
-        </div>
-      </div>
-
-    </div>
   </div>
 </template>
 
@@ -50,6 +42,7 @@
             axios
                 .post(url, params)
                 .then(response => {
+                    this.comment = '';//コメントの初期化
                     this.closeModal();
                 })
                 .catch(error => {
@@ -63,11 +56,21 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-  #geochangename {
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
+  #comaddcomment {
+    position: absolute;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    margin: auto;
+    width: 100%;
+    max-width: 400px;
+    border-radius: 30px 30px 0 0;
+    background-color: #fff;
+    z-index: 1;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
   .o-border {
@@ -85,16 +88,6 @@
     align-items: flex-end;
   }
 
-  .o-modal {
-    width: 100%;
-    border-radius: 30px 30px 0 0;
-    background-color: #fff;
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
   .o-text {
     padding: 20px;
     font-size: 16px;
@@ -105,7 +98,7 @@
       outline: none;
       margin: 20px 0;
       resize: vertical;
-      width: calc(100vw - 60px);
+      width: 100%;
       min-height: 80px;
       font-size: 18px;
       color: rgba(0,0,0, .87);

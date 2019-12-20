@@ -1,21 +1,13 @@
 <template>
   <div id="changename">
-    <div class="o-background">
-      
-      <div class="o-background_black">
-        <div class="o-modal">
-            <div class="o-image u-mt20"></div>
-            <form class="u-mt20">
-                <input type="text" placeholder="ここにツアーの名前を入力" v-model="tour_name_updated" />
-            </form>
-            <div class="o-border u-mt40"></div>
-            <div class="l-button">
-                <button class="o-button_cancel" v-on:click="closeModal()">キャンセル</button>
-                <button class="o-button_save" v-on:click="update_tour_name()">保存する</button>
-            </div>
-        </div>
-      </div>
-
+    <div class="o-image u-mt20"></div>
+    <form class="u-mt20">
+        <input type="text" placeholder="ここにツアーの名前を入力" v-model="tour_name" />
+    </form>
+    <div class="o-border u-mt40"></div>
+    <div class="l-button">
+        <button class="o-button_cancel" v-on:click="closeModal()">キャンセル</button>
+        <button class="o-button_save" v-on:click="update_tour_name()">保存する</button>
     </div>
   </div>
 </template>
@@ -26,10 +18,16 @@
     name: 'changename',
     props: {
         tour_id: '',
+        tour_name_avoid: '',
     },
     data() {
       return {
-          tour_name_updated: '',
+          tour_name: ''
+      }
+    },
+    watch: {
+      tour_name_avoid: function() {
+        this.tour_name = this.tour_name_avoid;
       }
     },
     methods: {
@@ -42,12 +40,12 @@
             let params = new URLSearchParams();
             console.log(this.tour_id);
             params.append("tour_id", this.tour_id);
-            params.append("tour_name_updated", this.tour_name_updated);
+            params.append("tour_name_updated", this.tour_name);
             axios
             .post(url, params)
             .then(response => {
                 console.log("更新成功");
-                this.tour_name_updated = ''; //リセット
+                this.tour_name = ''; //リセット
                 this.closeModal();
             })
             .catch(error => {
@@ -61,34 +59,18 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-    #changename {
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-    }
 
-  .o-border {
-    height: 1px;
+  #changename {
+    position: absolute;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    margin: auto;
     width: 100%;
-    background-color: rgba(0,0,0, .12);
-  }
-
-  .o-background_black {
-    height: 100%;
-    width: 100%;
-    position: fixed;
-    background-color: rgba(0,0,0, .54);
-
-    display: flex;
-    align-items: flex-end;
-    z-index: 1;
-  }
-
-  .o-modal {
-    width: 100%;
+    max-width: 400px;
     border-radius: 30px 30px 0 0;
     background-color: #fff;
+    z-index: 1;
 
     display: flex;
     flex-direction: column;

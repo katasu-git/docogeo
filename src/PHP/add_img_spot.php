@@ -11,19 +11,16 @@ function add_img_spot() {
     $pdo = connect_mysql();  //mysqlに接続
 
     // UPDATE文を変数に格納
-    $sql = "UPDATE images SET tour_id = :tour_id, spot_id = :spot_id, updated = :updated WHERE id = :id";
+    $sql = "UPDATE images SET tour_id = :tour_id, spot_id = :spot_id, updated = :updated, isAdded=:isAdded WHERE id = :id";
  
     // 更新する値と該当のIDは空のまま、SQL実行の準備をする
     $stmt = $pdo->prepare($sql);
  
     // 更新する値と該当のIDを配列に格納する
-    $params = array('tour_id' => $tour_id, ':spot_id' => $spot_id, ':id' => $image_id, ':updated' => $date);
+    $params = array('tour_id' => $tour_id, ':spot_id' => $spot_id, ':id' => $image_id, ':updated' => $date, ':isAdded' => 1);
  
     // 更新する値と該当のIDが入った変数をexecuteにセットしてSQLを実行
     $stmt->execute($params);
- 
-    // 更新完了のメッセージ
-    //echo '更新完了しました';
 
 }
 

@@ -2,51 +2,80 @@
   <div id="images">
     <div class="o-background">
 
-    　　 <div id="comuppic" v-show="flag_add_img">
-            <div class="o-background_black">
-                <div class="o-modal">
-                    <img class="o-preview_img" v-show="uploadedImage" :src="uploadedImage" alt="preview_img" />
-                    <div class="l-button u-mt40">
-                        <button class="o-button_cancel" @click="closeModal()">キャンセル</button>
-                        <button class="o-button_save" type="submit" @click="postFile()">追加する</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+      <transition name="fade">
+        <PopupImage
+          @closeModal="closeModal"
+          :image="image_avoid"
+          v-show="flag_popup_image"></PopupImage>
+      </transition>
+
+      <transition name="fade">
+        <Uploading
+          v-if="flag_uploading"></Uploading>
+      </transition>
+
+        <Success
+          v-show="flag_success"
+          @closeModal="closeModal"
+          @jumpPage=jumpPage></Success>
 
       <div class="l-header_above">
         <div class="o-text_tour">Images</div>
-        <div class="o-image_image_button">
-            <img @click="startSort()" v-show="!flag_order" src="../assets/sort_button.svg" />
-            <img @click="startSort()" v-show="flag_order" src="../assets/sort_button_active.svg" />
-        </div>
+
       </div>
       <div class="l-header_under">
-        <div class="o-text_tour_min">画像</div>
-        <div class="o-text_add_image" v-bind:style="{ color: returnSortColor()}">並べ替え</div>
+        <div class="o-text_tour_min">
+          <p v-show="!flag_add">画像</p>
+          <p v-show="flag_add">追加する画像を選択</p>
+        </div>
+
       </div>
 
-      <label class="o-upload_button">
+      <label 
+        class="o-upload_button"
+        v-show="!flag_add"
+      >
         <img src="../assets/upload_button.svg" @click="wakeAddImg()"/>
-        <input class="u-disp_none" type="file" @change="onFileChange" name="upfile" id="upfile"/>
       </label>
 
       <div class="o-img_container">
         <div class="o-img_fit" v-for="image in srcArray" :key="image.id">
-            <img
-            class="box"
-            :src="image.imgPath"
-            @touchstart="addImgToSpot(image.id)" />
+            <v-lazy-image
+              @click="popup_image(image, image.id, image.isAdded)"
+              class="box"
+              :src="image.imgPath"
+              :style="{opacity: returnOpacity(image.isAdded)}"
+            />
         </div>
       </div>
       
     </div>
+    <div class="o-modal"
+        v-show="flag_add_img"
+        v-bind:class="{ slideIn: flag_add_img, slideOut: !flag_add_img }">
+          <input 
+            type="file"
+            @change="onFileChange"
+            name="upfile" 
+            id="upfile"
+            class="u-mt40"
+          />
+          <img class="o-preview_img" v-show="uploadedImage" :src="uploadedImage" alt="preview_img" />
+          <div class="l-button u-mt40">
+              <button class="o-button_cancel" @click="closeModal()">キャンセル</button>
+              <button class="o-button_save" type="submit" @click="postFile(file)">追加する</button>
+          </div>
+      </div>
   </div>
 </template>
 
 <script>
-  import axios from 'axios'
-import { async } from 'q';
+import axios from 'axios'
+import { async, resolve, reject } from 'q';
+import Compressor from 'compressorjs'
+import Success from '../components/modals/imgSuccess'
+import PopupImage from "../components/modals/imgPopup"
+import Uploading from "../components/modals/imgUploading"
   export default {
     name: 'images',
     data() {
@@ -56,34 +85,42 @@ import { async } from 'q';
         img_name: '',
         flag_order: false,
         flag_add_img: false,
-        height: '',
-        images: 20,
+        flag_success: false,
+        flag_add: false,
+        flag_popup_image: false,
+        flag_uploading: false,
         tour_id: '', //commentから渡ってきた場合
         spot_id: '', //commentから渡ってきた場合
         srcArray: [],
+        image_avoid: ''
       }
     },
     created: function () {
       if(this.$route.params.tour_id != undefined && this.$route.params.spot_id != undefined) {
         this.tour_id = this.$route.params.tour_id;
         this.spot_id = this.$route.params.spot_id;
+        this.flag_add = true;
       }
       this.getAllImage();
     },
     methods: {
-        jumpPage: function(where, tour_id, tour_name) {
-            //console.log(this.avoidParam.tour_id);
+        jumpPage: function(where) {
             this.$router.push({
                 name: where,
                 params: {
                 tour_id: this.tour_id,
-                tour_name: this.tour_name,
+                spot_id: this.spot_id,
                 }
             })
         },
         closeModal: function() {
-            console.log("発火");
             this.flag_add_img = false;
+            this.flag_success = false;
+            this.flag_popup_image = false;
+            this.flag_uploading = false;
+            this.file = '';
+            this.uploadedImage = '';
+            this.img_name = '';
             this.getAllImage();
         },
         wakeAddImg() {
@@ -105,47 +142,76 @@ import { async } from 'q';
         },
         onFileChange(e) {
             const files = e.target.files || e.dataTransfer.files;
-            //console.log(files[0]);
             this.file = files[0];
             this.createImage(files[0]);
             this.img_name = files[0].name;
+            
+            //圧縮の処理
+            this.comp_file(this.file)
+              .then((value) => {
+                this.comp_file2(value)
+                  .then((value) => {
+                    this.file = value;
+                    console.log("圧縮完了")
+                  })
+              })
+        },
+        comp_file(file) {
+          return new Promise(function(resolve) {
+            new Compressor(file, {
+              quality: .2,
+              mimeType: 'image/jpeg',
+              maxWidth: 600,
+              success(result) {
+                resolve(result);
+              },
+              error(err) {
+                //エラー処理
+                console.log(err);
+              }
+            });
+          })
+        },
+        comp_file2(file) {
+          return new Promise(function(resolve) {
+            
+            const reader = new FileReader();
+            reader.onload = function(){
+              let file_post = reader.result;
+              resolve(file_post)
+            };
+            reader.readAsDataURL(file);
+
+          })
         },
         createImage(file) {
             const reader = new FileReader();
             reader.onload = e => {
                 this.uploadedImage = e.target.result;
             };
-
             reader.readAsDataURL(file);
         },
-        postFile: function() {
-            // FormData を利用して File を POST する
-                let formData = new FormData();
-                formData.append('upfile', this.file);
-                axios
-                    .post('https://www2.yoslab.net/~nishimura/geotour/PHP/upload.php', 
-                        formData, {
-                            headers: {
-                                 'Content-Type': 'multipart/form-data',
-                            }
-                        })
-                    .then(function(response) {
-                        // response 処理
-                        console.log(response.data);
-                        this.closeModal();
-                    })
-                    .catch(function(error) {
-                        // error 処理
-                    })
+        postFile(file) {
+            this.closeModal();
+            this.flag_uploading = true;
+            const url = "https://www2.yoslab.net/~nishimura/geotour/PHP/upload.php";
+            let params = new URLSearchParams();
+            params.append('image_data', file);
+            axios
+              .post(url, params)
+              .then(response => {
+                  this.closeModal();
+              })
+              .catch(error => {
+                // エラーを受け取る
+                console.log(error);
+              });
         },
-        addImgToSpot(index) {
-          if(this.tour_id == '' || this.spot_id == '') {
+        addImgToSpot(index, isAdded) {
+          if(this.tour_id == '' || this.spot_id == '' || isAdded == 1) {
             console.log("reject");
             return; //editページ以外からの遷移時は登録しない
           }
-          console.log(this.tour_id);
-          console.log(this.spot_id);
-          console.log(index);
           const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/add_img_spot.php';
               let params = new URLSearchParams();
               params.append('tour_id', this.tour_id);
@@ -154,6 +220,7 @@ import { async } from 'q';
               axios.post(url, params
               ).then(response => {
                 //ここでeditに戻る処理
+                this.flag_success = true;
               }).catch(error => {
                   // エラーを受け取る
                   console.log(error);
@@ -168,8 +235,28 @@ import { async } from 'q';
                   // エラーを受け取る
                   console.log(error);
               });
+        },
+        returnOpacity(isAdded) {
+          if(isAdded == 1 && this.flag_add) {
+            return '0.2';
+          } else {
+            return '1';
+          }
+        },
+        popup_image(image, index, isAdded) {
+          if(this.flag_add) {
+            this.addImgToSpot(index, isAdded)
+          } else {
+            this.image_avoid = image;
+            this.flag_popup_image = true;
+          }
         }
     },
+    components: {
+      Success: Success,
+      PopupImage: PopupImage,
+      Uploading: Uploading
+    }
   }
 
 </script>
@@ -182,6 +269,9 @@ import { async } from 'q';
 
     background-color: #F5F5F5;
     color: rgba(0,0,0,.87);
+
+    position: fixed;
+    overflow: auto;
   }
 
   .l-header_above {
@@ -237,13 +327,6 @@ import { async } from 'q';
         display: none;
     }
 
-    #comuppic {
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-  }
-
   .o-border {
     height: 1px;
     background-color: rgba(0,0,0, .12);
@@ -253,17 +336,23 @@ import { async } from 'q';
     height: 100%;
     width: 100%;
     position: fixed;
-    background-color: rgba(0,0,0, .54);
 
     display: flex;
     align-items: flex-end;
-    z-index: 1;
+    z-index: 2;
   }
 
   .o-modal {
+    position: absolute;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    margin: auto;
     width: 100%;
+    max-width: 400px;
     border-radius: 30px 30px 0 0;
     background-color: #fff;
+    z-index: 1;
 
     display: flex;
     flex-direction: column;
@@ -291,7 +380,8 @@ import { async } from 'q';
 
   .o-preview_img {
       padding: 20px;
-      width: calc(100% - 50px);
+      max-width: calc(100% - 50px);
+      max-height: 200px;
       border-radius: 30px;
   }
 
@@ -302,10 +392,21 @@ import { async } from 'q';
     flex-wrap: wrap;
   }
 
+  /*ここを30%にすればデスクトップでいい感じ*/
+
   .o-img_fit {
     position: relative;
     width: 50%;
     height: auto;
+  }
+
+  @media screen and (min-width:1024px) { 
+    /*　画面サイズが480pxからはここを読み込む　*/
+    .o-img_fit {
+      position: relative;
+      width: 20%;
+      height: auto;
+    }
   }
 
   .o-img_fit:before {
@@ -325,6 +426,13 @@ import { async } from 'q';
 
   .u-mt40 {
     margin-top: 40px;
+  }
+
+  .timeup {
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    z-index: 2;
   }
 
 </style>

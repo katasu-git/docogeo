@@ -1,21 +1,13 @@
 <template>
   <div id="createtour">
-    <div class="o-background">
-      
-      <div class="o-background_black">
-        <div class="o-modal">
-            <div class="o-image u-mt20"></div>
-            <form class="u-mt20">
-                <input type="text" placeholder="ここにツアーの名前を入力" v-model="tour_name_updated" />
-            </form>
-            <div class="o-border u-mt40"></div>
-            <div class="l-button">
-                <button class="o-button_cancel" v-on:click="closeModal()">キャンセル</button>
-                <button class="o-button_save" v-on:click="addNewTour()">保存する</button>
-            </div>
-        </div>
-      </div>
-
+    <div class="o-image u-mt20"></div>
+    <form class="u-mt20">
+        <input type="text" placeholder="ここにツアーの名前を入力" v-model="tour_name_updated" />
+    </form>
+    <div class="o-border u-mt40"></div>
+    <div class="l-button">
+        <button class="o-button_cancel" v-on:click="closeModal()">キャンセル</button>
+        <button class="o-button_save" v-on:click="addNewTour()">保存する</button>
     </div>
   </div>
 </template>
@@ -59,34 +51,17 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-    #createtour {
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-    }
-
-  .o-border {
-    height: 1px;
+  #createtour {
+    position: absolute;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    margin: auto;
     width: 100%;
-    background-color: rgba(0,0,0, .12);
-  }
-
-  .o-background_black {
-    height: 100%;
-    width: 100%;
-    position: fixed;
-    background-color: rgba(0,0,0, .54);
-
-    display: flex;
-    align-items: flex-end;
-    z-index: 1;
-  }
-
-  .o-modal {
-    width: 100%;
+    max-width: 400px;
     border-radius: 30px 30px 0 0;
     background-color: #fff;
+    z-index: 1;
 
     display: flex;
     flex-direction: column;
