@@ -13,7 +13,7 @@
         :tour_id="tour_id" @closeModal="closeModal"></GeoCreateGeo>
       
       <div class="l-header_above">
-        <div class="o-text_tour">Geosite</div>
+        <div class="o-text_tour">Spot</div>
         <div class="o-image_image_button">
           <img v-on:click="startSort()" v-show="!flag_order" src="../assets/sort_button.svg" />
           <img v-on:click="startSort()" v-show="flag_order" src="../assets/sort_button_active.svg" />

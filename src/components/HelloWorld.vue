@@ -22,14 +22,14 @@
       ></TopChangeName>
 
       <div class="l-header_above">
-        <div class="o-text_tour">Tour</div>
+        <div class="o-text_tour">Event</div>
         <div 
           class="o-image_image_button"
           v-on:click='jumpPage("images")'
         ><img src="../assets/image_button.svg" /></div>
       </div>
       <div class="l-header_under">
-        <div class="o-text_tour_min">ツアー</div>
+        <div class="o-text_tour_min">イベント</div>
         <div class="o-text_add_image">画像をみる</div>
       </div>
       <div class="o-slider">
