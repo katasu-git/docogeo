@@ -4,15 +4,9 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import LongPress from 'vue-directive-long-press'
-import VueLazyload from 'vue-lazyload'
- 
-Vue.use(VueLazyload, {
-  preLoad: 1.3,
-  error: 'https://dummyimage.com/130x120/ccc/999.png&text=Not+Found',
-  loading: 'https://dummyimage.com/130x120/dcdcdc/999.png&text=Now loading',
-  attempt: 1
-})
+import { VLazyImagePlugin } from "v-lazy-image";
 
+Vue.use(VLazyImagePlugin);
 Vue.config.productionTip = false
 Vue.directive('long-press', LongPress)
 

@@ -72,4 +72,12 @@ button, input {
   animation-name: slideOut;
 }
 
+.v-lazy-image {
+  filter: blur(2px);
+  transition: filter 0.2s;
+}
+.v-lazy-image-loaded {
+  filter: blur(0);
+}
+
 </style>
