@@ -42,6 +42,7 @@
             axios
                 .post(url, params)
                 .then(response => {
+                    this.comment = '';//コメントの初期化
                     this.closeModal();
                 })
                 .catch(error => {
