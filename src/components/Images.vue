@@ -43,7 +43,7 @@
             <img
               @click="popup_image(image, image.id, image.isAdded)"
               class="box"
-              :src="image.imgPath"
+              :v-lazy="image.imgPath"
               :style="{opacity: returnOpacity(image.isAdded)}"
             />
         </div>
@@ -161,7 +161,7 @@ import Uploading from "../components/modals/imgUploading"
             new Compressor(file, {
               quality: .2,
               mimeType: 'image/jpeg',
-              maxWidth: 2000,
+              maxWidth: 600,
               success(result) {
                 resolve(result);
               },

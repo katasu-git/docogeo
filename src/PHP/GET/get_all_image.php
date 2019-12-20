@@ -4,7 +4,7 @@ require_once("../connect_mysql.php");
 
 function get_all_image() {
     $pdo = connect_mysql();  //mysqlに接続
-    $sql = "SELECT * FROM images WHERE isDeleted=0 ORDER BY order_num ASC";
+    $sql = "SELECT * FROM images WHERE isDeleted=0 ORDER BY id DESC";
     $stmt = $pdo -> query($sql);
     $result = array();
     foreach($stmt as $row) {

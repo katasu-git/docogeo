@@ -66,7 +66,8 @@ export default {
     get_height: '',
     get_captures: '',
     tour_id: '',
-    tour_name: ''
+    tour_name: '',
+    spot_id: ''
   },
   data: () => ({
     width: window.innerWidth,
@@ -226,6 +227,8 @@ export default {
           const url = "https://www2.yoslab.net/~nishimura/geotour/PHP/upload_draw.php";
           let params = new URLSearchParams();
           params.append('canvasData', this.file);
+          params.append('tour_id', this.tour_id);
+          params.append('spot_id', this.spot_id);
           axios
             .post(url, params)
             .then(response => {

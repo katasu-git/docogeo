@@ -134,7 +134,8 @@
                 name: where,
                 params: {
                     tour_id: this.tour_id,
-                    tour_name: this.tour_name
+                    tour_name: this.tour_name,
+                    spot_id: this.spot_id
                 }
             });
         },

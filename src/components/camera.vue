@@ -51,6 +51,7 @@ import Footer from '../components/parts/Footer'
       return {
         tour_id: '',
         tour_name: '',
+        spot_id: '',
         video: {},
         canvas: {},
         captures: [],
@@ -66,6 +67,7 @@ import Footer from '../components/parts/Footer'
     created() {
       this.tour_id = this.$route.params.tour_id;
       this.tour_name = this.$route.params.tour_name;
+      this.spot_id = this.$route.params.spot_id;
       this.user_flag = this.$route.params.user_flag;
     },
     mounted() {
@@ -128,7 +130,8 @@ import Footer from '../components/parts/Footer'
               height: this.video_h,
               captures: this.captures,
               tour_id: this.tour_id,
-              tour_name: this.tour_name
+              tour_name: this.tour_name,
+              spot_id: this.spot_id
             }
         })
       },

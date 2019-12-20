@@ -35,6 +35,8 @@ function add_img_db($data) {
 
     $stmt->execute();
 
+    return $img_path;
+
 }
 
 function base64url_decode($data) { 
@@ -43,12 +45,10 @@ function base64url_decode($data) {
 }
 
 //撮影した画像を配信する
-function post_image() {
+function post_image($image_path) {
     //必要な引数を用意
     $tour_id = $_POST['tour_id'];
     $spot_id = $_POST['spot_id'];
-    $img_id = $_POST['img_id'];
-    $img_path = $_POST['img_path'];
 
     $pdo = connect_mysql();  //mysqlに接続
 
@@ -57,7 +57,6 @@ function post_image() {
     VALUES (:tour_id, :spot_id, :img_id, :img_path)");
     $stmt->bindValue(':tour_id', $tour_id, PDO::PARAM_INT);
     $stmt->bindValue(':spot_id', $spot_id, PDO::PARAM_INT);
-    $stmt->bindValue(':img_id', $img_id, PDO::PARAM_INT);
     $stmt->bindParam(':img_path', $img_path, PDO::PARAM_STR);
 
     $stmt->execute();
@@ -66,8 +65,8 @@ function post_image() {
 }
 
 try {
-    add_img_db($_POST['canvasData']); //偶数が線画像
-    //add_img_db($_POST['backImage']); //奇数が背景画像
+    add_img_db($_POST['canvasData']);
+    //post_image($image_path);
     return "成功";
 } catch(PDOException $e) {
     echo $e;
