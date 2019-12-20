@@ -39,9 +39,13 @@
       </label>
 
       <div class="o-img_container">
-        <div class="o-img_fit" v-for="image in srcArray" :key="image.id">
+        <div 
+          class="o-img_fit" 
+          v-for="image in srcArray"
+          :key="image.id"
+          @click="popup_image(image, image.id, image.isAdded)"
+        >
             <v-lazy-image
-              @click="popup_image(image, image.id, image.isAdded)"
               class="box"
               :src="image.imgPath"
               :style="{opacity: returnOpacity(image.isAdded)}"
