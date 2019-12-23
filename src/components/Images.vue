@@ -43,12 +43,11 @@
           class="o-img_fit" 
           v-for="image in srcArray"
           :key="image.id"
-          @click="popup_image(image, image.id, image.isAdded)"
+          @click="popup_image(image, image.id, image.isAdded, image.imgPath)"
         >
           <v-lazy-image
             class="box"
             :src="image.imgPath"
-            :style="{opacity: returnOpacity(image.isAdded)}"
           />
         </div>
       </div>
@@ -211,7 +210,7 @@ import Uploading from "../components/modals/imgUploading"
                 console.log(error);
               });
         },
-        addImgToSpot(index, isAdded) {
+        addImgToSpot(index, isAdded, image_path) {
           if(this.tour_id == '' || this.spot_id == '' || isAdded == 1) {
             console.log("reject");
             return; //editページ以外からの遷移時は登録しない
@@ -221,6 +220,8 @@ import Uploading from "../components/modals/imgUploading"
               params.append('tour_id', this.tour_id);
               params.append('spot_id', this.spot_id);
               params.append('image_id', index);
+              params.append('image_path', image_path);
+              console.log(image_path);
               axios.post(url, params
               ).then(response => {
                 //ここでeditに戻る処理
@@ -240,16 +241,9 @@ import Uploading from "../components/modals/imgUploading"
                   console.log(error);
               });
         },
-        returnOpacity(isAdded) {
-          if(isAdded == 1 && this.flag_add) {
-            return '0.2';
-          } else {
-            return '1';
-          }
-        },
-        popup_image(image, index, isAdded) {
+        popup_image(image, index, isAdded, image_path) {
           if(this.flag_add) {
-            this.addImgToSpot(index, isAdded)
+            this.addImgToSpot(index, isAdded, image_path)
           } else {
             this.image_avoid = image;
             this.flag_popup_image = true;

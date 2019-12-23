@@ -40,7 +40,7 @@
           :key="image.id"
           @click="onPlusStart(image.id, true)"
         >
-          <img class="img" :src="image.imgPath" :alt="image.imgName" />
+          <img class="img" :src="image.image_path" :alt="image.imgName" />
         </div>
       </div>
 
@@ -49,7 +49,7 @@
           v-for="image in srcArray"
           :key="image.id"
         >
-          <img class="img" :src="image.imgPath" :alt="image.imgName" />
+          <img class="img" :src="image.image_path" :alt="image.imgName" />
         </div>
       </draggable>
 
@@ -203,7 +203,7 @@ export default {
     onPlusStart: function(id,flag_press_img, comment) {
       this.ex_id_avoid = id;  //削除する時の判定に使う
       this.ex_avoid = comment;
-      console.log(this.ex_avoid);
+      console.log(this.ex_id_avoid);
       if(flag_press_img) {
         this.flag_press_img = true;
       } else {

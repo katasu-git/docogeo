@@ -46,8 +46,7 @@
             >
                 <img 
                     class="img"
-                    :src="image.imgPath"
-                    :alt="image.imgName"
+                    :src="image.image_path"
                     :style="{ opacity:returnOpacity(image.isPosted) }"
                 />
             </div>
@@ -116,8 +115,7 @@
         getPost() {
             const url ="https://www2.yoslab.net/~nishimura/geotour/PHP/getPost.php";
             let params = new URLSearchParams();
-            //スポットの表示順はarrの長さから逆順で引いていけばok
-            params.append("spot_id", this.spot_id); //ここを直す
+            params.append("spot_id", this.spot_id);
             axios 
                 .post(url, params)
                 .then(response => {
@@ -204,8 +202,8 @@
                     let params = new URLSearchParams();
                     params.append("tour_id", image.tour_id);
                     params.append("spot_id", image.spot_id);
-                    params.append("img_id", image.id);
-                    params.append("img_path", image.imgPath);
+                    params.append("img_id", image.image_id);
+                    params.append("img_path", image.image_path);
                     axios
                         .post(url, params).then(()=>{
                             this.getPost(); //isPostedの値更新処理
@@ -220,7 +218,11 @@
                     //delete処理もまとめた
                     const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/undo_posted_post.php';
                     let params = new URLSearchParams();
-                    params.append("img_id", image.id);
+                    params.append("id", image.id);
+                    params.append("tour_id", image.tour_id);
+                    params.append("spot_id", image.spot_id);
+                    params.append("image_id", image.image_id);
+                    console.log(image);
                     axios
                         .post(url, params).then(response => {
                             this.getPost(); //isPostedの値更新処理

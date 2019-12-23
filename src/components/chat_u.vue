@@ -97,6 +97,7 @@
             return ex.spot_ex;
         },
         return_spot_img(ex) {
+            console.log(ex);
             return ex.imgPath;
         },
         returnFlag(contents) {

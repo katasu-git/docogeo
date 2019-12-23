@@ -24,6 +24,28 @@ function post_image() {
 
 }
 
+function update_isPosted() {
+    //必要な引数を用意
+    $tour_id = $_POST['tour_id'];
+    $spot_id = $_POST['spot_id'];
+    $img_id = $_POST['img_id'];
+
+    $pdo = connect_mysql();  //mysqlに接続
+
+    // UPDATE文を変数に格納
+    $sql = "UPDATE spot_image SET isPosted = :isPosted WHERE tour_id = $tour_id AND spot_id = $spot_id AND image_id = $img_id";
+ 
+    // 更新する値と該当のIDは空のまま、SQL実行の準備をする
+    $stmt = $pdo->prepare($sql);
+ 
+    // 更新する値と該当のIDを配列に格納する
+    $params = array(':isPosted' => 1);
+ 
+    // 更新する値と該当のIDが入った変数をexecuteにセットしてSQLを実行
+    $stmt->execute($params);
+
+}
+
 function isPosted_img_t() {
     $img_id = $_POST['img_id'];
     try {
@@ -51,5 +73,7 @@ function isPosted_img_t() {
 post_image();
 
 isPosted_img_t();
+
+update_isPosted();
 
 ?>
