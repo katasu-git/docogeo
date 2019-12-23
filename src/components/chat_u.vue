@@ -11,22 +11,21 @@
             </div>
         </div>
 
-        <div class="l-comment_container">
-            <div class="l-comment_row" v-for="ex in spot_ex">
-                <div class="l-flex_end">
-                    <div class="l-comment" 
+        <div class="l-comment">
+            <div class="l-commnet_row" v-for="ex in spot_ex" :key="ex.id">
+                <div class="l-flex-end">
+                    <img 
+                        class="o-image"
+                        :src="return_spot_img(ex)"
+                        v-if="returnFlag(!ex.spot_ex)"
+                    />
+                    <div 
+                        class="o-commnet"
                         v-if="returnFlag(ex.spot_ex)"
                     >{{ return_spot_ex(ex) }}</div>
-                    <img 
-                        class="o-spot_img"
-                        :src="return_spot_img(ex)"
-                        v-if="returnFlag(!ex.spot_ex)" 
-                    />
                     <div class="o-send_time">{{returnSended(ex.created)}}</div>
                 </div>
-                <div class="o-button_hoe">
-                    <img src="../assets/hoe_button_gray.svg" />
-                </div>
+                <img src="../assets/hoe_button_gray.svg" />
             </div>
         </div>
 
@@ -120,126 +119,97 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-  #chat_u {
+#chat_u {
     height: 100%;
     width: 100%;
-
     background-color: #F5F5F5;
     color: rgba(0,0,0,.87);
-  }
+}
 
-  .o-background {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-  }
-
-  .o-header {
-      position: fixed;
-      height: 80px;
-      width: 100%;
-      background-color: #fff;
-      filter: drop-shadow(0 0 5px rgba(0,0,0,.26));
-  }
-
-  .l-header_above {
+.o-header {
+    position: fixed;
+    height: 80px;
     width: 100%;
+    background-color: #fff;
+    filter: drop-shadow(0 0 5px rgba(0,0,0,.26));
+    z-index: 1;
+}
 
+.l-header_above {
+    width: 100%;
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
-
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
-  }
+}
 
-    .o-text_tour {
-      padding: 10px 0 0 20px;
+.o-text_tour {
+    padding: 10px 0 0 20px;
+    font-size: 24px;
+    font-weight: bold;
+}
 
-      font-size: 24px;
-      font-weight: bold;
-    }
-
-    .o-image_image_button {
-      padding: 0 20px 0 20px;
-    }
-
-    .o-button_sort {
-      fill: #4B8E8D;
-    }
-
-  .l-header_under {
+.l-header_under {
     width: 100%;
-
     display: flex;
     justify-content: space-between;
     align-items: center;
-  }
+}
 
-    .o-text_tour_min {
-      padding: 0 0 0 20px;
+.l-comment {
+    position: absolute;
+    top: 100px;
+    width: 100%;
+    overflow-y: scroll;
 
-      font-size: 14px;
-      font-weight: bold;
-    }
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
 
-    .o-text_add_image {
-      padding: 0 15px 0 0;
+.l-commnet_row {
+    width: calc(100% - 40px);
+    display: flex;
+    align-items: center;
+}
 
-      font-size: 12px;
-      font-weight: bold;
-      color: rgba(0,0,0, .26);
-    }
+.l-commnet_row:not(:first-of-type) {
+    margin-top: 10px;
+}
 
-  .l-comment_container {
-      width: calc(100% - 40px);
-  }
+.l-commnet_row:last-of-type {
+    margin-bottom: 100px;
+}
 
-  .l-comment_row {
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
-  }
+.o-commnet {
+    width: calc(100% - 55px);
+    margin-right: 10px;
+    padding: 10px;
+    background-color: #E3E5E5;
+    border-radius: 10px;
+}
 
-  .l-comment_row:first-of-type {
-      margin-top: 100px;
-  }
+.o-image {
+    width: calc(100% - 45px);
+    margin-right: 10px;
+    border-radius: 10px;
+}
 
-  .l-comment_row:not(:first-of-type) {
-      margin-top: 20px;
-  }
+.l-flex-end {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+}
 
-  .l-comment_row:last-of-type {
-      margin-bottom: 120px;
-  }
-
-  .l-flex_end {
-      width: 100%;
-      display: flex;
-  }
-
-  .l-comment {
-      padding: 10px;
-      background-color: #E3E5E5;
-      border-radius: 10px;
-  }
-
-  .o-spot_img {
-      width: calc(100% - 35px);
-      max-width: 400px;
-      border-radius: 10px;
-  }
-
-  .o-send_time {
-      margin: 0 5px;
-      display: flex;
-      align-items: flex-end;
-
-      font-size: 10px;
-      color: #A2A6A5;
-  }
+.o-send_time {
+    width: 25px;
+    margin-right: 10px;
+    font-size: 10px;
+    color: #A2A6A5;
+}
 
   .l-footer {
       position: fixed;

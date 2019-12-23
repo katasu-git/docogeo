@@ -45,11 +45,11 @@
           :key="image.id"
           @click="popup_image(image, image.id, image.isAdded)"
         >
-            <v-lazy-image
-              class="box"
-              :src="image.imgPath"
-              :style="{opacity: returnOpacity(image.isAdded)}"
-            />
+          <v-lazy-image
+            class="box"
+            :src="image.imgPath"
+            :style="{opacity: returnOpacity(image.isAdded)}"
+          />
         </div>
       </div>
       
