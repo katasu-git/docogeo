@@ -8,13 +8,16 @@
       <div class="l-header_under">
         <div class="o-text_tour_min">開催中のイベント</div>
       </div>
-      <div class="o-slider">
+      <div 
+        class="o-slider"
+        v-if="!checkActiveTour()"
+      >
         <div class="o-card"
           v-for="info in tour_info"
           :key="info.tour_id"
           @click="jumpPage('chat_u', info.tour_id, info.tour_name)"
         >
-          <img src="../assets/sample.jpg" class="o-image_tour" />
+          <img src="../assets/kujira.svg" class="o-image_tour" />
           <div class="o-transparent">
             <div class="o-text_tour_title">{{ info.tour_name }}</div>
             <div class="o-text_update">最終更新 2019.11.7</div>
@@ -141,7 +144,8 @@
     }
 
   .o-slider {
-    padding: 40px 0 0 0;
+    height: calc(100% - 100px - 90px - 60px);
+    padding: 20px 0 0 0;
     display: flex;
     overflow-x: scroll;
     overflow-y: hidden;
@@ -151,8 +155,9 @@
   .o-card {
     padding: 0 0 0 20px;
     position: relative;
-    height: 330px;
-    width: 240px;
+    height: 100%;
+    width: calc(100vw - 80px);
+    max-width: 400px;
   }
 
   .o-card:last-of-type {
@@ -160,15 +165,18 @@
   }
 
     .o-image_tour {
-      height: 330px;
-      width: 240px;
+      height: 100%;
+      width: calc(100vw - 80px);
+      max-width: 400px;
       border-radius: 30px;
       object-fit: cover;
+      border: solid 1px rgba(0,0,0, .12);
     }
 
     .o-transparent {
       height: 80px;
-      width: 240px;
+      width: calc(100vw - 80px);
+      max-width: 400px;
       position: absolute;
       bottom: 0;
       border-radius: 0 0 30px 30px;
@@ -191,6 +199,7 @@
       }
 
   .o-kujira {
+    margin-top: 50px;
     width: 100%;
     display: flex;
     flex-direction: column;

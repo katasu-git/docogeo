@@ -65,6 +65,14 @@
           v-show="flag_long_press"
         ></TopLongPress>
       </transition>
+
+      <div class="l-footer">
+        <div class="o-text_footer">DoCoGeo for <span class="u-color-green">GUIDE</span></div>
+        <div
+          @click="jumpPage('top_u')"
+          class="o-text_go u-color-green">参加者ページへ</div>
+      </div>
+
   </div>
 </template>
 
@@ -215,7 +223,7 @@
 
   .o-slider {
     height: calc(100% - 100px - 90px - 60px);
-    padding: 40px 0 0 0;
+    padding: 20px 0 0 0;
     display: flex;
     overflow-x: scroll;
     overflow-y: hidden;
@@ -270,7 +278,7 @@
 
       .o-button_save_sort, .o-button_create_geosite {
         position: fixed;
-        bottom: 20px;
+        bottom: 50px;
         left: 20px;
         height: 50px;
         width: calc(100% - 40px);
@@ -286,5 +294,32 @@
         background-color: #4B8E8D;
         color: #fff;
       }
+
+.l-footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  height: 30px;
+  background-color: #fff;
+
+  display: flex;
+  align-items: center;
+}
+
+.o-text_footer {
+  margin-left: 20px; 
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.o-text_go {
+  position: absolute;
+  right: 20px;
+  font-size: 12px;
+}
+
+.u-color-green {
+  color: #4B8E8D;
+}
 
 </style>
