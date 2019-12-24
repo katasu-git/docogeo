@@ -222,7 +222,7 @@ import DeleteImage from "../components/modals/imgDelete"
               });
         },
         addImgToSpot(index, isAdded, image_path) {
-          if(this.tour_id == '' || this.spot_id == '' || isAdded == 1) {
+          if(this.tour_id == '' || this.spot_id == '') {
             console.log("reject");
             return; //editページ以外からの遷移時は登録しない
           }

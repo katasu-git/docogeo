@@ -1,6 +1,13 @@
 <template>
   <div id="chat_u">
       <div class="o-background">
+
+        <transition name="fade">
+            <TourEnd
+                v-show="end_flag"
+                :tour_name="tour_name"
+            ></TourEnd>
+        </transition>
       
         <div class="o-header">
             <div class="l-header_above">
@@ -39,6 +46,7 @@
 <script>
   import axios from 'axios'
   import Footer from '../components/parts/Footer'
+  import TourEnd from '../components/modals/TourEnd'
   export default {
     name: 'chat_u',
     data() {
@@ -48,6 +56,7 @@
           spot_id: 1,
           spot_name: '',
           spot_ex: JSON,
+          end_flag: false,
       }
     },
     created: function () {
@@ -57,6 +66,7 @@
         } else {
             this.tour_id = this.$route.params.tour_id;
             this.tour_name = this.$route.params.tour_name;
+            this.judgeTour();
             this.getPost();
         }
         setInterval(function() {
@@ -64,6 +74,40 @@
         }.bind(this), 1000);
     },
     methods: {
+        judgeTour() {
+            const url ="https://www2.yoslab.net/~nishimura/geotour/PHP/GET/get_tour_start_time.php";
+            let params = new URLSearchParams();
+            //console.log("発火");
+            params.append("tour_id", this.tour_id);
+            axios
+                .post(url, params)
+                .then(response => {
+                    let s_date = response.data.start_time;
+                    let timestamp = Date.parse(s_date)
+                    //http://yut.hatenablog.com/entry/20111015/1318633937
+                    let now = Date.now()
+                    let dif = now - timestamp;
+                    //console.log(dif/60/1000);//コンマ0秒以下も取得しているので/1000で補正
+                    let pass_min = dif/60/1000;
+                    if(pass_min > 1) {
+                        this.end_flag = true;
+                    }
+                })
+                .catch(error => {
+                    // エラーを受け取る
+                    console.log(error);
+                });
+        },
+        getTime() {
+            var now = new Date();
+            var Year = now.getFullYear();
+            var Month = now.getMonth()+1;
+            var Date = now.getDate();
+            var Hour = now.getHours();
+            var Min = now.getMinutes();
+            var Sec = now.getSeconds();
+            console.log(Year)
+        },
         getPost: function() {
             const url ="https://www2.yoslab.net/~nishimura/geotour/PHP/getPostedPost.php";
             let params = new URLSearchParams();
@@ -112,7 +156,8 @@
         }
     },
     components: {
-        Footer: Footer
+        Footer: Footer,
+        TourEnd: TourEnd
     }
   }
 
