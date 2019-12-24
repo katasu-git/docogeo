@@ -14,9 +14,19 @@
       
       <div class="l-header_above">
         <div class="o-text_tour">Spot</div>
-        <div class="o-image_image_button">
-          <img v-on:click="startSort()" v-show="!flag_order" src="../assets/sort_button.svg" />
-          <img v-on:click="startSort()" v-show="flag_order" src="../assets/sort_button_active.svg" />
+        <div class="o-image_image_button ">
+          <img 
+            class="u_pointer"
+            v-on:click="startSort()"
+            v-show="!flag_order" 
+            src="../assets/sort_button.svg" 
+          />
+          <img 
+            class="u_pointer"
+            v-on:click="startSort()"
+            v-show="flag_order"
+            src="../assets/sort_button_active.svg"
+          />
         </div>
       </div>
       <div class="l-header_under u-mb20">
@@ -28,13 +38,13 @@
         <div class="o-list" v-for="(info) in spot_info" :key="info.spot_id">
           <div class="l-image_text_burger">
             <div class="l-image_text">
-              <div class="o-list_image"><img class="o-image_circle" src="../assets/sample.jpg" /></div>
+              <div class="o-list_image"><img class="o-image_circle" src="../assets/kujira.svg" /></div>
               <div class="l-list_text">
                 <div class="o-list_text_geosite">{{ info.spot_name }}</div>
-                <div class="o-list_text_update">最終更新 2019.11.7</div>
+                <div class="o-list_text_update">最終更新 {{returnSended(info.updated)}}</div>
               </div>
             </div>
-            <div class="o-burger"><img src="../assets/burger_button.svg" /></div>
+            <div class="o-burger"><img class="u_pointer" src="../assets/burger_button.svg" /></div>
           </div>
           <div class="o-border u-mt10"></div>
         </div>
@@ -42,12 +52,13 @@
 
       <div v-show="!flag_order">
         <div class="o-list"
-            v-for="(info) in spot_info" v-on:click='jumpPage("editSpot", info.spot_id, info.spot_name)' :key="info.spot_id">
+            v-for="(info) in spot_info" :key="info.spot_id">
           <div class="l-image_text_burger">
             <div class="l-image_text">
               <div class="o-list_image"><img class="o-image_circle" src="../assets/kujira.svg" /></div>
               <div class="l-list_text">
-                <div class="o-list_text_geosite" 
+                <div class="o-list_text_geosite u_pointer" 
+                  @click='jumpPage("editSpot", info.spot_id, info.spot_name)'
                   v-long-press="300" @long-press-start="onPlusStart(info.spot_id)">{{ info.spot_name }}</div>
                 <div class="o-list_text_update">最終更新 {{returnSended(info.updated)}}</div>
               </div>
@@ -57,10 +68,10 @@
         </div>
       </div>
 
-      <button class="o-button_save_sort" v-on:click="startSort()" 
+      <button class="o-button_save_sort u_pointer" v-on:click="startSort()" 
         v-show="flag_order && !flag && !flag_name && !flag_create">並び替えを終了する</button>
 
-      <button class="o-button_create_geosite" @click="wakeCreateGeo()"
+      <button class="o-button_create_geosite u_pointer" @click="wakeCreateGeo()"
         v-show="!flag_order && !flag && !flag_name && !flag_create">新しくジオサイトを登録する</button>
 
     </div>

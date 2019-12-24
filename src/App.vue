@@ -80,4 +80,8 @@ button, input {
   filter: blur(0);
 }
 
+.u_pointer {
+  cursor : pointer;
+}
+
 </style>

@@ -21,7 +21,7 @@
       
       <div class="l-header_above">
         <div class="o-text_tour">Comment</div>
-        <div class="o-image_image_button">
+        <div class="o-image_image_button u_pointer">
           <img v-on:click="startSort()" v-show="!flag_order" src="../assets/sort_button.svg" />
           <img v-on:click="startSort()" v-show="flag_order" src="../assets/sort_button_active.svg" />
         </div>
@@ -33,9 +33,9 @@
 
       <div class="l-slider_images" v-show="!flag_order">
         <button
-          class="o-button_add_img"
+          class="o-button_add_img u_pointer"
           @click="addImg()">画像を追加する</button>
-        <div class="o-image" 
+        <div class="o-image u_pointer" 
           v-for="image in srcArray"
           :key="image.id"
           @click="onPlusStart(image.id, true)"
@@ -64,7 +64,7 @@
             <div class="l-comment_row" v-for="ex in spot_ex" :key="ex.id">
                 <div class="l-flex_end">
                     <div
-                      class="l-comment"
+                      class="l-comment u_pointer"
                       @click="onPlusStart(ex.id, false, ex.spot_ex)"
                     >{{ ex.spot_ex }}</div>
                     <div class="o-send_time">{{returnSended(ex.created)}}</div>
@@ -86,17 +86,17 @@
                     >{{ ex.spot_ex }}</div>
                     <div class="o-send_time">{{returnSended(ex.created)}}</div>
                 </div>
-                <div class="o-burger u-mt20"><img src="../assets/burger_button.svg" /></div>
+                <div class="o-burger u-mt20 u_pointer"><img src="../assets/burger_button.svg" /></div>
             </div>
       </draggable>
 
       <button 
-        class="o-button_save_sort"
+        class="o-button_save_sort u_pointer"
         v-on:click="startSort()" 
         v-show="flag_order && !flag_add_com &&!flag_longpress"
       >並び替えを終了する</button>
 
-      <button class="o-button_create_geosite" v-on:click="addComment()" 
+      <button class="o-button_create_geosite u_pointer" v-on:click="addComment()" 
         v-show="!flag_order && !flag_add_com &&!flag_longpress">新しく説明を追加する</button>
     </div>
     <ComAddComment 

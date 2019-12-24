@@ -24,7 +24,7 @@
       <div class="l-header_above">
         <div class="o-text_tour">Event</div>
         <div 
-          class="o-image_image_button"
+          class="o-image_image_button u_pointer"
           v-on:click='jumpPage("images")'
         ><img src="../assets/image_button.svg" /></div>
       </div>
@@ -41,7 +41,7 @@
         >
           <img 
             src="../assets/kujira.svg"
-            class="o-image_tour"
+            class="o-image_tour u_pointer"
           />
           <div class="o-transparent">
             <div class="o-text_tour_title">{{ info.tour_name }}</div>
@@ -50,7 +50,7 @@
         </div>
       </div>
 
-      <button class="o-button_create_geosite"
+      <button class="o-button_create_geosite u_pointer"
         v-show="!flag_create_tour"
         @click="wakeCreateTour()">新しくツアーを作成する</button>
 
@@ -70,7 +70,7 @@
         <div class="o-text_footer">DoCoGeo for <span class="u-color-green">GUIDE</span></div>
         <div
           @click="jumpPage('top_u')"
-          class="o-text_go u-color-green">参加者ページへ</div>
+          class="o-text_go u-color-green u_pointer">参加者ページへ</div>
       </div>
 
   </div>
