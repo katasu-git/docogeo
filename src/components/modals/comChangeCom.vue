@@ -15,8 +15,7 @@
   export default {
     name: 'comchangecom',
     props: {
-        ex_id_avoid: '',
-        ex_avoid: ''
+      info_avoid: '',
     },
     data() {
       return {
@@ -24,9 +23,8 @@
       }
     },
     watch: {
-      ex_avoid: function() {
-        console.log("発火");
-        this.comment = this.ex_avoid;
+      info_avoid: function() {
+        this.comment = this.info_avoid.spot_ex;
       }
     },
     methods: {
@@ -39,7 +37,7 @@
             }
             const url =　"https://www2.yoslab.net/~nishimura/geotour/PHP/update_comment.php";
             let params = new URLSearchParams();
-            params.append("ex_id", this.ex_id_avoid);
+            params.append("ex_id", this.info_avoid.id);
             params.append("spot_explanation", this.comment);
             axios
                 .post(url, params)

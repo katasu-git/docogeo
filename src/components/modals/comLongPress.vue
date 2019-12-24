@@ -3,15 +3,24 @@
       
       <div class="o-background_black">
         <div class="o-modal">
-          <div class="o-text">{{ ex_avoid }}</div>
+          <img 
+            class="o-image"
+            :src="info.image_path"
+            v-show="info.image_path"
+          />
+          <div 
+            class="o-text"
+            v-show="info.spot_ex"
+          >{{info.spot_ex}}</div>
           <div class="l_button">
             <div
               @click="closeModal" 
               class="o_button_cancel u_pointer">キャンセル</div>
             <div 
               @click="changeCom"
-              v-show="!flag_press_img"
-              class="o_button_edit u_pointer">編集</div>
+              v-show="!flag_press_img && info.spot_ex"
+              class="o_button_edit u_pointer"
+            >編集</div>
             <div 
               @click="deleteEx()"
               v-show="!flag_press_img"
@@ -27,8 +36,7 @@ import axios from 'axios'
   export default {
     name: 'comlongpress',
     props: {
-      ex_id_avoid: '',
-      ex_avoid: '',
+      info: '',
       flag_press_img: Boolean
     },
     methods: {
@@ -41,19 +49,6 @@ import axios from 'axios'
           this.$emit("confDelete")
 
           //先に何かしらの確認が欲しいか
-        },
-        reset_img_bind() {
-          const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/RESET/reset_img_bind.php';
-              let params = new URLSearchParams();
-              params.append('id', this.ex_id_avoid);
-              axios.post(url, params
-              ).then(response => {
-                this.$emit('getSpotImage');
-                this.closeModal();
-              }).catch(error => {
-                  // エラーを受け取る
-                  console.log(error);
-              });
         },
         changeCom() {
           this.$emit("changeCom")
@@ -85,6 +80,13 @@ import axios from 'axios'
     display: flex;
     flex-direction: column;
     align-items: center;
+  }
+
+  .o-image {
+    max-width: calc(100% - 20px);
+    max-height: 250px;
+    margin: 10px 0 40px 0;
+    border-radius: 10px;
   }
 
   .o-text {

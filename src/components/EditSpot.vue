@@ -5,9 +5,8 @@
       <transition name="fade">
         <ComLongPress 
           v-show="flag_longpress && !flag_change_com"
-          :ex_id_avoid="ex_id_avoid"
-          :ex_avoid="ex_avoid"
-          :flag_press_img="flag_press_img"
+          :info="info"
+          :image_flag="image_flag"
           @closeModal="closeModal"
           @get_spot_ex="get_spot_ex"
           @changeCom="changeCom"
@@ -20,16 +19,16 @@
         <ComDelete
           v-show="flag_delete"
           @closeModal="closeModal"
-          :ex_id_avoid="ex_id_avoid"
-          :ex_avoid="ex_avoid"
+          @getSpotImage="getSpotImage"
+          :info="info"
+          :image_flag="image_flag"
         ></ComDelete>
       </transition>
 
       <ComChangeCom
         v-show="flag_change_com"
+        :info_avoid="info"
         v-bind:class="{ slideIn: flag_change_com, slideOut: !flag_change_com }"
-        :ex_id_avoid="ex_id_avoid"
-        :ex_avoid="ex_avoid"
         @closeModal="closeModal"></ComChangeCom>
       
       <div class="l-header_above">
@@ -51,7 +50,7 @@
         <div class="o-image u_pointer" 
           v-for="image in srcArray"
           :key="image.id"
-          @click="onPlusStart(image.id, true)"
+          @click="onPlusStart(image, true)"
         >
           <img class="img" :src="image.image_path" :alt="image.imgName" />
         </div>
@@ -78,7 +77,7 @@
                 <div class="l-flex_end">
                     <div
                       class="l-comment u_pointer"
-                      @click="onPlusStart(ex.id, false, ex.spot_ex)"
+                      @click="onPlusStart(ex, false)"
                     >{{ ex.spot_ex }}</div>
                     <div class="o-send_time">{{returnSended(ex.created)}}</div>
                 </div>
@@ -139,14 +138,13 @@ export default {
       spot_name: '',
       spot_ex: [],
       srcArray: [],
-      ex_id_avoid: '',
-      ex_avoid: '',
+      info: '',
       flag_order: false,
       flag_add_com: false,
       flag_longpress: false,
       flag_change_com: false,
-      flag_press_img: false,
       flag_delete: false,
+      image_flag: false
     };
   },
   created: function() {
@@ -213,19 +211,14 @@ export default {
       }
     },
     changeCom() {
-      //this.closeModal();
       this.flag_change_com = true;
     },
-    onPlusStart: function(id,flag_press_img, comment) {
-      this.ex_id_avoid = id;  //削除する時の判定に使う
-      this.ex_avoid = comment;
-      console.log(this.ex_id_avoid);
-      if(flag_press_img) {
-        this.flag_press_img = true;
-      } else {
-        this.flag_press_img = false;
-      }
+    onPlusStart: function(info, image_flag) {
+      this.info = info;
+      this.image_flag = image_flag;
       this.flag_longpress = true;
+      console.log(info)
+      console.log(this.image_flag)
     },
     update_order_spot_ex: function() {
             const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/update_order_spot_ex.php';
@@ -265,16 +258,16 @@ export default {
                   // エラーを受け取る
                   console.log(error);
               });
-        },
-        returnSended(sended) {
-            let month = sended.substr(5, 2) + '月';
-            let day = sended.substr(8, 2) + '日';
-            let time = ' ' + sended.substr(10, 6);
-            return month + day + time;
-        },
-        confDelete() {
-          this.flag_delete = true;
-        }
+      },
+      returnSended(sended) {
+          let month = sended.substr(5, 2) + '月';
+          let day = sended.substr(8, 2) + '日';
+          let time = ' ' + sended.substr(10, 6);
+          return month + day + time;
+      },
+      confDelete() {
+        this.flag_delete = true;
+      }
   },
   components: {
     draggable: draggable,
