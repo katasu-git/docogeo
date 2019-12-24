@@ -1,12 +1,15 @@
 <template>
-  <div id="topdelete">
+  <div id="imgdelete">
     <div class="o-background">
       
       <div class="o-background_black">
         <div class="o-modal">
             <div class="o-text">
-                <p class="tour_name">{{ tour_name }}</p>
-                <p class="u-mt20">このツアーを削除します</p>
+                <img 
+                    class="o-image"
+                    :src="image.imgPath"
+                />
+                <p class="u-mt20">この画像を削除します</p>
                 <p>よろしいですか？</p>
             </div>
             <div class="l-button">
@@ -29,36 +32,37 @@
 <script>
 　import axios from 'axios'
   export default {
-    name: 'topdelete',
+    name: 'imgdelete',
     props: {
         tour_id: '',
-        tour_name: ''
+        tour_name: '',
+        image: ''
     },
     methods: {
         closeModal: function() {
             this.$emit('closeModal');
         },
         delete_tour() {
-            const url =　"https://www2.yoslab.net/~nishimura/geotour/PHP/delete_tour.php";
+            //削除処理
+            const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/DELETE/delete_image.php';
             let params = new URLSearchParams();
-            params.append("tour_id", this.tour_id);
-            axios
-            .post(url, params)
-            .then(response => {
-              this.closeModal();
-            })
-            .catch(error => {
-              // エラーを受け取る
-              console.log(error);
+            params.append('image_id', this.image.id);
+            axios.post(url, params
+            ).then(response => {
+                //更新処理
+                this.$emit('closeModal');
+            }).catch(error => {
+                // エラーを受け取る
+                console.log(error);
             });
-        }
-    },
+        },
+    }
   }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-  #topdelete {
+  #imgdelete {
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
@@ -90,7 +94,7 @@
   .o-modal {
     width: calc(100% - 40px);
     max-width: 400px;
-    border-radius: 30px 30px 0 0;
+    border-radius: 10px;
     background-color: #fff;
 
     display: flex;
@@ -106,23 +110,10 @@
     align-items: center;
   }
 
-  textarea {
-      outline: none;
-      margin: 20px 0;
-      resize: vertical;
-      width: calc(100vw - 60px);
-      min-height: 80px;
-      font-size: 18px;
-      color: rgba(0,0,0, .87);
-      text-align: center;
-      border: solid 1px rgba(0,0,0, .12);
+  .o-image {
+      max-width: calc(100% - 20px);
+      max-height: 250px;
       border-radius: 10px;
-  }
-
-  input::placeholder {
-      font-size: 18px;
-      color: rgba(0,0,0, .12);
-      text-align: center;
   }
 
   .l-button {
@@ -135,12 +126,16 @@
     width: 50%;
     font-size: 16px;
     font-weight: bold;
-    color: #4B8E8D;
+    background-color: #4B8E8D;
+    color: #fff;
+    border-radius: 0 0 0 10px;
   }
 
   .o-button_finish {
-    background: #CC544D;
-    color: #fff;
+    border-top: solid 1px rgba(0,0,0, .12);
+    border-radius: 0 0 10px 0;
+    background-color: #fff;
+    color: #CC544D;
   }
 
   .u-color-green {

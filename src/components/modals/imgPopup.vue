@@ -1,9 +1,13 @@
 <template>
   <div id="popupimage">
-    <div class="o-background">
       
       <div class="o-background_black">
         <div class="o-modal">
+            <img 
+              @click="delete_image()"
+              class="o_button_delete"
+              src="../../assets/delete_icon.svg"
+            />
             <div class="o-text">
                 <img
                     class="o-image" 
@@ -14,15 +18,11 @@
                     class="o-button_cancel"
                     @click="closeModal()"
                 >閉じる</button>
-                <button 
-                    class="o-button_finish"
-                    @click="delete_image()"
-                >削除する</button>
             </div>
         </div>
       </div>
 
-    </div>
+
   </div>
 </template>
 
@@ -39,18 +39,8 @@
             this.$emit('closeModal');
         },
         delete_image() {
-            //削除処理
-            const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/DELETE/delete_image.php';
-            let params = new URLSearchParams();
-            params.append('image_id', this.image.id);
-            axios.post(url, params
-            ).then(response => {
-                //更新処理
-                this.$emit('closeModal');
-            }).catch(error => {
-                // エラーを受け取る
-                console.log(error);
-            });
+            this.$emit('closeModal');
+            this.$emit('confDelete');
         }
     },
   }
@@ -88,9 +78,10 @@
   }
 
   .o-modal {
+    position: relative;
     width: calc(100% - 40px);
     max-width: 400px;
-    border-radius: 30px 30px 0 0;
+    border-radius: 10px;
     background-color: #fff;
 
     display: flex;
@@ -107,28 +98,11 @@
   }
 
   .o-image {
-      width: calc(100% - 20px);
-      border-radius: 20px;
-  }
-
-  textarea {
-      outline: none;
-      margin: 20px 0;
-      resize: vertical;
-      width: calc(100vw - 60px);
-      min-height: 80px;
-      font-size: 18px;
-      color: rgba(0,0,0, .87);
-      text-align: center;
-      border: solid 1px rgba(0,0,0, .12);
+      max-width: calc(100% - 20px);
+      max-height: 250px;
       border-radius: 10px;
   }
 
-  input::placeholder {
-      font-size: 18px;
-      color: rgba(0,0,0, .12);
-      text-align: center;
-  }
 
   .l-button {
       width: 100%;
@@ -137,7 +111,7 @@
 
   .o-button_cancel, .o-button_finish {
     padding: 20px;
-    width: 50%;
+    width: 100%;
     font-size: 16px;
     font-weight: bold;
     color: #4B8E8D;
@@ -146,6 +120,11 @@
   .o-button_finish {
     background: #CC544D;
     color: #fff;
+  }
+
+  .o_button_delete {
+    position: absolute;
+    right: 0;
   }
 
   .u-color-green {

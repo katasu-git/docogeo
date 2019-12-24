@@ -5,8 +5,16 @@
       <transition name="fade">
         <PopupImage
           @closeModal="closeModal"
+          @confDelete="confDelete"
           :image="image_avoid"
           v-show="flag_popup_image"></PopupImage>
+      </transition>
+
+      <transition name="fade">
+        <DeleteImage
+          @closeModal="closeModal"
+          :image="image_avoid"
+          v-show="flag_delete_image"></DeleteImage>
       </transition>
 
       <transition name="fade">
@@ -79,6 +87,7 @@ import Compressor from 'compressorjs'
 import Success from '../components/modals/imgSuccess'
 import PopupImage from "../components/modals/imgPopup"
 import Uploading from "../components/modals/imgUploading"
+import DeleteImage from "../components/modals/imgDelete"
   export default {
     name: 'images',
     data() {
@@ -92,6 +101,7 @@ import Uploading from "../components/modals/imgUploading"
         flag_add: false,
         flag_popup_image: false,
         flag_uploading: false,
+        flag_delete_image: false,
         tour_id: '', //commentから渡ってきた場合
         spot_id: '', //commentから渡ってきた場合
         srcArray: [],
@@ -121,6 +131,7 @@ import Uploading from "../components/modals/imgUploading"
             this.flag_success = false;
             this.flag_popup_image = false;
             this.flag_uploading = false;
+            this.flag_delete_image = false;
             this.file = '';
             this.uploadedImage = '';
             this.img_name = '';
@@ -248,12 +259,16 @@ import Uploading from "../components/modals/imgUploading"
             this.image_avoid = image;
             this.flag_popup_image = true;
           }
+        },
+        confDelete() {
+          this.flag_delete_image = true;
         }
     },
     components: {
       Success: Success,
       PopupImage: PopupImage,
-      Uploading: Uploading
+      Uploading: Uploading,
+      DeleteImage: DeleteImage
     }
   }
 
