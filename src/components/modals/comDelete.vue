@@ -1,11 +1,11 @@
 <template>
-  <div id="topdelete">
+  <div id="comdelete">
     <div class="o-background">
       
       <div class="o-background_black">
         <div class="o-modal">
-          <div class="o-text">{{ spot_name }}</div>
-          <div class="o-text_sub">このスポットを削除します。よろしいですか？</div>
+          <div class="o-text">{{ ex_avoid }}</div>
+          <div class="o-text_sub">この説明文を削除します。よろしいですか？</div>
           <div class="l_button">
             <div
               @click="closeModal" 
@@ -24,26 +24,27 @@
 <script>
 　import axios from 'axios'
   export default {
-    name: 'topdelete',
+    name: 'comdelete',
     props: {
-        spot_id: '',
-        spot_name: ''
+        ex_avoid: '',
+        ex_id_avoid: ''
     },
     methods: {
         closeModal: function() {
             this.$emit('closeModal');
         },
         delete_spot() {
-            const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/DELETE/delete_spot.php';
-            let params = new URLSearchParams();
-            params.append('spot_id', this.spot_id);
-            axios.post(url, params
-            ).then(response => {
+            const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/delete_spot_ex.php';
+              let params = new URLSearchParams();
+              params.append('ex_id', this.ex_id_avoid);
+              axios.post(url, params
+              ).then(response => {
+                this.$emit('get_spot_ex');
                 this.closeModal();
-            }).catch(error => {
-                // エラーを受け取る
-                console.log(error);
-            });
+              }).catch(error => {
+                  // エラーを受け取る
+                  console.log(error);
+              });
         }
     },
   }
@@ -76,8 +77,8 @@
 
   .o-text {
     margin: 20px 10px;
-    padding: 40px 20px 0 20px;
-    font-size: 20px;
+    padding: 40px 0 20px 0;
+    font-size: 12px;
     font-weight: bold;
     transition: 100ms;
     border-radius: 5px;

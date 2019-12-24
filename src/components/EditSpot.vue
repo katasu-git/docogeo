@@ -12,7 +12,17 @@
           @get_spot_ex="get_spot_ex"
           @changeCom="changeCom"
           @getSpotImage="getSpotImage"
+          @confDelete="confDelete"
         ></ComLongPress>
+      </transition>
+
+      <transition name="fade">
+        <ComDelete
+          v-show="flag_delete"
+          @closeModal="closeModal"
+          :ex_id_avoid="ex_id_avoid"
+          :ex_avoid="ex_avoid"
+        ></ComDelete>
       </transition>
 
       <ComChangeCom
@@ -118,6 +128,7 @@ import draggable from 'vuedraggable';
 import ComAddComment from '../components/modals/comAddComment'
 import ComLongPress from '../components/modals/comLongPress'
 import ComChangeCom from '../components/modals/comChangeCom'
+import ComDelete from "../components/modals/comDelete"
 export default {
   name: "editSpot",
   data() {
@@ -135,6 +146,7 @@ export default {
       flag_longpress: false,
       flag_change_com: false,
       flag_press_img: false,
+      flag_delete: false,
     };
   },
   created: function() {
@@ -176,6 +188,7 @@ export default {
         this.flag_add_com = false;
         this.flag_longpress = false;
         this.flag_change_com = false;
+        this.flag_delete = false;
         this.get_spot_ex(); //説明の更新を反映
     },
     startSort: function() {
@@ -258,6 +271,9 @@ export default {
             let day = sended.substr(8, 2) + '日';
             let time = ' ' + sended.substr(10, 6);
             return month + day + time;
+        },
+        confDelete() {
+          this.flag_delete = true;
         }
   },
   components: {
@@ -265,6 +281,7 @@ export default {
     ComAddComment: ComAddComment,
     ComLongPress: ComLongPress,
     ComChangeCom: ComChangeCom,
+    ComDelete: ComDelete
   }
 };
 </script>

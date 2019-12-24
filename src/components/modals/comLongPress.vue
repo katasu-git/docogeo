@@ -37,19 +37,10 @@ import axios from 'axios'
         },
         deleteEx: function() {
 
-          //先に何かしらの確認が欲しいかも？
+          this.$emit("closeModal")
+          this.$emit("confDelete")
 
-          const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/delete_spot_ex.php';
-              let params = new URLSearchParams();
-              params.append('ex_id', this.ex_id_avoid);
-              axios.post(url, params
-              ).then(response => {
-                this.$emit('get_spot_ex');
-                this.closeModal();
-              }).catch(error => {
-                  // エラーを受け取る
-                  console.log(error);
-              });
+          //先に何かしらの確認が欲しいか
         },
         reset_img_bind() {
           const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/RESET/reset_img_bind.php';
