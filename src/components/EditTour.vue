@@ -2,9 +2,26 @@
   <div id="editTour">
     <div class="o-background">
 
-      <GeoLongPress v-show="flag"
-        :spot_id_avoid="spot_id_avoid"
-        @closeModal="closeModal" @wakeChangeNameModal="wakeChangeNameModal"></GeoLongPress>
+      <transition name="fade">
+        <GeoLongPress v-show="flag"
+          :spot_id_avoid="spot_id_avoid"
+          :spot_name_avoid="spot_name_avoid"
+          @closeModal="closeModal" 
+          @wakeChangeNameModal="wakeChangeNameModal"
+          @jumpPage="jumpPage"
+          @confDelete="confDelete"
+        ></GeoLongPress>
+      </transition>
+
+      <transition name="fade">
+        <GeoDelete
+          @click="confDelete"
+          v-show="flag_delete"
+          :spot_id="spot_id_avoid"
+          :spot_name="spot_name_avoid"
+          @closeModal="closeModal"
+        ></GeoDelete>
+      </transition>
 
       <GeoChangeName v-show="flag_name"
         @closeModal="closeModal" @update_spot_name="update_spot_name"></GeoChangeName>
@@ -58,8 +75,7 @@
               <div class="o-list_image"><img class="o-image_circle" src="../assets/kujira.svg" /></div>
               <div class="l-list_text">
                 <div class="o-list_text_geosite u_pointer" 
-                  @click='jumpPage("editSpot", info.spot_id, info.spot_name)'
-                  v-long-press="300" @long-press-start="onPlusStart(info.spot_id)">{{ info.spot_name }}</div>
+                  @click='onPlusStart(info)'>{{ info.spot_name }}</div>
                 <div class="o-list_text_update">最終更新 {{returnSended(info.updated)}}</div>
               </div>
             </div>
@@ -84,6 +100,7 @@ import draggable from 'vuedraggable'
 import GeoLongPress from '../components/modals/geoLongPress'
 import GeoChangeName from '../components/modals/geoChageName'
 import GeoCreateGeo from '../components/modals/geoCreateGeo'
+import GeoDelete from '../components/modals/geoDelete'
 
   export default {
     name: 'editTour',
@@ -96,7 +113,9 @@ import GeoCreateGeo from '../components/modals/geoCreateGeo'
           flag_name: false,
           flag_order: false,
           flag_create: false,
+          flag_delete: false,
           spot_id_avoid: '', //名前を変更する時に呼び出し
+          spot_name_avoid: '', //名前を変更する時に呼び出し
       }
     },
     created: function () {
@@ -161,14 +180,18 @@ import GeoCreateGeo from '../components/modals/geoCreateGeo'
               }
           });
       },
-      onPlusStart: function(spot_id)  {
-        this.spot_id_avoid = spot_id;
+      onPlusStart: function(spot)  {
+        this.spot_id_avoid = spot.spot_id;
+        this.spot_name_avoid = spot.spot_name;
+        console.log(spot.spot_name)
         this.flag = true; //戻す
       },
       closeModal: function() {
+        console.log("heuuu")
         this.flag = false;
         this.flag_name = false;
         this.flag_create = false;
+        this.flag_delete = false;
         this.get_spot_info(); //名前の更新を反映
       },
       wakeChangeNameModal: function() {
@@ -200,6 +223,9 @@ import GeoCreateGeo from '../components/modals/geoCreateGeo'
             let day = sended.substr(8, 2) + '日';
             let time = ' ' + sended.substr(10, 6);
             return month + day + time;
+      },
+      confDelete() {
+        this.flag_delete = true;
       }
     },
     components: {
@@ -207,6 +233,7 @@ import GeoCreateGeo from '../components/modals/geoCreateGeo'
       GeoChangeName: GeoChangeName,
       GeoCreateGeo: GeoCreateGeo,
       draggable: draggable,
+      GeoDelete: GeoDelete
     },
   }
 </script>

@@ -117,7 +117,7 @@ import axios from 'axios'
   .o-modal {
     width: calc(100% - 80px);
     max-width: 400px;
-    border-radius: 30px;
+    border-radius: 10px;
     background-color: #fff;
 
     display: flex;
