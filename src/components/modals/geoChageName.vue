@@ -92,21 +92,6 @@
     font-weight: bold;
   }
 
-  input {
-      width: calc(100vw - 20px);
-      font-size: 18px;
-      font-weight: bold;
-      color: rgba(0,0,0, .87);
-      text-align: center;
-  }
-
-  input::placeholder {
-      font-size: 18px;
-      font-weight: bold;
-      color: rgba(0,0,0, .12);
-      text-align: center;
-  }
-
   .l-button {
       width: 100%;
       display: flex;

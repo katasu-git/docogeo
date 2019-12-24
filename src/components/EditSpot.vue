@@ -2,15 +2,18 @@
   <div id="editSpot">
     <div class="o-background">
 
-      <ComLongPress 
-        v-show="flag_longpress && !flag_change_com"
-        :ex_id_avoid="ex_id_avoid"
-        :flag_press_img="flag_press_img"
-        @closeModal="closeModal"
-        @get_spot_ex="get_spot_ex"
-        @changeCom="changeCom"
-        @getSpotImage="getSpotImage"
-      ></ComLongPress>
+      <transition name="fade">
+        <ComLongPress 
+          v-show="flag_longpress && !flag_change_com"
+          :ex_id_avoid="ex_id_avoid"
+          :ex_avoid="ex_avoid"
+          :flag_press_img="flag_press_img"
+          @closeModal="closeModal"
+          @get_spot_ex="get_spot_ex"
+          @changeCom="changeCom"
+          @getSpotImage="getSpotImage"
+        ></ComLongPress>
+      </transition>
 
       <ComChangeCom
         v-show="flag_change_com"

@@ -1,30 +1,24 @@
 <template>
   <div id="comlongpress">
-    <div class="o-background">
       
       <div class="o-background_black">
         <div class="o-modal">
-          <div 
-            class="o-text"
-            @click="changeCom"
-            v-show="!flag_press_img"
-          >編集</div>
-          <div class="o-border u-mt10"></div>
-          <div 
-            class="o-text u-color-red" 
-            @click="deleteEx()"
-            v-show="!flag_press_img"
-          >削除</div>
-          <div 
-            class="o-text u-color-red" 
-            @click="reset_img_bind()"
-            v-show="flag_press_img"
-          >削除</div>
-          <div class="o-border u-mt10"></div>
-          <div class="o-text u-color-green" @click='closeModal()'>キャンセル</div>
+          <div class="o-text">{{ ex_avoid }}</div>
+          <div class="l_button">
+            <div
+              @click="closeModal" 
+              class="o_button_cancel u_pointer">キャンセル</div>
+            <div 
+              @click="changeCom"
+              v-show="!flag_press_img"
+              class="o_button_edit u_pointer">編集</div>
+            <div 
+              @click="deleteEx()"
+              v-show="!flag_press_img"
+              class="o_button_delete u_pointer">削除</div>
+          </div>
         </div>
       </div>
-    </div>
   </div>
 </template>
 
@@ -34,6 +28,7 @@ import axios from 'axios'
     name: 'comlongpress',
     props: {
       ex_id_avoid: '',
+      ex_avoid: '',
       flag_press_img: Boolean
     },
     methods: {
@@ -78,19 +73,6 @@ import axios from 'axios'
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-  #comlongpress {
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-  }
-
-  .o-border {
-    height: 1px;
-    width: 100%;
-    background-color: rgba(0,0,0, .12);
-  }
-
   .o-background_black {
     height: 100%;
     width: 100%;
@@ -99,11 +81,14 @@ import axios from 'axios'
 
     display: flex;
     align-items: center;
+    justify-content: center;
+    z-index: 1;
   }
 
   .o-modal {
-    width: 100px;
-    border-radius: 0 30px 30px 0;
+    width: calc(100% - 40px);
+    max-width: 400px;
+    border-radius: 10px;
     background-color: #fff;
 
     display: flex;
@@ -112,22 +97,43 @@ import axios from 'axios'
   }
 
   .o-text {
-    padding: 20px;
+    margin: 20px 10px;
+    padding: 60px 20px;
     font-size: 12px;
     font-weight: bold;
     transition: 100ms;
+    border-radius: 5px;
   }
 
-  .o-text:active {
-    opacity: .7;
-    transform: scale(1.2);
+  .l_button {
+    position: relative;
+    height: 40px;
+    width: 100%;
   }
 
-  .u-color-green {
+  .o_button_cancel {
+    position: absolute;
+    left: 20px;
+    font-size: 12px;
+    font-weight: bold;
+    width: 70px;
     color: #4B8E8D;
   }
 
-  .u-color-red {
+  .o_button_edit {
+    position: absolute;
+    right: 60px;
+    font-size: 12px;
+    font-weight: bold;
+    width: 30px;
+  }
+
+  .o_button_delete {
+    position: absolute;
+    right: 20px;
+    font-size: 12px;
+    font-weight: bold;
+    width: 30px;
     color: #CC544D;
   }
 
