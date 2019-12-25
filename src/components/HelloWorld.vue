@@ -46,22 +46,20 @@
       </div>
 
       <div class="o-slider">
-        <div 
-          class="o-card" 
+        <div
           v-for="info in tour_info"
-          @click="select_card(info)" 
           :key="info.tour_id"
         >
-          <img 
-            @click="delete_tour(info)"
-            class="delete_button u_pointer"
-            src="../assets/delete_icon.svg"
-          />
+        <div 
+          class="o-card" 
+          @click="select_card(info)"
+        >
           <img 
             src="../assets/kujira.svg"
             class="o-image_tour u_pointer"
           />
-          <div class="o-transparent">
+        </div>
+        <div class="o-transparent">
             <div 
               @click="change_tour_name(info)"
               class="l_text_pen_icon u_pointer">
@@ -71,6 +69,11 @@
                 src="../assets/pen_update_icon.svg" />
             </div>
             <div class="o-text_update">最終更新 {{returnUpdated(info.updated)}}</div>
+            <img 
+              @click="delete_tour(info)"
+              class="delete_button u_pointer"
+              src="../assets/delete_tour_icon.svg"
+            />
           </div>
         </div>
       </div>
@@ -154,6 +157,7 @@ export default {
     },
     change_tour_name(tour_info) {
       this.tour_info_selected = tour_info;
+      this.flag.select_card = false;
       this.flag.change_tour_name = true;
     },
     create_tour() {
@@ -243,7 +247,7 @@ export default {
   .o-card {
     padding: 0 0 0 20px;
     position: relative;
-    height: 100%;
+    height: calc(100% - 80px);
     width: calc(100vw - 80px);
     max-width: 400px;
   }
@@ -252,19 +256,22 @@ export default {
       height: 100%;
       width: calc(100vw - 80px);
       max-width: 400px;
-      border-radius: 10px;
+      border-radius: 10px 10px 0 0;
       object-fit: cover;
       border: solid 1px rgba(0,0,0, .12);
+      border-bottom: none;
     }
 
     .o-transparent {
+      position: relative;
+      margin-left: 20px;
       height: 80px;
       width: calc(100vw - 80px);
       max-width: 400px;
-      position: absolute;
-      bottom: 0;
       border-radius: 0 0 10px 10px;
       background-color: rgba(0,0,0,.5);
+      border-right: solid 1px rgba(0,0,0, .12);
+      border-left: solid 1px rgba(0,0,0, .12);
     }
 
       .o-text_tour_title {
@@ -328,12 +335,14 @@ export default {
 
 .delete_button {
   position: absolute;
-  right: 0;
+  right: -1px;
+  bottom: 0;
 }
 
 .l_text_pen_icon {
   display: flex;
   align-items: center;
+  width: 40%;
   padding:  20px 0 0 20px;
 }
 
