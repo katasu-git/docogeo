@@ -35,11 +35,10 @@
         },
         update_tour_name: function() {
             const url =
-            "https://www2.yoslab.net/~nishimura/geotour/PHP/update_tour_name.php";
+            "https://www2.yoslab.net/~nishimura/docogeo/PHP_C/Edit_Event/change_tour_name.php";
             let params = new URLSearchParams();
-            console.log(this.tour_id);
-            params.append("tour_id", this.tour_id);
-            params.append("tour_name_updated", this.tour_name);
+            params.append("tour_id", this.tour_info.tour_id);
+            params.append("tour_name_changed", this.tour_name_changed);
             axios
             .post(url, params)
             .then(response => {
