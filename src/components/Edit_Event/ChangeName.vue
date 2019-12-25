@@ -7,7 +7,7 @@
     <div class="o-border u-mt40"></div>
     <div class="l-button">
         <button class="o-button_cancel" v-on:click="close_modal()">キャンセル</button>
-        <button class="o-button_save" v-on:click="update_tour_name()">保存する</button>
+        <button class="o-button_save" v-on:click="update_tour_name()">変更を保存する</button>
     </div>
   </div>
 </template>

@@ -342,7 +342,7 @@ export default {
 .l_text_pen_icon {
   display: flex;
   align-items: center;
-  width: 40%;
+  width: calc(100% - 80px);
   padding:  20px 0 0 20px;
 }
 
