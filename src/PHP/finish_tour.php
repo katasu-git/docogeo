@@ -73,7 +73,7 @@ function reset_post_img() {
         $pdo = connect_mysql();  //mysqlに接続
     
         // UPDATE文を変数に格納
-        $sql = "UPDATE images SET isPosted = :isPosted";
+        $sql = "UPDATE spot_image SET isPosted = :isPosted";
     
         // 更新する値と該当のIDは空のまま、SQL実行の準備をする
         $stmt = $pdo->prepare($sql);

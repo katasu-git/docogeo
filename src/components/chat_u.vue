@@ -89,8 +89,10 @@
                     let dif = now - timestamp;
                     //console.log(dif/60/1000);//コンマ0秒以下も取得しているので/1000で補正
                     let pass_min = dif/60/1000;
-                    if(pass_min > 1) {
+                    if(pass_min > 5400) {
+                        //開始から9時間でアクセス不可にする
                         this.end_flag = true;
+                        this.finish_tour();
                     }
                 })
                 .catch(error => {
@@ -98,15 +100,19 @@
                     console.log(error);
                 });
         },
-        getTime() {
-            var now = new Date();
-            var Year = now.getFullYear();
-            var Month = now.getMonth()+1;
-            var Date = now.getDate();
-            var Hour = now.getHours();
-            var Min = now.getMinutes();
-            var Sec = now.getSeconds();
-            console.log(Year)
+        finish_tour() {
+            const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/finish_tour.php';
+            let params = new URLSearchParams();
+            params.append('tour_id', this.tour_id);
+            axios
+                .post(url, params).then(response => {
+                    this.closeModal();
+                    this.$emit('jumpPage', 'HelloWorld');//トップに戻る
+                })
+                .catch(error => {
+                    // エラーを受け取る
+                    console.log(error);
+                });
         },
         getPost: function() {
             const url ="https://www2.yoslab.net/~nishimura/geotour/PHP/getPostedPost.php";
