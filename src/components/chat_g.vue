@@ -106,8 +106,8 @@
             // 更新されたときはトップに戻る
             this.jumpPage("HelloWorld");
         } else {
-            this.tour_id = this.$route.params.tour_id;
-            this.tour_name = this.$route.params.tour_name;
+            this.tour_id = this.$route.params.tour_info.tour_id;
+            this.tour_name = this.$route.params.tour_info.tour_name;
             this.get_spot_name_arr();
         }
     },

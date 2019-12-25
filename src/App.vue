@@ -84,4 +84,8 @@ button, input {
   cursor : pointer;
 }
 
+.u_ml5 {
+  margin-left: 5px;
+}
+
 </style>
