@@ -68,7 +68,7 @@
                 class="u_ml5"
                 src="../assets/pen_update_icon.svg" />
             </div>
-            <div class="o-text_update">最終更新 {{returnUpdated(info.updated)}}</div>
+            <div class="o-text_update">最終更新 {{return_updated(info.updated)}}</div>
             <img 
               @click="delete_tour(info)"
               class="delete_button u_pointer"
@@ -112,7 +112,7 @@ export default {
       },
     }
   },
-  created: function () {
+  created () {
     //初期処理
     this.init();
   },
@@ -163,7 +163,7 @@ export default {
     create_tour() {
       this.flag.create_tour = true;
     },
-    returnUpdated(sended) {
+    return_updated(sended) {
           let month = sended.substr(5, 2) + '月';
           let day = sended.substr(8, 2) + '日';
           let time = ' ' + sended.substr(10, 6);

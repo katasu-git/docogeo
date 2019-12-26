@@ -2,6 +2,8 @@
   <div id="editTour">
     <div class="o-background">
 
+      <!-- 
+
       <transition name="fade">
         <GeoLongPress v-show="flag"
           :spot_id_avoid="spot_id_avoid"
@@ -28,7 +30,10 @@
 
       <GeoCreateGeo v-show="flag_create"
         :tour_id="tour_id" @closeModal="closeModal"></GeoCreateGeo>
+
+      -->
       
+
       <div class="l-header_above">
         <div class="o-text_tour">Spot</div>
         <div class="o-image_image_button ">
@@ -51,38 +56,15 @@
         <div class="o-text_add_image" v-bind:style="{ color: returnSortColor()}">並べ替え</div>
       </div>
 
-      <draggable v-model="spot_info" :animation="150" @update="onEnd()" v-show="flag_order">
-        <div class="o-list" v-for="(info) in spot_info" :key="info.spot_id">
-          <div class="l-image_text_burger">
-            <div class="l-image_text">
-              <div class="o-list_image"><img class="o-image_circle" src="../assets/kujira.svg" /></div>
-              <div class="l-list_text">
-                <div class="o-list_text_geosite">{{ info.spot_name }}</div>
-                <div class="o-list_text_update">最終更新 {{returnSended(info.updated)}}</div>
-              </div>
-            </div>
-            <div class="o-burger"><img class="u_pointer" src="../assets/burger_button.svg" /></div>
-          </div>
-          <div class="o-border u-mt10"></div>
-        </div>
-      </draggable>
+      <List
+      v-show="!flag_order"
+      :spot_info="spot_info"
+      ></List>
 
-      <div v-show="!flag_order">
-        <div class="o-list"
-            v-for="(info) in spot_info" :key="info.spot_id">
-          <div class="l-image_text_burger">
-            <div class="l-image_text">
-              <div class="o-list_image"><img class="o-image_circle" src="../assets/kujira.svg" /></div>
-              <div class="l-list_text">
-                <div class="o-list_text_geosite u_pointer" 
-                  @click='onPlusStart(info)'>{{ info.spot_name }}</div>
-                <div class="o-list_text_update">最終更新 {{returnSended(info.updated)}}</div>
-              </div>
-            </div>
-          </div>
-          <div class="o-border u-mt10"></div>
-        </div>
-      </div>
+      <ListDrag
+        v-show="flag_order"
+        :spot_info="spot_info"
+      ></ListDrag>
 
       <button class="o-button_save_sort u_pointer" v-on:click="startSort()" 
         v-show="flag_order && !flag && !flag_name && !flag_create">並び替えを終了する</button>
@@ -97,45 +79,48 @@
 <script>
 import axios from 'axios'
 import draggable from 'vuedraggable'
-import GeoLongPress from '../components/modals/geoLongPress'
-import GeoChangeName from '../components/modals/geoChageName'
-import GeoCreateGeo from '../components/modals/geoCreateGeo'
-import GeoDelete from '../components/modals/geoDelete'
+import List from '../components/Edit_Tour/List'
+import ListDrag from '../components/Edit_Tour/ListDrag'
 
   export default {
     name: 'editTour',
     data() {
       return {
-          spot_info: [],
-          tour_id: Number,
-          tour_name: String,
+        tour_info: '',
+        spot_info: [],
+          tour_id: '',
+          tour_name: '',
           flag: false,
           flag_name: false,
           flag_order: false,
           flag_create: false,
           flag_delete: false,
-          spot_id_avoid: '', //名前を変更する時に呼び出し
-          spot_name_avoid: '', //名前を変更する時に呼び出し
       }
     },
-    created: function () {
-      if(JSON.stringify(this.$route.params) == "{}") {
-        // 更新されたときはトップに戻る
-        this.jumpPage("HelloWorld");
-      } else {
-        this.tour_id = Number(this.$route.params.tour_info.tour_id);
-        this.tour_name = this.$route.params.tour_info.tour_name;
-        this.get_spot_info();
-      }
+    created() {
+      this.init()
     },
     methods: {
+      init() {
+        if(JSON.stringify(this.$route.params) == "{}") {
+          // 更新されたときはトップに戻る
+          this.jumpPage("HelloWorld");
+        } else {
+          this.tour_info = this.$route.params.tour_info;
+          this.tour_id = Number(this.$route.params.tour_info.tour_id);
+          this.tour_name = this.$route.params.tour_info.tour_name;
+          this.get_spot_info();
+        }
+      },
       get_spot_info: function () {
         const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/get_spot_info.php';
         let params = new URLSearchParams();
         params.append('tour_id', this.tour_id);
         axios.post(url, params
         ).then(response => {
-          this.spot_info = response.data;
+          for(let i=0; i<response.data.length; i++) {
+            this.spot_info.push(response.data[i])
+          }
         }).catch(error => {
           // エラーを受け取る
           console.log(error);
@@ -153,22 +138,6 @@ import GeoDelete from '../components/modals/geoDelete'
                 // エラーを受け取る
                 console.log(error);
             });
-      },
-      update_order_spot_name: function() {
-            const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/update_order_spot_name.php';
-            for(let i=0; i<this.spot_info.length; i++) {
-              let params = new URLSearchParams();
-              let arr= this.spot_info[i].spot_id;
-              params.append('spot_id_arr', arr);
-              params.append('order', i);
-              axios.post(url, params
-              ).then(response => {
-              }).catch(error => {
-                  // エラーを受け取る
-                  console.log(error);
-              });
-            }
-            this.get_spot_info();
       },
       jumpPage: function(where, spot_id, spot_name) {
           this.$router.push({
@@ -198,9 +167,6 @@ import GeoDelete from '../components/modals/geoDelete'
         this.flag = false; //前のモーダルを閉じる
         this.flag_name = true;
       },
-      onEnd: function() {
-        this.update_order_spot_name();  //ここで発火させればオートセーブも可能
-      },
       startSort: function() {
         if(this.flag_order) {
           this.flag_order = false;
@@ -218,22 +184,14 @@ import GeoDelete from '../components/modals/geoDelete'
       wakeCreateGeo: function() {
         this.flag_create = true;
       },
-      returnSended(sended) {
-            let month = sended.substr(5, 2) + '月';
-            let day = sended.substr(8, 2) + '日';
-            let time = ' ' + sended.substr(10, 6);
-            return month + day + time;
-      },
       confDelete() {
         this.flag_delete = true;
       }
     },
     components: {
-      GeoLongPress: GeoLongPress,
-      GeoChangeName: GeoChangeName,
-      GeoCreateGeo: GeoCreateGeo,
       draggable: draggable,
-      GeoDelete: GeoDelete
+      List: List,
+      ListDrag: ListDrag
     },
   }
 </script>
