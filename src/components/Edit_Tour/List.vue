@@ -6,10 +6,27 @@
             <div class="l-image_text">
               <div class="o-list_image"><img class="o-image_circle" src="../../assets/kujira.svg" /></div>
               <div class="l-list_text">
-                <div class="o-list_text_geosite u_pointer">{{ info.spot_name }}</div>
-                <div class="o-list_text_update">最終更新 {{return_sended(info.updated)}}</div>
+                <div 
+                    class="l_text_pen_icon u_pointer"
+                    @click="move_page(spot_info)"
+                >
+                    <div class="o-list_text_geosite u_pointer">{{ info.spot_name }}</div>
+                    <img 
+                        class="u_pointer"
+                        src="../../assets/pen_update_black.svg" 
+                        @click="change_name(info)"
+                    />
+                </div>
+                <div class="o-burger">
+                 </div>
+                <div class="o-list_text_update">{{return_sended(info.updated)}}</div>
               </div>
             </div>
+            <img 
+                class="u_pointer"
+                src="../../assets/delete_circle.svg" 
+                @click="delete_spot(info)"
+            />
           </div>
           <div class="o-border u-mt10"></div>
         </div>
@@ -30,6 +47,15 @@ export default {
             let time = ' ' + sended.substr(10, 6);
             return month + day + time;
       },
+      delete_spot(spot_info) {
+          this.$emit('delete_spot', spot_info);
+      },
+      change_name(spot_info) {
+          this.$emit('change_name', spot_info);
+      },
+      move_page(spot_info) {
+          this.$emit('move_page', 'editSpot', spot_info)
+      }
   }
 }
 
@@ -92,7 +118,12 @@ export default {
 
 .o-border {
     height: 1px;
-    width: calc(100vw - 100px);
+    width: 100%;
     background-color: rgba(0,0,0, .12);
+}
+
+.l_text_pen_icon {
+  display: flex;
+  align-items: center;
 }
 </style>

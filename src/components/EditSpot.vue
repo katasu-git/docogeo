@@ -152,9 +152,9 @@ export default {
       // 更新されたときはトップに戻る
       this.jumpPage("editTour");
     } else {
-      this.tour_id = this.$route.params.tour_id;
-      this.spot_id = this.$route.params.spot_id;
-      this.spot_name = this.$route.params.spot_name;
+      this.tour_id = this.$route.params.tour_info.tour_id;
+      this.spot_id = this.$route.params.spot_info[0].spot_id;
+      this.spot_name = this.$route.params.spot_info[0].spot_name;
       this.get_spot_ex();
       this.getSpotImage();
     }

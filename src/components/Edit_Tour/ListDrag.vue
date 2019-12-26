@@ -20,7 +20,6 @@
               </div>
               <div class="l-list_text">
                 <div class="o-list_text_geosite">{{ info.spot_name }}</div>
-                <div class="o-list_text_update">最終更新 {{return_sended(info.updated)}}</div>
               </div>
             </div>
             <div class="o-burger">
@@ -45,19 +44,11 @@ export default {
       spot_info: Array
   },
   methods: {
-      return_sended(sended) {
-            let month = sended.substr(5, 2) + '月';
-            let day = sended.substr(8, 2) + '日';
-            let time = ' ' + sended.substr(10, 6);
-            return month + day + time;
-      },
       update_order_spot_name() {
-        console.log("hello");
         const url = 'https://www2.yoslab.net/~nishimura/docogeo/PHP_C/Edit_Tour/update_order_spot_name.php';
         axios.post(url, this.spot_info
         ).then(response => {
             //返ってきたデータの処理
-            console.log(response.data);
         }).catch(error => {
             // エラーを受け取る
             console.log(error);
@@ -96,10 +87,6 @@ export default {
     justify-content: space-between;
 }
 
-.o-burger {
-    margin-right: 20px;
-}
-
 .l-image_text {
     display: flex;
 }
@@ -128,7 +115,7 @@ export default {
 
 .o-border {
     height: 1px;
-    width: calc(100vw - 100px);
+    width: 100%;
     background-color: rgba(0,0,0, .12);
 }
 </style>
