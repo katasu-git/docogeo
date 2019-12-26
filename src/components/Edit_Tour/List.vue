@@ -6,11 +6,10 @@
             <div class="l-image_text">
               <div class="o-list_image"><img class="o-image_circle" src="../../assets/kujira.svg" /></div>
               <div class="l-list_text">
-                <div 
-                    class="l_text_pen_icon u_pointer"
-                    @click="move_page(spot_info)"
-                >
-                    <div class="o-list_text_geosite u_pointer">{{ info.spot_name }}</div>
+                <div class="l_text_pen_icon">
+                    <div 
+                        @click="move_page(spot_info)"
+                        class="o-list_text_geosite u_pointer">{{ info.spot_name }}</div>
                     <img 
                         class="u_pointer"
                         src="../../assets/pen_update_black.svg" 
