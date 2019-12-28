@@ -109,7 +109,7 @@ import DeleteImage from "../components/modals/imgDelete"
       }
     },
     created: function () {
-      if(this.$route.params.tour_info.tour_id != undefined && this.$route.params.spot_info.spot_id != undefined) {
+      if(JSON.stringify(this.$route.params) == "{}" && this.$route.params.tour_info != undefined) {
         this.tour_id = this.$route.params.tour_info.tour_id;
         this.spot_id = this.$route.params.spot_info.spot_id;
         this.flag_add = true;
