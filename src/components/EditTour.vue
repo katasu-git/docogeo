@@ -125,7 +125,6 @@ import ChangeName from '../components/Edit_Tour/ChangeName'
         });
       },
       move_page: function(where, spot_info) {
-          console.log(spot_info)
           this.$router.push({
               name: where,
               params: {
@@ -179,16 +178,7 @@ import ChangeName from '../components/Edit_Tour/ChangeName'
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-  ul {
-    margin: 0;
-    padding: 0;
-  }
-
-  button {
-    outline: none;
-  }
-
-  #editTour, .o-background {
+  #editTour {
     height: 100%;
     width: 100%;
 
@@ -197,6 +187,12 @@ import ChangeName from '../components/Edit_Tour/ChangeName'
 
     position: fixed;
     overflow: hidden;
+  }
+
+  .o-background {
+    height: 100%;
+    width: 100%;
+    overflow: scroll;
   }
 
   .l-header_above {

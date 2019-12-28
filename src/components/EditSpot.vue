@@ -3,168 +3,127 @@
     <div class="o-background">
 
       <transition name="fade">
-        <ComLongPress 
-          v-show="flag_longpress && !flag_change_com"
-          :info="info"
-          :image_flag="image_flag"
-          @closeModal="closeModal"
-          @get_spot_ex="get_spot_ex"
-          @changeCom="changeCom"
-          @getSpotImage="getSpotImage"
-          @confDelete="confDelete"
-        ></ComLongPress>
+        <Delete
+          v-show="flag.delete"
+          :selected="selected"
+          :isImage="isImage"
+          @close_modal="close_modal"
+        ></Delete>
       </transition>
 
-      <transition name="fade">
-        <ComDelete
-          v-show="flag_delete"
-          @closeModal="closeModal"
-          @getSpotImage="getSpotImage"
-          :info="info"
-          :image_flag="image_flag"
-        ></ComDelete>
-      </transition>
+      <EditCommnet
+        v-bind:class="{ slideIn: flag.edit_ex, slideOut: !flag.edit_ex }"
+        :selected="selected"
+        @close_modal="close_modal"
+      ></EditCommnet>
 
-      <ComChangeCom
-        v-show="flag_change_com"
-        :info_avoid="info"
-        v-bind:class="{ slideIn: flag_change_com, slideOut: !flag_change_com }"
-        @closeModal="closeModal"></ComChangeCom>
+      <CreateComment
+        v-bind:class="{ slideIn: flag.create, slideOut: !flag.create }"
+        :tour_info="tour_info"
+        :spot_info="spot_info"
+        @edit_spot_ex="edit_spot_ex"
+        @close_modal="close_modal"
+      ></CreateComment>
       
       <div class="l-header_above">
         <div class="o-text_tour">Comment</div>
         <div class="o-image_image_button u_pointer">
-          <img v-on:click="startSort()" v-show="!flag_order" src="../assets/sort_button.svg" />
-          <img v-on:click="startSort()" v-show="flag_order" src="../assets/sort_button_active.svg" />
+          <img v-on:click="start_sort()" v-show="!flag.order" src="../assets/sort_button.svg" />
+          <img v-on:click="start_sort()" v-show="flag.order" src="../assets/sort_button_active.svg" />
         </div>
       </div>
       <div class="l-header_under u-mb20">
-        <div class="o-text_tour_min"><span class="u-color-green">{{spot_name}}</span></div>
-        <div class="o-text_add_image" v-bind:style="{ color: returnSortColor()}">並べ替え</div>
+        <div class="o-text_tour_min"><span class="u-color-green">{{spot_info.spot_name}}</span></div>
+        <div class="o-text_add_image" v-bind:style="{ color: return_color()}">並べ替え</div>
       </div>
 
-      <div class="l-slider_images" v-show="!flag_order">
-        <button
-          class="o-button_add_img u_pointer"
-          @click="addImg()">画像を追加する</button>
-        <div class="o-image u_pointer" 
-          v-for="image in srcArray"
-          :key="image.id"
-          @click="onPlusStart(image, true)"
-        >
-          <img class="img" :src="image.image_path" :alt="image.imgName" />
-        </div>
-      </div>
+      <ImageList
+        :tour_info="tour_info"
+        :spot_info="spot_info"
+        :image_info="image_info"
+        @delete_selected="delete_selected"
+      ></ImageList>
 
-      <draggable class="l-slider_images" :animation="150" v-show="flag_order">
-        <div class="o-image" 
-          v-for="image in srcArray"
-          :key="image.id"
-        >
-          <img class="img" :src="image.image_path" :alt="image.imgName" />
-        </div>
-      </draggable>
 
       <div class="l-border">
         <div class="o-border u-mt20"></div>
       </div>
-      
-      <div
-        class="l-comment_container"
-        v-show="!flag_order"
-      >
-            <div class="l-comment_row" v-for="ex in spot_ex" :key="ex.id">
-                <div class="l-flex_end">
-                    <div
-                      class="l-comment u_pointer"
-                      @click="onPlusStart(ex, false)"
-                    >{{ ex.spot_ex }}</div>
-                    <div class="o-send_time">{{returnSended(ex.created)}}</div>
-                </div>
-            </div>
-      </div>
 
-      <draggable 
-        class="l-comment_container"
-        v-show="flag_order"
-        @update="update_order_spot_ex()"
-        v-model="spot_ex" 
-        :animation="150"
-      >
-            <div class="l-comment_row" v-for="ex in spot_ex" :key="ex.id">
-                <div class="l-flex_end">
-                    <div
-                      class="l-comment"
-                    >{{ ex.spot_ex }}</div>
-                    <div class="o-send_time">{{returnSended(ex.created)}}</div>
-                </div>
-                <div class="o-burger u-mt20 u_pointer"><img src="../assets/burger_button.svg" /></div>
-            </div>
-      </draggable>
+      <List
+        v-show="!flag.order"
+        :spot_ex="spot_ex"
+        @delete_selected="delete_selected"
+        @edit_spot_ex="edit_spot_ex"
+      ></List>
+
+      <ListDrag
+        v-show="flag.order"
+        :spot_ex="spot_ex"  
+      ></ListDrag>
 
       <button 
+        v-show="flag.order"
         class="o-button_save_sort u_pointer"
-        v-on:click="startSort()" 
-        v-show="flag_order && !flag_add_com &&!flag_longpress"
+        v-on:click="start_sort()" 
       >並び替えを終了する</button>
 
-      <button class="o-button_create_geosite u_pointer" v-on:click="addComment()" 
-        v-show="!flag_order && !flag_add_com &&!flag_longpress">新しく説明を追加する</button>
+      <button 
+        v-show="!flag.order"
+        class="o-button_create_geosite u_pointer"
+        v-on:click="create_spot_ex()" 
+      >新しく説明を追加する</button>
     </div>
-    <ComAddComment 
-        @closeModal="closeModal"
-        :tour_id="tour_id" 
-        :spot_id="spot_id"
-        v-show="flag_add_com"
-        v-bind:class="{ slideIn: flag_add_com, slideOut: !flag_add_com }"
-    ></ComAddComment>
   </div>
 </template>
 
 <script>
 import axios from "axios";
-import draggable from 'vuedraggable';
-import ComAddComment from '../components/modals/comAddComment'
-import ComLongPress from '../components/modals/comLongPress'
-import ComChangeCom from '../components/modals/comChangeCom'
-import ComDelete from "../components/modals/comDelete"
+import List from '../components/Edit_Spot/List'
+import ListDrag from '../components/Edit_Spot/ListDrag'
+import Delete from'../components/Edit_Spot/Delete'
+import ImageList from '../components/Edit_Spot/ImageList'
+import EditCommnet from '../components/Edit_Spot/EditComment'
+import CreateComment from '../components/Edit_Spot/CreateCommnet'
+
 export default {
   name: "editSpot",
   data() {
     return {
-      tour_id: '',
-      spot_id: '',
-      tour_name: '',
-      spot_name: '',
+      tour_info: '',
+      spot_info: '',
       spot_ex: [],
-      srcArray: [],
+      image_info: [],
+      selected: '',
+      isImage: false,
+      flag: {
+        order: false,
+        delete: false,
+        edit_ex: false,
+        create: false
+      },
       info: '',
-      flag_order: false,
-      flag_add_com: false,
-      flag_longpress: false,
-      flag_change_com: false,
-      flag_delete: false,
-      image_flag: false
     };
   },
   created: function() {
-    if (JSON.stringify(this.$route.params) == "{}") {
-      // 更新されたときはトップに戻る
-      this.jumpPage("editTour");
-    } else {
-      this.tour_id = this.$route.params.tour_info.tour_id;
-      this.spot_id = this.$route.params.spot_info[0].spot_id;
-      this.spot_name = this.$route.params.spot_info[0].spot_name;
-      this.get_spot_ex();
-      this.getSpotImage();
-    }
+    this.init();
   },
   methods: {
+    init() {
+      if (JSON.stringify(this.$route.params) == "{}") {
+        // 更新されたときはトップに戻る
+        this.move_page("editTour");
+      } else {
+        this.tour_info = this.$route.params.tour_info;
+        this.spot_info = this.$route.params.spot_info[0];
+        this.get_spot_ex();
+        this.get_spot_image();
+      }
+    },
     get_spot_ex: function() {
       const url =
-        "https://www2.yoslab.net/~nishimura/geotour/PHP/get_spot_ex.php";
+        "https://www2.yoslab.net/~nishimura/docogeo/PHP_C/Edit_Spot/get_spot_ex.php";
       let params = new URLSearchParams();
-      params.append("spot_id", this.spot_id);
+      params.append("spot_id", this.spot_info.spot_id);
       axios
         .post(url, params)
         .then(response => {
@@ -175,106 +134,69 @@ export default {
           console.log(error);
         });
     },
-    jumpPage: function(where) {
+    get_spot_image() {
+        const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/GET/get_spot_img.php';
+          let params = new URLSearchParams();
+          params.append('tour_id', this.tour_info.tour_id);
+          params.append('spot_id', this.spot_info.spot_id);
+          axios.post(url, params
+          ).then(response => {
+            this.image_info = response.data;
+          }).catch(error => {
+              // エラーを受け取る
+              console.log(error);
+          });
+    },
+    move_page: function(where) {
         this.$router.push({
             name: where,
             params: {
             }
         })
     },
-    closeModal: function() {
-        this.flag_add_com = false;
-        this.flag_longpress = false;
-        this.flag_change_com = false;
-        this.flag_delete = false;
-        this.get_spot_ex(); //説明の更新を反映
+    close_modal: function() {
+      this.flag.order = false;
+      this.flag.delete = false;
+      this.flag.edit_ex = false;
+      this.flag.create = false;
+      this.init(); //説明の更新を反映
     },
-    startSort: function() {
-        if(this.flag_order) {
-          this.flag_order = false;
+    start_sort() {
+        if(this.flag.order) {
+          this.flag.order = false;
         } else {
-          this.flag_order = true;
+          this.close_modal();
+          this.flag.order = true;
         }
     },
-    returnSortColor: function() {
-        if(this.flag_order) {
+    return_color: function() {
+        if(this.flag.order) {
           return '#4B8E8D';
         } else {
           return 'rgba(0,0,0,.26)';
         }
     },
-    addComment: function() {
-      if(this.flag_add_com) {
-        this.flag_add_com = false;
-      } else {
-        this.flag_add_com = true;
-      }
+    delete_selected(info, isImage) {
+      this.selected = info;
+      this.isImage = isImage;
+      this.flag.delete = true;
     },
-    changeCom() {
-      this.flag_change_com = true;
-    },
-    onPlusStart: function(info, image_flag) {
-      this.info = info;
-      this.image_flag = image_flag;
-      this.flag_longpress = true;
+    edit_spot_ex(info) {
       console.log(info)
-      console.log(this.image_flag)
+      this.selected = info;
+      this.flag.edit_ex = true;
     },
-    update_order_spot_ex: function() {
-            const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/update_order_spot_ex.php';
-            //let arr = [];
-            for(let i=0; i<this.spot_ex.length; i++) {
-              let params = new URLSearchParams();
-              let arr= this.spot_ex[i].id;
-              params.append('spot_id_arr', arr);
-              params.append('order', i);
-              axios.post(url, params
-              ).then(response => {
-              }).catch(error => {
-                  // エラーを受け取る
-                  console.log(error);
-              });
-            }
-            this.get_spot_ex();
-      },
-      addImg() {
-        this.$router.push({
-            name: 'images',
-            params: {
-              tour_id: this.tour_id,
-              spot_id: this.spot_id
-            }
-        })
-      },
-      getSpotImage() {
-          const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/GET/get_spot_img.php';
-              let params = new URLSearchParams();
-              params.append('tour_id', this.tour_id);
-              params.append('spot_id', this.spot_id);
-              axios.post(url, params
-              ).then(response => {
-                this.srcArray = response.data;
-              }).catch(error => {
-                  // エラーを受け取る
-                  console.log(error);
-              });
-      },
-      returnSended(sended) {
-          let month = sended.substr(5, 2) + '月';
-          let day = sended.substr(8, 2) + '日';
-          let time = ' ' + sended.substr(10, 6);
-          return month + day + time;
-      },
-      confDelete() {
-        this.flag_delete = true;
-      }
+    create_spot_ex() {
+      this.flag.create = true;
+    }
   },
   components: {
-    draggable: draggable,
-    ComAddComment: ComAddComment,
-    ComLongPress: ComLongPress,
-    ComChangeCom: ComChangeCom,
-    ComDelete: ComDelete
+    List: List,
+    ListDrag: ListDrag,
+    Delete: Delete,
+    ImageList: ImageList,
+    EditCommnet: EditCommnet,
+    CreateComment: CreateComment
   }
 };
 </script>
@@ -284,9 +206,18 @@ export default {
 #editSpot {
   height: 100%;
   width: 100%;
+
   background-color: #F5F5F5;
   color: rgba(0,0,0,.87);
-  overflow: auto;
+
+  position: fixed;
+  overflow: hidden;
+}
+
+.o-background {
+  height: 100%;
+  width: 100%;
+  overflow: scroll;
 }
 
 
@@ -335,52 +266,6 @@ export default {
       color: rgba(0,0,0, .26);
     }
 
-  .o-image_circle {
-    height: 50px;
-    width: 50px;
-    border-radius: 100px;
-    object-fit: cover;
-  }
-
-  .l-slider_images {
-    padding: 40px 0 0 20px;
-    display: flex;
-    overflow-x: scroll;
-    overflow-y: hidden;
-    -webkit-overflow-scrolling: touch; /*ios*/
-  }
-
-  .o-image, .o-button_add_img {
-    height: 100px;
-    width: 100px;
-    min-height: 100px;
-    min-width: 100px;
-    background-color: rgba(0,0,0, .05);
-    border-radius: 10px;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-  }
-
-  .img {
-    width: 100%;
-    height: 100%;
-    border-radius: 10px;
-    object-fit: cover;
-  }
-
-  .o-image:not(:first-of-type) {
-    margin-left: 10px;
-  }
-
-  .o-button_add_img {
-    margin-right: 10px;
-    background-color: #4B8E8D;
-    color: white;
-    font-weight: bold;
-  }
-
   .l-border {
     width: 100vw;
     display: flex;
@@ -414,52 +299,6 @@ export default {
 
   .o-button_create_geosite:acitve {
     opacity: .7;
-  }
-
-  .l-comment_container {
-      width: calc(100% - 40px);
-      margin-left: 20px;
-      word-wrap: break-word;
-  }
-
-  .l-comment_row {
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
-  }
-
-  .l-comment_row:first-of-type {
-      margin-top: 20px;
-  }
-
-  .l-comment_row:not(:first-of-type) {
-      margin-top: 20px;
-  }
-
-  .l-comment_row:last-of-type {
-      margin-bottom: 120px;
-  }
-
-  .l-flex_end {
-      width: 100%;
-      display: flex;
-      align-items: flex-end;
-  }
-
-  .l-comment {
-      padding: 10px;
-      background-color: #E3E5E5;
-      border-radius: 10px;
-  }
-
-  .o-send_time {
-      margin: 0 25px 0 5px;
-      display: flex;
-      align-items: flex-end;
-      white-space: nowrap;
-
-      font-size: 10px;
-      color: #A2A6A5;
   }
 
   .u-mt10 {

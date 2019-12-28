@@ -76,7 +76,7 @@ export default {
 }
 
 .o-list:last-of-type {
-    margin-bottom: 100px;
+    margin-bottom: 120px;
 }
 
 .l-image_text_burger {

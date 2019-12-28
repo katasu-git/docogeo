@@ -88,4 +88,12 @@ button, input {
   margin-left: 5px;
 }
 
+.u_ml10 {
+  margin-left: 10px;
+}
+
+.u_ml20 {
+  margin-left: 20px;
+}
+
 </style>
