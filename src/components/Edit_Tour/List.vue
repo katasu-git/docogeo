@@ -8,10 +8,10 @@
               <div class="l-list_text">
                 <div class="l_text_pen_icon">
                     <div 
-                        @click="move_page(spot_info)"
+                        @click="move_page(info)"
                         class="o-list_text_geosite u_pointer">{{ info.spot_name }}</div>
                     <img 
-                        class="u_pointer"
+                        class="u_pointer u_ml10"
                         src="../../assets/pen_update_black.svg" 
                         @click="change_name(info)"
                     />

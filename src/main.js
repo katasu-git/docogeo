@@ -5,10 +5,12 @@ import App from './App'
 import router from './router'
 import LongPress from 'vue-directive-long-press'
 import { VLazyImagePlugin } from "v-lazy-image";
+import VueLocalStorage from 'vue-localstorage'
 
 Vue.use(VLazyImagePlugin);
 Vue.config.productionTip = false
 Vue.directive('long-press', LongPress)
+Vue.use(VueLocalStorage)
 
 /* eslint-disable no-new */
 new Vue({
@@ -16,4 +18,26 @@ new Vue({
   router,
   components: { App },
   template: '<App/>',
+  localStorage: {
+    stringKey: {
+      type: String
+    },
+    numberKey: {
+      type: Number
+    },
+    booleanKey: {
+      type: Boolean,
+      default: true
+    },
+    listKey: {
+      type: Array
+    },
+    objectKey: {
+      type: Object,
+      default: {
+        val: 'default'
+      }
+    },
+    noTypeKey: ''
+  }
 })

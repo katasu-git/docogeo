@@ -109,15 +109,18 @@ export default {
   },
   methods: {
     init() {
-      if (JSON.stringify(this.$route.params) == "{}") {
-        // 更新されたときはトップに戻る
-        this.move_page("editTour");
+      this.tour_info = JSON.parse(this.$localStorage.get('now_tour_info'));
+      if(JSON.stringify(this.$route.params) != "{}") {
+        this.spot_info = this.$route.params.spot_info;
+        //ローカルストレージに登録
+        this.$localStorage.set('now_spot_info',JSON.stringify(this.$route.params.spot_info));
+        console.log(this.$route.params.spot_info)
       } else {
-        this.tour_info = this.$route.params.tour_info;
-        this.spot_info = this.$route.params.spot_info[0];
-        this.get_spot_ex();
-        this.get_spot_image();
+        //リロード時の対応
+        this.spot_info = JSON.parse(this.$localStorage.get('now_spot_info'));
       }
+      this.get_spot_ex();
+      this.get_spot_image();
     },
     get_spot_ex: function() {
       const url =

@@ -97,25 +97,24 @@ import ChangeName from '../components/Edit_Tour/ChangeName'
         }
       }
     },
-    created() {
+    mounted() {
       this.init()
     },
     methods: {
       init() {
-        if(JSON.stringify(this.$route.params) == "{}") {
-          // 更新されたときはトップに戻る
-          this.move_page("HelloWorld");
-        } else {
+        //localstrageに登録するときはJSON.stringify, 取得するときはJSON.parseする必要あり
+        if(JSON.stringify(this.$route.params) != "{}") {
+          this.$localStorage.set('now_tour_info',JSON.stringify(this.$route.params.tour_info));
           this.tour_info = this.$route.params.tour_info;
-          this.tour_id = Number(this.$route.params.tour_info.tour_id);
-          this.tour_name = this.$route.params.tour_info.tour_name;
-          this.fetch_spot_info();
+        } else {
+          this.tour_info = JSON.parse(this.$localStorage.get('now_tour_info'));
         }
+        this.fetch_spot_info();
       },
       fetch_spot_info: function () {
         const url = 'https://www2.yoslab.net/~nishimura/docogeo/PHP_C/Edit_Tour/fetch_spot_info.php';
         let params = new URLSearchParams();
-        params.append('tour_id', this.tour_id);
+        params.append('tour_id', this.tour_info.tour_id);
         axios.post(url, params
         ).then(response => {
           this.spot_info = response.data;
@@ -125,6 +124,7 @@ import ChangeName from '../components/Edit_Tour/ChangeName'
         });
       },
       move_page: function(where, spot_info) {
+        console.log(spot_info)
           this.$router.push({
               name: where,
               params: {

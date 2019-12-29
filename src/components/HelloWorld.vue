@@ -116,6 +116,11 @@ export default {
     //初期処理
     this.init();
   },
+  mounted() {
+    //ローカルストレージの初期化
+    this.$localStorage.remove('now_tour_info');
+    this.$localStorage.remove('now_spot_info');
+  },
   methods: {
     init() {
       this.fetch_tour_info();
