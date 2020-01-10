@@ -6,6 +6,7 @@ import router from './router'
 import LongPress from 'vue-directive-long-press'
 import { VLazyImagePlugin } from "v-lazy-image";
 import VueLocalStorage from 'vue-localstorage'
+import 'leaflet/dist/leaflet.css'
 
 Vue.use(VLazyImagePlugin);
 Vue.config.productionTip = false

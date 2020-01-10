@@ -33,7 +33,8 @@
                 name: 'images',
                 params: {
                     tour_info: this.tour_info,
-                    spot_info: this.spot_info
+                    spot_info: this.spot_info,
+                    add_image_flag: true, 
                 }
             })
         },

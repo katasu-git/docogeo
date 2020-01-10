@@ -92,6 +92,8 @@ import DeleteImage from "../components/modals/imgDelete"
     name: 'images',
     data() {
       return {
+        tour_info: '',
+        spot_info: '',
         file: '',
         uploadedImage: '',
         img_name: '',
@@ -102,16 +104,16 @@ import DeleteImage from "../components/modals/imgDelete"
         flag_popup_image: false,
         flag_uploading: false,
         flag_delete_image: false,
-        tour_id: '', //commentから渡ってきた場合
-        spot_id: '', //commentから渡ってきた場合
         srcArray: [],
         image_avoid: ''
       }
     },
     created: function () {
-      if(JSON.stringify(this.$route.params) == "{}" && this.$route.params.tour_info != undefined) {
-        this.tour_id = this.$route.params.tour_info.tour_id;
-        this.spot_id = this.$route.params.spot_info.spot_id;
+      if(JSON.stringify(this.$route.params) != "{}") {
+        this.tour_info = this.$route.params.tour_info;
+        this.spot_info = this.$route.params.spot_info;
+      }
+      if(this.$route.params.add_image_flag) {
         this.flag_add = true;
       }
       this.getAllImage();
@@ -121,8 +123,8 @@ import DeleteImage from "../components/modals/imgDelete"
             this.$router.push({
                 name: where,
                 params: {
-                tour_id: this.tour_id,
-                spot_id: this.spot_id,
+                tour_info: this.tour_info,
+                spot_info: this.spot_info,
                 }
             })
         },
@@ -222,14 +224,14 @@ import DeleteImage from "../components/modals/imgDelete"
               });
         },
         addImgToSpot(index, isAdded, image_path) {
-          if(this.tour_id == '' || this.spot_id == '') {
+          if(this.tour_info.tour_id == '' || this.spot_info.spot_id == '') {
             console.log("reject");
             return; //editページ以外からの遷移時は登録しない
           }
           const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/add_img_spot.php';
               let params = new URLSearchParams();
-              params.append('tour_id', this.tour_id);
-              params.append('spot_id', this.spot_id);
+              params.append('tour_id', this.tour_info.tour_id);
+              params.append('spot_id', this.spot_info.spot_id);
               params.append('image_id', index);
               params.append('image_path', image_path);
               console.log(image_path);
