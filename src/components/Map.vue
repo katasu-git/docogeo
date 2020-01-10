@@ -31,7 +31,7 @@
 
 <script>
   import Footer from '../components/parts/Footer'
-  //AIzaSyAoNzWElg3mCVGsrO8oOFTlWxMwAHjnY30
+  //危ないからやめたほうがいいらしい
 
   export default {
     name: 'maps',
