@@ -4,8 +4,8 @@
 
         <transition name="fade">
             <TourEnd
-                v-show="end_flag"
-                :tour_name="tour_name"
+                v-show="flag.end"
+                :tour_name="tour_info.tour_name"
             ></TourEnd>
         </transition>
       
@@ -56,12 +56,10 @@
           place: 'chat',
           user: 'guest',
           tour_info: '',
-          tour_id: 1,
-          tour_name: '',
-          spot_id: 1,
-          spot_name: '',
           spot_ex: JSON,
-          end_flag: false,
+          flag: {
+              end: false
+          },
       }
     },
     created: function () {
@@ -77,15 +75,14 @@
           this.tour_info = JSON.parse(this.$localStorage.get('now_tour_info'));
         }
 
-        console.log(this.tour_info)
-        
+        setInterval(function() {
+        this.getPost();
+
         //ツアー終了の処理
         this.judge_tour_isActive();
         this.break_tour_timer();
         //////////////
 
-        setInterval(function() {
-        this.getPost();
         }.bind(this), 1000);
     },
     methods: {
@@ -101,11 +98,10 @@
                     //http://yut.hatenablog.com/entry/20111015/1318633937
                     let now = Date.now()
                     let dif = now - timestamp;
-                    //console.log(dif/60/1000);//コンマ0秒以下も取得しているので/1000で補正
                     let pass_min = dif/60/1000;
                     if(pass_min > 5400) {
                         //開始から9時間でアクセス不可にする
-                        this.end_flag = true;
+                        this.flag.end = true;
                         this.finish_tour();
                     }
                 })
@@ -121,10 +117,9 @@
             axios
                 .post(url, params)
                 .then(response => {
-                    console.log(response.data[0]);
                     if(response.data[0].isActive == 0) {
                         //開始から9時間でアクセス不可にする
-                        this.end_flag = true;
+                        this.flag.end = true;
                         this.finish_tour();
                     }
                 })
@@ -134,14 +129,12 @@
                 });
         },
         finish_tour() {
+            //isAcive == 0にする
             const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/finish_tour.php';
             let params = new URLSearchParams();
             params.append('tour_id', this.tour_info.tour_id);
             axios
-                .post(url, params).then(response => {
-                    this.closeModal();
-                    this.$emit('move_page', 'HelloWorld');//トップに戻る
-                })
+                .post(url, params)
                 .catch(error => {
                     // エラーを受け取る
                     console.log(error);
@@ -150,7 +143,6 @@
         getPost: function() {
             const url ="https://www2.yoslab.net/~nishimura/geotour/PHP/getPostedPost.php";
             let params = new URLSearchParams();
-            //console.log("発火");
             params.append("tour_id", this.tour_info.tour_id);
             axios
                 .post(url, params)
@@ -171,7 +163,6 @@
             return ex.spot_ex;
         },
         return_spot_img(ex) {
-            console.log(ex);
             return ex.imgPath;
         },
         returnFlag(contents) {
