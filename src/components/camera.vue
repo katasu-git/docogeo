@@ -35,7 +35,7 @@
       ></canvas>
 
     <Footer
-      @backToExPage="backToExPage"
+      :place="place"
     ></Footer>
 
   </div>
@@ -49,6 +49,7 @@ import Footer from '../components/parts/Footer'
     name: 'camera',
     data() {
       return {
+        place: "camera",
         tour_id: '',
         tour_name: '',
         spot_id: '',
@@ -114,7 +115,7 @@ import Footer from '../components/parts/Footer'
         //canvasのサイズ変更
         let canvas = document.getElementById("canvas");
         this.video_w = document.getElementById("video").clientWidth;
-        this.video_h = document.getElementById("video").clientHeight;
+        //this.video_h = document.getElementById("video").clientHeight;
 
         canvas.width = this.video_w;
         canvas.height = this.video_h;

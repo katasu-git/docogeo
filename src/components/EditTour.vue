@@ -234,7 +234,7 @@ import ChangeName from '../components/Edit_Tour/ChangeName'
     .o-text_tour_min {
       padding: 0 0 0 20px;
 
-      font-size: 18px;
+      font-size: 14px;
       font-weight: bold;
     }
 

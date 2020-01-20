@@ -5,21 +5,17 @@
       <div class="o-background_black">
         <div class="o-modal">
             <button 
-                v-for="name in spot_names"
-                @click="change_spot_name(name.spot_id)"
-                :key="name.spot_id"
+                v-for="info in spot_info_arr"
+                @click="change_spot_name(info)"
+                :key="info.spot_id"
             >
                 <div 
                     class="o-text" 
-                    :style="{color:returnCol(name.spot_id)}"
-                >{{ name.spot_name }}</div>
+                    :style="{color:returnCol(info.spot_id)}"
+                >{{ info.spot_name }}</div>
                 
                 <div class="o-border u-mt10"></div>
             </button>
-            <button
-                class="o-button_cancel"
-                @click="closeModal()"
-            >キャンセル</button>
         </div>
       </div>
 
@@ -32,9 +28,9 @@
   export default {
     name: 'changespot',
     props: {
-        tour_id: '',
-        spot_id: '',
-        spot_names: '',
+        tour_info: '',
+        spot_info: '',
+        spot_info_arr: ''
     },
     data() {
       return {
@@ -46,12 +42,12 @@
             this.$emit('closeModal');
         },
         returnCol(id) {
-            if(this.spot_id == id) {
+            if(this.spot_info.spot_id == id) {
                 return '#4B8E8D';
             }
         },
-        change_spot_name(spot_id_selected) {
-            this.$emit('change_spot_name', spot_id_selected);
+        change_spot_name(spot_selected) {
+            this.$emit('change_spot_name', spot_selected);
         }
     },
   }
@@ -90,7 +86,7 @@
 
   .o-modal {
     width: calc(100% - 40px);
-    border-radius: 30px;
+    border-radius: 10px;
     background-color: #fff;
 
     display: flex;
@@ -98,8 +94,8 @@
   }
 
   .o-text {
-    padding: 20px;
-    font-size: 16px;
+    padding: 15px;
+    font-size: 14px;
     font-weight: bold;
   }
 
@@ -125,15 +121,6 @@
   .l-button {
       width: 100%;
       display: flex;
-  }
-
-  .o-button_cancel {
-    padding: 20px;
-    font-size: 16px;
-    font-weight: bold;
-    background: #CC544D;
-    color: #fff;
-    border-radius: 0 0 30px 30px;
   }
 
   .u-color-green {

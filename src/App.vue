@@ -96,4 +96,16 @@ button, input {
   margin-left: 20px;
 }
 
+.u-mb20 {
+  margin-bottom: 20px;  
+} 
+
+.u-color-green {
+  color: #4B8E8D;
+}
+
+.u-color-red {
+  color: #CC544D;
+}
+
 </style>

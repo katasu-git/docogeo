@@ -2,26 +2,35 @@
   <div id="footer_comp">
     <div 
         class="o-icon"
-        @click="jump('camera')"
+        @click="move_page('camera')"
     >
-        <img class="o-icon_img" src="../../assets/camera_button.svg" />
-        <div class="o-footer_text">カメラ</div>
+        <img class="o-icon_img" :src="return_src('camera')" />
+        <div 
+          class="o-footer_text"
+          :style="{ color: return_color('camera')}"
+        >カメラ</div>
     </div>
     <div 
         class="o-icon"
-        @click="jump('expage')"
+        @click="move_page('chat_g')"
     >
         <div>
-          <img class="o-icon_img" :src='changeColor("camera")' />
+          <img class="o-icon_img" :src="return_src('chat')" />
         </div>
-        <div class="o-footer_text u-color-green">説明</div>
+        <div 
+          class="o-footer_text"
+          :style="{ color: return_color('chat')}"
+        >説明</div>
     </div>
     <div 
         class="o-icon"
-        @click="jump('')"
+        @click="move_page('maps')"
     >
-        <img class="o-icon_img" src="../../assets/map_button.svg" />
-        <div class="o-footer_text">地図</div>
+        <img class="o-icon_img" :src="return_src('map')" />
+        <div 
+          class="o-footer_text"
+          :style="{ color: return_color('map')}"
+        >地図</div>
     </div>
   </div>
 </template>
@@ -30,26 +39,59 @@
   import axios from 'axios'
   export default {
     name: 'footer_comp',
+    props: {
+      place: '',
+      user: ''
+    },
     data() {
       return {
-          tour_id: '',
       }
     },
     methods: {
-        jump(where) {
-          this.where = where;
-          if(where == 'camera') {
-            this.$emit("jumpPage", "camera");
-          } else if (where == 'expage') {
-            this.$emit("backToExPage");
+        move_page(where) {
+          if(where == 'chat') {
+            if(this.user == 'guide') {
+              this.$router.push({
+                name: 'chat_g',
+              });
+            } else {
+              this.$router.push({
+                name: 'chat_u',
+              });
+            }
+          } else {
+            this.$router.push({
+                name: where,
+            });
           }
         },
-        changeColor(dom) {
-          if(dom === "camera") {
-            if(this.where == "camera") {
-              return require("../../assets/comment_active.svg")
+        return_color(button) {
+          if(button == 'camera' && this.place == 'camera') {
+            return '#4B8E8D';
+          } else if(button == 'chat' && this.place == 'chat') {
+            return '#4B8E8D';
+          } else if(button == 'map' && this.place == 'map') {
+            return '#4B8E8D';
+          }
+        },
+        return_src(button) {
+          if(button == 'camera') {
+            if(this.place == 'camera') {
+              return require('../../assets/camera_active.svg')
             } else {
-              return require("../../assets/comment_button.svg")
+              return require('../../assets/camera_button.svg')
+            }
+          } else if(button == 'chat') {
+            if(this.place == 'chat') {
+              return require('../../assets/comment_active.svg')
+            } else {
+              return require('../../assets/comment_button.svg')
+            }
+          } else if(button == 'map') {
+            if(this.place == 'map') {
+              return require('../../assets/map_active.svg')
+            } else {
+              return require('../../assets/map_button.svg')
             }
           }
         }
@@ -90,14 +132,6 @@
       margin-top: 10px;
       font-size: 12px;
       color: #C2C7C6;
-  }
-
-  .u-color-green {
-    color: #4B8E8D;
-  }
-
-  .u-color-red {
-    color: #CC544D;
   }
 
 </style>

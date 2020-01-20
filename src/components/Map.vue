@@ -1,63 +1,132 @@
 <template>
-  <div id="maps">
-      <div class="o-background">
-      
+    <div id="maps">
+
+
         <div class="o-header">
             <div class="l-header_above">
-                <div class="o-text_tour">ツアーの名前</div>
+                <div class="o-text_tour">{{ tour_info.tour_name }}</div>
+                <div 
+                    class="o-image_image_button"
+                ><img :style="{opacity : 0}" src="../assets/close_button.svg" /></div>
             </div>
             <div class="l-header_under u-mb20">
-                <div class="o-text_tour_min"><span class="u-color-green">スポットの名前</span></div>
+                <button 
+                    class="o-text_tour_min"
+                >
+                    <span class="u-color-green">{{ spot_info.spot_name }}</span>
+                </button>
             </div>
         </div>
 
-        <!--
-        <iframe 
-            :src=src 
-            width="300" 
-            height="450" 
-            frameborder="0" 
-            style="border:0;" 
-            allowfullscreen=""
-        >
-        </iframe>
-        -->
 
-        <Footer></Footer>
+        <div class="l_altitude">
+            <div class="o_altitude">
+                <div class="o_alt_text">
+                    現在地の海抜：
+                    <div 
+                        class="o_alt_green"
+                        :style="{ 'font-size': return_font_size()}" 
+                    >{{return_altitude()}}</div>
+                m</div>
+            </div>
+        </div>
+        <div class="body">
 
-      </div>
+            <GmapMap
+                class="gmap"
+                :center="{lat:this.lat, lng:this.lng}"
+                :zoom="15"
+                :options="{streetViewControl: false}"
+                map-type-id="terrain"
+                :style="{ width: width, height: height }"
+            >
+                <GmapMarker
+                    :key="index"
+                    v-for="(m, index) in markers"
+                    :position="m.position"
+                    :clickable="true"
+                    :draggable="true"
+                    @click="center=m.position"
+                />
+            </GmapMap>
+
+        </div>
+    <Footer
+        :place="place"
+    ></Footer>
   </div>
 </template>
 
 <script>
-  import Footer from '../components/parts/Footer'
-  //危ないからやめたほうがいいらしい
+import axios from 'axios'
+import Footer from '../components/parts/Footer'
 
   export default {
     name: 'maps',
     data() {
       return {
+        place: "map",
+        tour_info: '',
+        spot_info: '',
         src: String,
+        lat: Number,
+        lng: Number,
+        altitude: Number,
+        width: '200px',
+        height: '400px',
+        markers: [{ position: { lat: 10, lng: 10 } }],
+        flag: {
+            isLoad: false
+        }
       }
     },
     created() {
-        //navigator.geolocation.getCurrentPosition(this.create_src);
+        navigator.geolocation.getCurrentPosition(this.create_src);
+        this.tour_info = JSON.parse(this.$localStorage.get('now_tour_info'));
+        this.spot_info = JSON.parse(this.$localStorage.get('now_spot_info'));
     },
     mounted() {
-        /*
-        const map = L.map( 'map', { center: L.latLng( this.lat, this.lon ), zoom: 17 } ).addLayer(
-            L.tileLayer( 'http://{s}.tile.osm.org/{z}/{x}/{y}.png' )
-        )
-
-        var lc = L.control.locate(option).addTo(map);
-        lc.start();
-        */
+        this.init();
     },
     methods: {
-        create_src(position) {
-            this.lat =  position.coords.latitude;
-            this.lon = position.coords.longitude;
+        init() {
+            this.width = (document.getElementById("maps").clientWidth - 40 ) + "px";
+            //this.hight = document.getElementById("maps").clientHeight + "px";
+            console.log("hello" + this.width + "" + this.height);
         },
+        create_src(position) {
+            this.lat =  Number(position.coords.latitude);
+            this.lng = Number(position.coords.longitude);
+            this.markers[0].position.lat = this.lat;
+            this.markers[0].position.lng = this.lng;
+            this.getElevation();
+        },
+        getElevation() {
+            let url ="https://map.yahooapis.jp/alt/V1/getAltitude?appid=dj00aiZpPW5HanZkalZwY1poTyZzPWNvbnN1bWVyc2VjcmV0Jng9ZGQ-&coordinates=" 
+                + this.lng + "," + this.lat + "&output=json";
+            this.$jsonp(url).then(json => {
+                // Success.
+                console.log(json.Feature[0].Property.Altitude);
+                this.altitude = json.Feature[0].Property.Altitude;
+                this.flag.isLoad = true;
+            }).catch(err => {
+                // Failed.
+            })
+        },
+        return_altitude() {
+            if(this.flag.isLoad) {
+                return this.altitude;
+            } else {
+                return '読み込み中';
+            }
+        },
+        return_font_size() {
+            if(this.flag.isLoad) {
+                return '36px' 
+            } else {
+                return '20px'
+            }
+        }
     },
     components: {
         Footer: Footer,
@@ -76,83 +145,104 @@
     color: rgba(0,0,0,.87);
 }
 
-#map {
-    position: absolute;
-    top: 200px;
-    width: 300px;
-    height: 300px;
-}
-
-.o-header {
-    position: fixed;
-    height: 80px;
+.body {
     width: 100%;
-    background-color: #fff;
-    filter: drop-shadow(0 0 5px rgba(0,0,0,.26));
-    z-index: 1;
 }
 
-.l-header_above {
+.l_altitude {
     width: 100%;
     display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-}
-
-.o-text_tour {
-    padding: 10px 0 0 20px;
-    font-size: 24px;
-    font-weight: bold;
-}
-
-.l-header_under {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
 }
 
-  .l-footer {
-      position: fixed;
-      right: 20px;
-      bottom: 20px;
-      height: 80px;
-      width: calc(100% - 40px);
-      background-color: #fff;
-      border-radius: 100px;
-      filter: drop-shadow(0 3px 10px rgba(0,0,0,.26));
+.o_altitude {
+    margin-top: 100px;
+    margin-bottom: 20px;
+    width: calc(100% - 40px);
+    height: 150px;
+    background-color: #FFF;
+    border-radius: 10px;
+    filter: drop-shadow(0 1px 3px rgba(0,0,0,.26));
+}
 
-      display: flex;
-      justify-content: space-evenly;
-      align-items: center;
-  }
+.o_alt_text {
+    margin-top: 10px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    line-height: 35px;
+    font-weight: bold;
+    font-size: 18px;
+}
 
-  .o-icon {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-  }
-
-  .o-icon_img {
-      height: 35px;
-  }
-
-  .o-footer_text {
-      margin-top: 10px;
-      font-size: 12px;
-      color: #C2C7C6;
-  }
-
-  .u-color-green {
+.o_alt_green {
+    line-height: 50px;
     color: #4B8E8D;
+}
+
+.gmap {
+    margin-left: 20px;
+    margin-bottom: 120px;
+}
+
+.o-header {
+      position: fixed;
+      height: 80px;
+      width: 100%;
+      background-color: #fff;
+      filter: drop-shadow(0 0 5px rgba(0,0,0,.26));
+      z-index: 1;
   }
 
-  .u-color-red {
-    color: #CC544D;
-  }
+.l-header_above {
+width: 100%;
+display: flex;
+justify-content: space-between;
+align-items: flex-start;
+-webkit-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
+user-select: none;
+}
+
+.o-text_tour {
+    padding: 10px 20px 0 20px;
+    font-size: 24px;
+    line-height: calc(24px * 1.5);
+    font-weight: bold;
+}
+
+.o-image_image_button {
+    padding: 10px 20px 0 0;
+}
+
+.o-button_sort {
+    fill: #4B8E8D;
+}
+
+.l-header_under {
+width: 100%;
+
+display: flex;
+justify-content: space-between;
+align-items: center;
+}
+
+.o-text_tour_min {
+    padding: 0 0 0 20px;
+
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.o-text_add_image {
+    padding: 0 10px 0 0;
+
+    font-size: 12px;
+    font-weight: bold;
+    color: rgba(0,0,0, .26);
+}
 
 </style>
