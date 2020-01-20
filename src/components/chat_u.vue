@@ -11,10 +11,10 @@
       
         <div class="o-header">
             <div class="l-header_above">
-                <div class="o-text_tour">{{ tour_name }}</div>
+                <div class="o-text_tour">{{ tour_info.tour_name }}</div>
             </div>
             <div class="l-header_under u-mb20">
-                <div class="o-text_tour_min"><span class="u-color-green">{{ spot_name }}</span></div>
+                <div class="o-text_tour_min"><span class="u-color-green"></span></div>
             </div>
         </div>
 
@@ -39,7 +39,7 @@
         <Footer
             :place="place"
             :user="user"
-            @jumpPage="jumpPage"></Footer>
+            @move_page="move_page"></Footer>
 
       </div>
   </div>
@@ -69,28 +69,30 @@
         if(JSON.stringify(this.$route.params) != "{}") {
             
           //再読み込み対策のローカル値
-          this.$localStorage.set('now_tour_info',JSON.stringify(this.$route.params.tour_info));
+          this.$localStorage.set('now_tour_info',JSON.stringify(this.$route.params.tour_info[0]));
           //通常の呼び出し先
-          this.tour_info = this.$route.params.tour_info;
+          this.tour_info = this.$route.params.tour_info[0];
 
         } else {
           this.tour_info = JSON.parse(this.$localStorage.get('now_tour_info'));
         }
+
         console.log(this.tour_info)
-        this.tour_id = this.tour_info[0].tour_id;
-        this.tour_name = this.tour_info[0].tour_name;
-        this.judgeTour();
-        this.getPost();
+        
+        //ツアー終了の処理
+        this.judge_tour_isActive();
+        this.break_tour_timer();
+        //////////////
+
         setInterval(function() {
-            this.getPost();
+        this.getPost();
         }.bind(this), 1000);
     },
     methods: {
-        judgeTour() {
+        break_tour_timer() {
             const url ="https://www2.yoslab.net/~nishimura/geotour/PHP/GET/get_tour_start_time.php";
             let params = new URLSearchParams();
-            //console.log("発火");
-            params.append("tour_id", this.tour_id);
+            params.append("tour_id", this.tour_info.tour_id);
             axios
                 .post(url, params)
                 .then(response => {
@@ -112,14 +114,33 @@
                     console.log(error);
                 });
         },
+        judge_tour_isActive() {
+            const url ="https://www2.yoslab.net/~nishimura/docogeo/PHP_C/Chat_U/judge_tour_isActive.php";
+            let params = new URLSearchParams();
+            params.append("tour_id", this.tour_info.tour_id);
+            axios
+                .post(url, params)
+                .then(response => {
+                    console.log(response.data[0]);
+                    if(response.data[0].isActive == 0) {
+                        //開始から9時間でアクセス不可にする
+                        this.end_flag = true;
+                        this.finish_tour();
+                    }
+                })
+                .catch(error => {
+                    // エラーを受け取る
+                    console.log(error);
+                });
+        },
         finish_tour() {
             const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/finish_tour.php';
             let params = new URLSearchParams();
-            params.append('tour_id', this.tour_id);
+            params.append('tour_id', this.tour_info.tour_id);
             axios
                 .post(url, params).then(response => {
                     this.closeModal();
-                    this.$emit('jumpPage', 'HelloWorld');//トップに戻る
+                    this.$emit('move_page', 'HelloWorld');//トップに戻る
                 })
                 .catch(error => {
                     // エラーを受け取る
@@ -130,29 +151,20 @@
             const url ="https://www2.yoslab.net/~nishimura/geotour/PHP/getPostedPost.php";
             let params = new URLSearchParams();
             //console.log("発火");
-            params.append("tour_id", this.tour_id);
+            params.append("tour_id", this.tour_info.tour_id);
             axios
                 .post(url, params)
                 .then(response => {
                     this.spot_ex = response.data;
-                    this.get_spot_name();
                 })
                 .catch(error => {
                     // エラーを受け取る
                     console.log(error);
                 });
         },
-        get_spot_name: function() {
-            return 'かりの名前';
-        },
-        jumpPage: function(where) {
+        move_page: function(where) {
             this.$router.push({
-                name: where,
-                params: {
-                    tour_id: this.tour_id,
-                    tour_name: this.tour_name,
-                    user_flag: true,
-                }
+                name: where
             });
         },
         return_spot_ex(ex) {

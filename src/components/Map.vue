@@ -13,7 +13,7 @@
                 <button 
                     class="o-text_tour_min"
                 >
-                    <span class="u-color-green">かりの名前</span>
+                    <span class="u-color-green">{{spot_info.spot_name}}</span>
                 </button>
             </div>
         </div>
