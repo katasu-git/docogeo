@@ -16,7 +16,7 @@
       />
 
       <button 
-        v-show="!user_flag"
+        v-show="show_button()"
         class="button_capture"
         @click="capture"
       ></button>
@@ -36,6 +36,7 @@
 
     <Footer
       :place="place"
+      :user="user"
     ></Footer>
 
   </div>
@@ -50,6 +51,7 @@ import Footer from '../components/parts/Footer'
     data() {
       return {
         place: "camera",
+        user: this.$localStorage.get('user'),
         tour_id: '',
         tour_name: '',
         spot_id: '',
@@ -59,7 +61,6 @@ import Footer from '../components/parts/Footer'
         photo_flag: true,
         bottom_flag: false,
         pile_flag: true,
-        user_flag: '',
         video_w: '200',
         video_h: '200',
         pile_image: '',
@@ -69,7 +70,6 @@ import Footer from '../components/parts/Footer'
       this.tour_id = this.$route.params.tour_id;
       this.tour_name = this.$route.params.tour_name;
       this.spot_id = this.$route.params.spot_id;
-      this.user_flag = this.$route.params.user_flag;
     },
     mounted() {
         this.video = this.$refs.video
@@ -136,19 +136,6 @@ import Footer from '../components/parts/Footer'
             }
         })
       },
-      backToExPage() {
-        let where = "chat_g"
-        if(this.user_flag) {
-          where = "chat_u";
-        }
-         this.$router.push({
-            name: where,
-            params: {
-              tour_id: this.tour_id,
-              tour_name: this.tour_name
-            }
-        })
-      },
       getImage() {
           const url ="https://www2.yoslab.net/~nishimura/geotour/PHP/GET/get_draw_image.php";
           axios
@@ -170,6 +157,13 @@ import Footer from '../components/parts/Footer'
           this.pile_flag = true;
         }
         console.log(this.pile_flag)
+      },
+      show_button() {
+        if(this.user == 'guide') {
+          return true;
+        } else {
+          return false;
+        }
       }
     },
     components: {

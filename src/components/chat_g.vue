@@ -96,7 +96,7 @@
     data() {
       return {
           place: "chat",
-          user: 'guide', //guide or guest
+          user: this.$localStorage.get('user'), //guide or guest
           tour_info: '',
           spot_info: '',
           spot_info_arr: '',
@@ -109,6 +109,8 @@
       }
     },
     created: function () {
+        //再読み込み対策のローカル値
+        this.$localStorage.set('user','guide');
         if(JSON.stringify(this.$route.params) != "{}") {
             
           //再読み込み対策のローカル値

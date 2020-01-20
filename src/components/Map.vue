@@ -13,7 +13,7 @@
                 <button 
                     class="o-text_tour_min"
                 >
-                    <span class="u-color-green">{{ spot_info.spot_name }}</span>
+                    <span class="u-color-green">かりの名前</span>
                 </button>
             </div>
         </div>
@@ -53,6 +53,7 @@
         </div>
     <Footer
         :place="place"
+        :user="user"
     ></Footer>
   </div>
 </template>
@@ -66,6 +67,7 @@ import Footer from '../components/parts/Footer'
     data() {
       return {
         place: "map",
+        user: this.$localStorage.get('user'),
         tour_info: '',
         spot_info: '',
         src: String,
@@ -83,6 +85,7 @@ import Footer from '../components/parts/Footer'
     created() {
         navigator.geolocation.getCurrentPosition(this.create_src);
         this.tour_info = JSON.parse(this.$localStorage.get('now_tour_info'));
+        console.log(this.user)
         this.spot_info = JSON.parse(this.$localStorage.get('now_spot_info'));
     },
     mounted() {
@@ -91,8 +94,6 @@ import Footer from '../components/parts/Footer'
     methods: {
         init() {
             this.width = (document.getElementById("maps").clientWidth - 40 ) + "px";
-            //this.hight = document.getElementById("maps").clientHeight + "px";
-            console.log("hello" + this.width + "" + this.height);
         },
         create_src(position) {
             this.lat =  Number(position.coords.latitude);

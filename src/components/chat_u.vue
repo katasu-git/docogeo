@@ -37,6 +37,8 @@
         </div>
 
         <Footer
+            :place="place"
+            :user="user"
             @jumpPage="jumpPage"></Footer>
 
       </div>
@@ -51,6 +53,9 @@
     name: 'chat_u',
     data() {
       return {
+          place: 'chat',
+          user: 'guest',
+          tour_info: '',
           tour_id: 1,
           tour_name: '',
           spot_id: 1,
@@ -60,15 +65,22 @@
       }
     },
     created: function () {
-        if (JSON.stringify(this.$route.params) == "{}") {
-            // 更新されたときはトップに戻る
-            this.jumpPage("top_u");
+        this.$localStorage.set('user','guest');
+        if(JSON.stringify(this.$route.params) != "{}") {
+            
+          //再読み込み対策のローカル値
+          this.$localStorage.set('now_tour_info',JSON.stringify(this.$route.params.tour_info));
+          //通常の呼び出し先
+          this.tour_info = this.$route.params.tour_info;
+
         } else {
-            this.tour_id = this.$route.params.tour_id;
-            this.tour_name = this.$route.params.tour_name;
-            this.judgeTour();
-            this.getPost();
+          this.tour_info = JSON.parse(this.$localStorage.get('now_tour_info'));
         }
+        console.log(this.tour_info)
+        this.tour_id = this.tour_info[0].tour_id;
+        this.tour_name = this.tour_info[0].tour_name;
+        this.judgeTour();
+        this.getPost();
         setInterval(function() {
             this.getPost();
         }.bind(this), 1000);

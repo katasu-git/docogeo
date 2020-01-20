@@ -12,7 +12,7 @@
     </div>
     <div 
         class="o-icon"
-        @click="move_page('chat_g')"
+        @click="move_page('chat')"
     >
         <div>
           <img class="o-icon_img" :src="return_src('chat')" />
@@ -49,21 +49,17 @@
     },
     methods: {
         move_page(where) {
-          if(where == 'chat') {
-            if(this.user == 'guide') {
-              this.$router.push({
-                name: 'chat_g',
-              });
-            } else {
-              this.$router.push({
-                name: 'chat_u',
-              });
-            }
-          } else {
-            this.$router.push({
-                name: where,
-            });
+          console.log("発火")
+          let page = where;
+          console.log(this.user)
+          if(this.user == "guide" && where == 'chat') {
+            page = 'chat_g'
+          } else if(this.user == "guest" && where == 'chat') {
+            page = 'chat_u'
           }
+          this.$router.push({
+                name: page
+          });
         },
         return_color(button) {
           if(button == 'camera' && this.place == 'camera') {
