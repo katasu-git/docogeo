@@ -65,11 +65,10 @@ export default {
     get_width: '',
     get_height: '',
     get_captures: '',
-    tour_id: '',
-    tour_name: '',
-    spot_id: ''
   },
   data: () => ({
+    tour_info: '',
+    spot_info: '',
     width: window.innerWidth,
     height: window.innerHeight,
     stage: null,
@@ -91,8 +90,8 @@ export default {
     file: '',
   }),
   created() {
-    //ルータから受け取った画像の縦横を指定
-    this.tour_id = this.$route.params.tour_id;
+    this.tour_info = JSON.parse(this.$localStorage.get('now_tour_info'))
+    this.spot_info = JSON.parse(this.$localStorage.get('now_spot_info'))
     this.width = this.get_width;
     this.height = this.get_height;
   },
@@ -216,19 +215,16 @@ export default {
       this.cvs1.getContext('2d').drawImage(image, 0, 0, this.width, this.height); //背景
       this.cvs1.getContext('2d').drawImage(this.canvas, 0, 0, this.width, this.height); //線
       this.file = this.cvs1.toDataURL('image/png');
-
-      console.log(this.file)
       this.$nextTick(function(){
         this.postFile();
       })
       },
       postFile: function() {
-        console.log(this.backgroundImage);
           const url = "https://www2.yoslab.net/~nishimura/geotour/PHP/upload_draw.php";
           let params = new URLSearchParams();
           params.append('canvasData', this.file);
-          params.append('tour_id', this.tour_id);
-          params.append('spot_id', this.spot_id);
+          params.append('tour_id', this.tour_info.tour_id);
+          params.append('spot_id', this.spot_info.spot_id);
           axios
             .post(url, params)
             .then(response => {
@@ -258,10 +254,6 @@ export default {
         jump(where) {
          this.$router.push({
             name: where,
-            params: {
-                tour_id: this.tour_id,
-                tour_name: this.tour_name
-            }
         })
       },
   },

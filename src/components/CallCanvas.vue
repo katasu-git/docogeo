@@ -3,9 +3,6 @@
         <FreeDrawing
             class="freeDrawing"
             ref="freeDrawing"
-            :tour_id="tour_id"
-            :tour_name="tour_name"
-            :spot_id="spot_id"
             :backgroundImage="captures[0]"
             :mode="mode"
             :get_width="width"
@@ -20,9 +17,6 @@ import FreeDrawing from '../components/FreeDrawing'
 export default {
   name: 'CallCanvas',
   data: () => ({
-    tour_id: '',
-    tour_name: '',
-    spot_id: '',
     mode: '',
     brushColor: '',
     defaultMode: 'brush',
@@ -33,9 +27,6 @@ export default {
   }),
   created() {
     if(this.$route.params.isNotReload) {
-      this.tour_id = this.$route.params.tour_id;
-      this.tour_name = this.$route.params.tour_name;
-      this.spot_id = this.$route.params.spot_id;
       this.width = this.$route.params.width;
       this.height = this.$route.params.height;
       this.captures = this.$route.params.captures;

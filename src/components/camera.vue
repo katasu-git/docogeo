@@ -131,9 +131,6 @@ import Footer from '../components/parts/Footer'
               width: this.video_w,
               height: this.video_h,
               captures: this.captures,
-              tour_id: this.tour_id,
-              tour_name: this.tour_name,
-              spot_id: this.spot_id,
               isNotReload: this.isNotReload
             }
         })
@@ -145,7 +142,6 @@ import Footer from '../components/parts/Footer'
               .then(response => {
               //画像を受け取ったときの処理
                 this.pile_image = response.data[0].image_path;
-                console.log(response.data[0].image_path);
               })
               .catch(error => {
               // エラーを受け取る
@@ -158,7 +154,6 @@ import Footer from '../components/parts/Footer'
         } else {
           this.pile_flag = true;
         }
-        console.log(this.pile_flag)
       },
       show_button() {
         if(this.user == 'guide') {
