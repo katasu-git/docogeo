@@ -2,25 +2,29 @@
   <div id="chat_g">
       <div class="o-background">
 
-        <ChangeSpot
-            :tour_id="tour_id"
-            :spot_id="spot_id"
-            :spot_names="spot_names"
-            @closeModal="closeModal"
-            @change_spot_name="change_spot_name"
-            v-show="flag_change_spot"
-        ></ChangeSpot>
+          <transition name="fade">
+            <ToggleSpot
+                :tour_info="tour_info"
+                :spot_info="spot_info"
+                :spot_info_arr="spot_info_arr"
+                @closeModal="closeModal"
+                @change_spot_name="change_spot_name"
+                v-show="flag.change_spot"
+            ></ToggleSpot>
+          </transition>
 
-        <FinishTour
-            :tour_id="tour_id"
-            @closeModal="closeModal"
-            @jumpPage="jumpPage"
-            v-show="flag_finish_tour"
-        ></FinishTour>
+          <transition name="fade">
+            <FinishTour
+                :tour_info="tour_info"
+                @closeModal="closeModal"
+                @move_page="move_page"
+                v-show="flag.finish_tour"
+            ></FinishTour>
+          </transition>
       
         <div class="o-header">
             <div class="l-header_above">
-                <div class="o-text_tour">{{ tour_name }}</div>
+                <div class="o-text_tour">{{ tour_info.tour_name }}</div>
                 <div 
                     class="o-image_image_button"
                     v-on:click='finish_tour()'
@@ -31,7 +35,7 @@
                     class="o-text_tour_min"
                     @click="changeSpot()"
                 >
-                    <span class="u-color-green">{{ spot_name }}</span>
+                    <span class="u-color-green">{{ spot_info.spot_name }}</span>
                     <img class="u-ml5" src="../assets/Polygon 1.svg" />
                 </button>
                 <div class="o-text_add_image">ツアー終了</div>
@@ -40,9 +44,9 @@
 
         <div class="l-slider_images" :animation="150">
             <div class="o-image" 
-                v-for="image in srcArray"
+                v-for="image in img_info"
                 :key="image.id"
-                @click="postImg(image)"
+                @click="post_img(image)"
             >
                 <img 
                     class="img"
@@ -67,7 +71,7 @@
                 </div>
                 <div class="o-button_hoe"
                     :style="{ opacity:returnOpacity(ex.isPosted) }"
-                    @click="postEx(ex)"
+                    @click="post_ex(ex)"
                 >
                     <img src="../assets/send_button.svg" />
                 </div>
@@ -75,69 +79,132 @@
         </div>
 
         <Footer
-            @jumpPage="jumpPage"></Footer>
-
+            :place="place"
+            :user="user"
+            @move_page="move_page"></Footer>
       </div>
   </div>
 </template>
 
 <script>
   import axios from 'axios'
-  import ChangeSpot from '../components/modals/chatChangeSpot'
-  import FinishTour from '../components/modals/chatFinish'
   import Footer from '../components/parts/Footer'
+  import ToggleSpot from '../components/Chat_Guide/ToggleSpot'
+  import FinishTour from '../components/Chat_Guide/FinishTour'
   export default {
     name: 'chat_g',
     data() {
       return {
-          tour_id: '',
-          tour_name: '',
-          spot_id: '',
-          spot_name: '',
-          spot_names: [],
-          srcArray: [],
+          place: "chat",
+          user: this.$localStorage.get('user'), //guide or guest
+          tour_info: '',
+          spot_info: '',
+          spot_info_arr: '',
+          img_info: '',
           spot_ex: JSON,
-          flag_change_spot: false,
-          flag_finish_tour: false,
+          flag: {
+              change_spot: false,
+              finish_tour: false
+          }
       }
     },
     created: function () {
-        if (JSON.stringify(this.$route.params) == "{}") {
-            // 更新されたときはトップに戻る
-            this.jumpPage("HelloWorld");
+        //再読み込み対策のローカル値
+        this.$localStorage.set('user','guide');
+        if(JSON.stringify(this.$route.params) != "{}") {
+            
+          //再読み込み対策のローカル値
+          this.$localStorage.set('now_tour_info',JSON.stringify(this.$route.params.tour_info));
+          //通常の呼び出し先
+          this.tour_info = this.$route.params.tour_info;
+
         } else {
-            this.tour_id = this.$route.params.tour_id;
-            this.tour_name = this.$route.params.tour_name;
-            this.get_spot_name_arr();
+          this.tour_info = JSON.parse(this.$localStorage.get('now_tour_info'));
         }
+        this.init()
     },
     methods: {
-        getPost() {
+        init() {
+            this.get_spot_info_arr();
+            this.closeModal();
+        },
+        refresh() {
+            this.get_post()
+            this.get_spot_image();
+            this.closeModal();
+        },
+        get_spot_info_arr() {
+            const url =　"https://www2.yoslab.net/~nishimura/geotour/PHP/get_spot_info.php";
+            let params = new URLSearchParams();
+            params.append("tour_id", this.tour_info.tour_id);
+            axios
+                .post(url, params)
+                .then(response => {
+                    //スポットのデータを丸ごと保存
+                    this.spot_info_arr = response.data;
+                    //通常の呼び出し先
+                    this.spot_info = response.data[0];
+                    if(!this.$localStorage.get('now_spot_info')) {
+                        //再読み込み対策のローカル値
+                        this.$localStorage.set('now_spot_info',JSON.stringify(response.data[0]));
+                    } else {
+                        this.spot_info = JSON.parse(this.$localStorage.get('now_spot_info'));
+                    }
+
+                    //後処理
+                    this.get_post()
+                    this.get_spot_image();
+                })
+                .catch(error => {
+                // エラーを受け取る
+                console.log(error);
+                });
+        },
+        get_post() {
             const url ="https://www2.yoslab.net/~nishimura/geotour/PHP/getPost.php";
             let params = new URLSearchParams();
-            params.append("spot_id", this.spot_id);
+            params.append("spot_id", this.spot_info.spot_id);
             axios 
                 .post(url, params)
                 .then(response => {
                     this.spot_ex = response.data;
-                    this.getSpotImage();
                 })
                 .catch(error => {
                     // エラーを受け取る
                     console.log(error);
                 });
         },
-        jumpPage(where) {
+        get_spot_image() {
+            const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/GET/get_spot_img.php';
+                let params = new URLSearchParams();
+                params.append('tour_id', this.tour_info.tour_id);
+                params.append('spot_id', this.spot_info.spot_id);
+                axios.post(url, params
+                ).then(response => {
+                    this.img_info = response.data;
+                }).catch(error => {
+                    // エラーを受け取る
+                    console.log(error);
+                });
+        },
+        change_spot_name(spot_selected) {
+            this.spot_info = spot_selected;
+            this.$localStorage.set('now_spot_info',JSON.stringify(spot_selected));
+            this.refresh();
+        },
+        move_page(where) {
             this.$router.push({
                 name: where,
                 params: {
-                    tour_id: this.tour_id,
-                    tour_name: this.tour_name,
-                    spot_id: this.spot_id
+                    //tour_id: this.tour_info.tour_id,
+                    //tour_name: this.tour_name,
+                    //spot_id: this.spot_id
+                    tour_info: this.tour_info,
+                    spot_info: this.spot_info
                 }
             });
         },
-        postEx(ex) {
+        post_ex(ex) {
             if(ex.isPosted == 0) {
 
                 const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/post_ex.php';
@@ -158,7 +225,7 @@
                 params2.append("ex_id", ex.ex_id);
                 axios
                     .post(url2, params2).then(response => {
-                        this.getPost();
+                        this.get_post();
                     })
                     .catch(error => {
                         // エラーを受け取る
@@ -186,7 +253,7 @@
                 axios
                     .post(url3, params3)
                     .then(response => {
-                        this.getPost();
+                        this.refresh();
                     })
                     .catch(error => {
                         // エラーを受け取る
@@ -195,7 +262,8 @@
 
             }
         },
-        postImg(image) {
+        post_img(image) {
+                console.log("----------------" + JSON.stringify(image));
 
                 if(image.isPosted == 0) {
                     const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/POST/post_img.php';
@@ -206,7 +274,7 @@
                     params.append("img_path", image.image_path);
                     axios
                         .post(url, params).then(()=>{
-                            this.getPost(); //isPostedの値更新処理
+                            this.refresh(); //isPostedの値更新処理
                         })
                         .catch(error => {
                             // エラーを受け取る
@@ -222,10 +290,9 @@
                     params.append("tour_id", image.tour_id);
                     params.append("spot_id", image.spot_id);
                     params.append("image_id", image.image_id);
-                    console.log(image);
                     axios
                         .post(url, params).then(response => {
-                            this.getPost(); //isPostedの値更新処理
+                            this.refresh(); //isPostedの値更新処理
                         })
                         .catch(error => {
                             // エラーを受け取る
@@ -242,7 +309,7 @@
             }
         },
         finish_tour () {
-            this.flag_finish_tour = true;
+            this.flag.finish_tour = true;
         },
         returnTimeCol(isPosted) {
             if(isPosted == 0) {
@@ -258,67 +325,24 @@
             }
         },
         changeSpot() {
-            this.flag_change_spot = true;
+            this.flag.change_spot = true;
         },
         closeModal() {
             setTimeout(() => {
-                this.flag_change_spot = false;
-                this.flag_finish_tour = false;
+                this.flag.change_spot = false;
+                this.flag.finish_tour = false;
             }, 200)
-        },
-        get_spot_name_arr() {
-            const url =　"https://www2.yoslab.net/~nishimura/geotour/PHP/get_spot_info.php";
-            let params = new URLSearchParams();
-            params.append("tour_id", this.tour_id);
-            axios
-                .post(url, params)
-                .then(response => {
-                    this.spot_names = response.data;
-                    if(this.spot_id == '') {
-                        //初回の処理
-                        this.spot_id = this.spot_names[0].spot_id;
-                        this.spot_name = this.spot_names[0].spot_name;
-                    }
-                    this.getPost();
-                    this.closeModal();
-                })
-                .catch(error => {
-                // エラーを受け取る
-                console.log(error);
-                });
-        },
-        change_spot_name(spot_id_selected) {
-            for(let i=0; i<this.spot_names.length; i++) {
-                this.spot_id = spot_id_selected;
-                if(this.spot_names[i].spot_id == spot_id_selected) {
-                    this.spot_name = this.spot_names[i].spot_name;
-                    break;
-                }
-            }
-            this.getPost();
-            this.closeModal();
-        },
-        getSpotImage() {
-            const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/GET/get_spot_img.php';
-                let params = new URLSearchParams();
-                params.append('tour_id', this.tour_id);
-                params.append('spot_id', this.spot_id);
-                axios.post(url, params
-                ).then(response => {
-                    this.srcArray = response.data;
-                }).catch(error => {
-                    // エラーを受け取る
-                    console.log(error);
-                });
         },
         returnSended(sended) {
             return sended.substr(10, 6);
         }
     },
     components: {
-        ChangeSpot: ChangeSpot,
-        FinishTour: FinishTour,
-        Footer: Footer
+        //ChangeSpot: ChangeSpot,
+        //FinishTour: FinishTour,
+        Footer: Footer,
+        ToggleSpot: ToggleSpot,
+        FinishTour: FinishTour
     }
   }
 
@@ -351,11 +375,9 @@
 
   .l-header_above {
     width: 100%;
-
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;

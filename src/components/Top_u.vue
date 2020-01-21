@@ -74,8 +74,7 @@
         this.$router.push({
             name: where,
             params: {
-              tour_id: tour_id,
-              tour_name: tour_name
+              tour_info: this.tour_info,
             }
         })
       },

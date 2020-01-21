@@ -84,4 +84,28 @@ button, input {
   cursor : pointer;
 }
 
+.u_ml5 {
+  margin-left: 5px;
+}
+
+.u_ml10 {
+  margin-left: 10px;
+}
+
+.u_ml20 {
+  margin-left: 20px;
+}
+
+.u-mb20 {
+  margin-bottom: 20px;  
+} 
+
+.u-color-green {
+  color: #4B8E8D;
+}
+
+.u-color-red {
+  color: #CC544D;
+}
+
 </style>

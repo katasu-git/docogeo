@@ -16,7 +16,7 @@
       />
 
       <button 
-        v-show="!user_flag"
+        v-show="show_button()"
         class="button_capture"
         @click="capture"
       ></button>
@@ -35,7 +35,8 @@
       ></canvas>
 
     <Footer
-      @backToExPage="backToExPage"
+      :place="place"
+      :user="user"
     ></Footer>
 
   </div>
@@ -49,16 +50,18 @@ import Footer from '../components/parts/Footer'
     name: 'camera',
     data() {
       return {
+        place: "camera",
+        user: this.$localStorage.get('user'),
         tour_id: '',
         tour_name: '',
         spot_id: '',
+        isNotReload: true,
         video: {},
         canvas: {},
         captures: [],
         photo_flag: true,
         bottom_flag: false,
         pile_flag: true,
-        user_flag: '',
         video_w: '200',
         video_h: '200',
         pile_image: '',
@@ -68,7 +71,6 @@ import Footer from '../components/parts/Footer'
       this.tour_id = this.$route.params.tour_id;
       this.tour_name = this.$route.params.tour_name;
       this.spot_id = this.$route.params.spot_id;
-      this.user_flag = this.$route.params.user_flag;
     },
     mounted() {
         this.video = this.$refs.video
@@ -114,7 +116,7 @@ import Footer from '../components/parts/Footer'
         //canvasのサイズ変更
         let canvas = document.getElementById("canvas");
         this.video_w = document.getElementById("video").clientWidth;
-        this.video_h = document.getElementById("video").clientHeight;
+        //this.video_h = document.getElementById("video").clientHeight;
 
         canvas.width = this.video_w;
         canvas.height = this.video_h;
@@ -123,28 +125,13 @@ import Footer from '../components/parts/Footer'
         if(this.captures == '' || this.captures == undefined || this.captures == null) {
           return;
         }
-         this.$router.push({
+        this.$router.push({
             name: 'draw',
             params: {
               width: this.video_w,
               height: this.video_h,
               captures: this.captures,
-              tour_id: this.tour_id,
-              tour_name: this.tour_name,
-              spot_id: this.spot_id
-            }
-        })
-      },
-      backToExPage() {
-        let where = "chat_g"
-        if(this.user_flag) {
-          where = "chat_u";
-        }
-         this.$router.push({
-            name: where,
-            params: {
-              tour_id: this.tour_id,
-              tour_name: this.tour_name
+              isNotReload: this.isNotReload
             }
         })
       },
@@ -155,7 +142,6 @@ import Footer from '../components/parts/Footer'
               .then(response => {
               //画像を受け取ったときの処理
                 this.pile_image = response.data[0].image_path;
-                console.log(response.data[0].image_path);
               })
               .catch(error => {
               // エラーを受け取る
@@ -168,7 +154,13 @@ import Footer from '../components/parts/Footer'
         } else {
           this.pile_flag = true;
         }
-        console.log(this.pile_flag)
+      },
+      show_button() {
+        if(this.user == 'guide') {
+          return true;
+        } else {
+          return false;
+        }
       }
     },
     components: {

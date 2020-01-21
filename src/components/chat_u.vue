@@ -4,17 +4,17 @@
 
         <transition name="fade">
             <TourEnd
-                v-show="end_flag"
-                :tour_name="tour_name"
+                v-show="flag.end"
+                :tour_name="tour_info.tour_name"
             ></TourEnd>
         </transition>
       
         <div class="o-header">
             <div class="l-header_above">
-                <div class="o-text_tour">{{ tour_name }}</div>
+                <div class="o-text_tour">{{ tour_info.tour_name }}</div>
             </div>
             <div class="l-header_under u-mb20">
-                <div class="o-text_tour_min"><span class="u-color-green">{{ spot_name }}</span></div>
+                <div class="o-text_tour_min"><span class="u-color-green"></span></div>
             </div>
         </div>
 
@@ -37,7 +37,10 @@
         </div>
 
         <Footer
-            @jumpPage="jumpPage"></Footer>
+            :place="place"
+            :user="user"
+            @move_page="move_page">
+        </Footer>
 
       </div>
   </div>
@@ -46,39 +49,48 @@
 <script>
   import axios from 'axios'
   import Footer from '../components/parts/Footer'
-  import TourEnd from '../components/modals/TourEnd'
+  import TourEnd from '../components/Chat_Guest/TourEnd'
   export default {
     name: 'chat_u',
     data() {
       return {
-          tour_id: 1,
-          tour_name: '',
-          spot_id: 1,
-          spot_name: '',
+          place: 'chat',
+          user: 'guest',
+          tour_info: '',
           spot_ex: JSON,
-          end_flag: false,
+          flag: {
+              end: false
+          },
       }
     },
     created: function () {
-        if (JSON.stringify(this.$route.params) == "{}") {
-            // 更新されたときはトップに戻る
-            this.jumpPage("top_u");
+        this.$localStorage.set('user','guest');
+        if(JSON.stringify(this.$route.params) != "{}") {
+            
+          //再読み込み対策のローカル値
+          this.$localStorage.set('now_tour_info',JSON.stringify(this.$route.params.tour_info[0]));
+          //通常の呼び出し先
+          this.tour_info = this.$route.params.tour_info[0];
+
         } else {
-            this.tour_id = this.$route.params.tour_id;
-            this.tour_name = this.$route.params.tour_name;
-            this.judgeTour();
-            this.getPost();
+          this.tour_info = JSON.parse(this.$localStorage.get('now_tour_info'));
         }
+
         setInterval(function() {
-            this.getPost();
+        this.getPost();
+
+        //ツアー終了の処理
+        this.judge_tour_isActive();
+        this.break_tour_timer();
+        //////////////
+
         }.bind(this), 1000);
     },
     methods: {
-        judgeTour() {
+        break_tour_timer() {
             const url ="https://www2.yoslab.net/~nishimura/geotour/PHP/GET/get_tour_start_time.php";
             let params = new URLSearchParams();
-            //console.log("発火");
-            params.append("tour_id", this.tour_id);
+            params.append("tour_id", this.tour_info.tour_id);
             axios
                 .post(url, params)
                 .then(response => {
@@ -87,11 +99,28 @@
                     //http://yut.hatenablog.com/entry/20111015/1318633937
                     let now = Date.now()
                     let dif = now - timestamp;
-                    //console.log(dif/60/1000);//コンマ0秒以下も取得しているので/1000で補正
                     let pass_min = dif/60/1000;
                     if(pass_min > 5400) {
                         //開始から9時間でアクセス不可にする
-                        this.end_flag = true;
+                        this.flag.end = true;
+                        this.finish_tour();
+                    }
+                })
+                .catch(error => {
+                    // エラーを受け取る
+                    console.log(error);
+                });
+        },
+        judge_tour_isActive() {
+            const url ="https://www2.yoslab.net/~nishimura/docogeo/PHP_C/Chat_U/judge_tour_isActive.php";
+            let params = new URLSearchParams();
+            params.append("tour_id", this.tour_info.tour_id);
+            axios
+                .post(url, params)
+                .then(response => {
+                    if(response.data[0].isActive == 0) {
+                        //開始から9時間でアクセス不可にする
+                        this.flag.end = true;
                         this.finish_tour();
                     }
                 })
@@ -101,14 +130,12 @@
                 });
         },
         finish_tour() {
+            //isAcive == 0にする
             const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/finish_tour.php';
             let params = new URLSearchParams();
-            params.append('tour_id', this.tour_id);
+            params.append('tour_id', this.tour_info.tour_id);
             axios
-                .post(url, params).then(response => {
-                    this.closeModal();
-                    this.$emit('jumpPage', 'HelloWorld');//トップに戻る
-                })
+                .post(url, params)
                 .catch(error => {
                     // エラーを受け取る
                     console.log(error);
@@ -117,37 +144,26 @@
         getPost: function() {
             const url ="https://www2.yoslab.net/~nishimura/geotour/PHP/getPostedPost.php";
             let params = new URLSearchParams();
-            //console.log("発火");
-            params.append("tour_id", this.tour_id);
+            params.append("tour_id", this.tour_info.tour_id);
             axios
                 .post(url, params)
                 .then(response => {
                     this.spot_ex = response.data;
-                    this.get_spot_name();
                 })
                 .catch(error => {
                     // エラーを受け取る
                     console.log(error);
                 });
         },
-        get_spot_name: function() {
-            return 'かりの名前';
-        },
-        jumpPage: function(where) {
+        move_page: function(where) {
             this.$router.push({
-                name: where,
-                params: {
-                    tour_id: this.tour_id,
-                    tour_name: this.tour_name,
-                    user_flag: true,
-                }
+                name: where
             });
         },
         return_spot_ex(ex) {
             return ex.spot_ex;
         },
         return_spot_img(ex) {
-            console.log(ex);
             return ex.imgPath;
         },
         returnFlag(contents) {

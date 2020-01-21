@@ -1,13 +1,13 @@
 <template>
-  <div id="createtour">
+  <div id="changename">
     <div class="o-image u-mt20"></div>
     <form class="u-mt20">
-        <input type="text" placeholder="ここにツアーの名前を入力" v-model="tour_name_updated" />
+        <input type="text" placeholder="新しい名前を入力" v-model="tour_name_changed" />
     </form>
     <div class="o-border u-mt40"></div>
     <div class="l-button">
-        <button class="o-button_cancel" v-on:click="closeModal()">キャンセル</button>
-        <button class="o-button_save" v-on:click="addNewTour()">保存する</button>
+        <button class="o-button_cancel" v-on:click="close_modal()">キャンセル</button>
+        <button class="o-button_save" v-on:click="update_tour_name()">変更を保存する</button>
     </div>
   </div>
 </template>
@@ -15,30 +15,36 @@
 <script>
 　import axios from 'axios'
   export default {
-    name: 'createtour',
+    name: 'changename',
     props: {
-        tour_id: '',
+        tour_info: ''
     },
     data() {
-      return {
-          tour_name_updated: '',
+        return {
+            tour_name_changed: ''
+        }
+    },
+    watch: {
+      tour_info: function() {
+        this.tour_name_changed = this.tour_info.tour_name;
       }
     },
     methods: {
-        closeModal: function() {
-            this.$emit('closeModal');
+        close_modal: function() {
+            this.$emit('close_modal');
         },
-        addNewTour: function() {
+        update_tour_name: function() {
             const url =
-            "https://www2.yoslab.net/~nishimura/geotour/PHP/add_new_tour.php";
+            "https://www2.yoslab.net/~nishimura/docogeo/PHP_C/Edit_Event/change_tour_name.php";
             let params = new URLSearchParams();
-            params.append("tour_name", this.tour_name_updated);
+            params.append("tour_id", this.tour_info.tour_id);
+            params.append("tour_name_changed", this.tour_name_changed);
             axios
             .post(url, params)
             .then(response => {
                 console.log("更新成功");
-                this.tour_name_updated = ''; //リセット
-                this.closeModal();
+                this.tour_name = ''; //リセット
+                this.close_modal();
             })
             .catch(error => {
                 // エラーを受け取る
@@ -51,7 +57,8 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-  #createtour {
+
+  #changename {
     position: absolute;
     right: 0;
     left: 0;
@@ -62,6 +69,7 @@
     border-radius: 30px 30px 0 0;
     background-color: #fff;
     z-index: 1;
+    filter: drop-shadow(0 0 5px rgba(0,0,0,.26));
 
     display: flex;
     flex-direction: column;

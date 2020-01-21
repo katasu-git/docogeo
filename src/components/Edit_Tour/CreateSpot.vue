@@ -1,13 +1,13 @@
 <template>
-  <div id="changename">
+  <div id="create">
     <div class="o-image u-mt20"></div>
     <form class="u-mt20">
-        <input type="text" placeholder="ここにツアーの名前を入力" v-model="tour_name" />
+        <input type="text" placeholder="ここにスポットの名前を入力" v-model="spot_name_updated" />
     </form>
     <div class="o-border u-mt40"></div>
     <div class="l-button">
-        <button class="o-button_cancel" v-on:click="closeModal()">キャンセル</button>
-        <button class="o-button_save" v-on:click="update_tour_name()">保存する</button>
+        <button class="o-button_cancel" v-on:click="close_modal()">キャンセル</button>
+        <button class="o-button_save" v-on:click="create_spot()">保存する</button>
     </div>
   </div>
 </template>
@@ -15,38 +15,30 @@
 <script>
 　import axios from 'axios'
   export default {
-    name: 'changename',
+    name: 'create',
     props: {
-        tour_id: '',
-        tour_name_avoid: '',
+      tour_info: ''
     },
     data() {
       return {
-          tour_name: ''
-      }
-    },
-    watch: {
-      tour_name_avoid: function() {
-        this.tour_name = this.tour_name_avoid;
+          spot_name_updated: '',
       }
     },
     methods: {
-        closeModal: function() {
-            this.$emit('closeModal');
+        close_modal: function() {
+            this.$emit('close_modal');
         },
-        update_tour_name: function() {
+        create_spot: function() {
             const url =
-            "https://www2.yoslab.net/~nishimura/geotour/PHP/update_tour_name.php";
+            "https://www2.yoslab.net/~nishimura/docogeo/PHP_C/Edit_Tour/create_spot.php";
             let params = new URLSearchParams();
-            console.log(this.tour_id);
-            params.append("tour_id", this.tour_id);
-            params.append("tour_name_updated", this.tour_name);
+            params.append("tour_id", this.tour_info.tour_id);
+            params.append("spot_name", this.spot_name_updated);
             axios
             .post(url, params)
             .then(response => {
-                console.log("更新成功");
-                this.tour_name = ''; //リセット
-                this.closeModal();
+                this.spot_name_updated = ''; //リセット
+                this.close_modal();
             })
             .catch(error => {
                 // エラーを受け取る
@@ -59,8 +51,7 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-
-  #changename {
+  #create {
     position: absolute;
     right: 0;
     left: 0;
@@ -71,6 +62,7 @@
     border-radius: 30px 30px 0 0;
     background-color: #fff;
     z-index: 1;
+    filter: drop-shadow(0 0 5px rgba(0,0,0,.26));
 
     display: flex;
     flex-direction: column;

@@ -1,14 +1,12 @@
 <template>
   <div id="topdelete">
-    <div class="o-background">
-      
       <div class="o-background_black">
         <div class="o-modal">
-          <div class="o-text">{{ tour_name }}</div>
+          <div class="o-text">{{ tour_info.tour_name }}</div>
           <div class="o-text_sub">このツアーを削除します。よろしいですか？</div>
           <div class="l_button">
             <div
-              @click="closeModal" 
+              @click="close_modal"
               class="o_button_cancel u_pointer">キャンセル</div>
             <div 
               @click="delete_tour()"
@@ -16,8 +14,6 @@
           </div>
         </div>
       </div>
-
-    </div>
   </div>
 </template>
 
@@ -26,21 +22,20 @@
   export default {
     name: 'topdelete',
     props: {
-        tour_id: '',
-        tour_name: ''
+        tour_info: ''
     },
     methods: {
-        closeModal: function() {
-            this.$emit('closeModal');
+        close_modal: function() {
+            this.$emit('close_modal');
         },
         delete_tour() {
             const url =　"https://www2.yoslab.net/~nishimura/geotour/PHP/delete_tour.php";
             let params = new URLSearchParams();
-            params.append("tour_id", this.tour_id);
+            params.append("tour_id", this.tour_info.tour_id);
             axios
             .post(url, params)
             .then(response => {
-              this.closeModal();
+              this.close_modal();
             })
             .catch(error => {
               // エラーを受け取る
@@ -53,12 +48,21 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-  .o-background_black {
+  #topdelete {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
     height: 100%;
     width: 100%;
     position: fixed;
-    background-color: rgba(0,0,0, .35);
-
+    z-index: 1;
+  }
+  .o-background_black {
+    height: 100%;
+    width: 100%;
+    background-color: rgba(0,0,0, .54);
+    position: fixed;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -69,6 +73,7 @@
     width: calc(100% - 40px);
     max-width: 400px;
     border-radius: 10px;
+    filter: drop-shadow(0 2px 5px rgba(0,0,0,.26));
     background-color: #fff;
 
     display: flex;

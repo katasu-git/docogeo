@@ -3,92 +3,72 @@
     <div class="o-background">
 
       <transition name="fade">
-        <GeoLongPress v-show="flag"
-          :spot_id_avoid="spot_id_avoid"
-          :spot_name_avoid="spot_name_avoid"
-          @closeModal="closeModal" 
-          @wakeChangeNameModal="wakeChangeNameModal"
-          @jumpPage="jumpPage"
-          @confDelete="confDelete"
-        ></GeoLongPress>
+        <Delete
+          v-show="flag.delete"
+          :spot_info="spot_info_selected"
+          @close_modal="close_modal"
+          ></Delete>
       </transition>
 
-      <transition name="fade">
-        <GeoDelete
-          @click="confDelete"
-          v-show="flag_delete"
-          :spot_id="spot_id_avoid"
-          :spot_name="spot_name_avoid"
-          @closeModal="closeModal"
-        ></GeoDelete>
-      </transition>
+      <Create
+        v-bind:class="{ slideIn: flag.create, slideOut: !flag.create }"
+        :tour_info="tour_info"
+        @close_modal="close_modal"
+      ></Create>
 
-      <GeoChangeName v-show="flag_name"
-        @closeModal="closeModal" @update_spot_name="update_spot_name"></GeoChangeName>
-
-      <GeoCreateGeo v-show="flag_create"
-        :tour_id="tour_id" @closeModal="closeModal"></GeoCreateGeo>
+      <ChangeName
+        v-bind:class="{ slideIn: flag.change_name, slideOut: !flag.change_name }"
+        :spot_info="spot_info_selected"
+        @close_modal="close_modal"
+      ></ChangeName>
       
+
       <div class="l-header_above">
         <div class="o-text_tour">Spot</div>
         <div class="o-image_image_button ">
           <img 
             class="u_pointer"
-            v-on:click="startSort()"
-            v-show="!flag_order" 
+            v-on:click="start_sort()"
+            v-show="!flag.order_start" 
             src="../assets/sort_button.svg" 
           />
           <img 
             class="u_pointer"
-            v-on:click="startSort()"
-            v-show="flag_order"
+            v-on:click="start_sort()"
+            v-show="flag.order_start"
             src="../assets/sort_button_active.svg"
           />
         </div>
       </div>
       <div class="l-header_under u-mb20">
-        <div class="o-text_tour_min"><span class="u-color-green">{{tour_name}}</span></div>
-        <div class="o-text_add_image" v-bind:style="{ color: returnSortColor()}">並べ替え</div>
+        <div class="o-text_tour_min"><span class="u-color-green">{{tour_info.tour_name}}</span></div>
+        <div class="o-text_add_image" v-bind:style="{ color: return_button_color()}">並べ替え</div>
       </div>
 
-      <draggable v-model="spot_info" :animation="150" @update="onEnd()" v-show="flag_order">
-        <div class="o-list" v-for="(info) in spot_info" :key="info.spot_id">
-          <div class="l-image_text_burger">
-            <div class="l-image_text">
-              <div class="o-list_image"><img class="o-image_circle" src="../assets/kujira.svg" /></div>
-              <div class="l-list_text">
-                <div class="o-list_text_geosite">{{ info.spot_name }}</div>
-                <div class="o-list_text_update">最終更新 {{returnSended(info.updated)}}</div>
-              </div>
-            </div>
-            <div class="o-burger"><img class="u_pointer" src="../assets/burger_button.svg" /></div>
-          </div>
-          <div class="o-border u-mt10"></div>
-        </div>
-      </draggable>
+      <List
+        v-show="!flag.order_start"
+        :spot_info="spot_info"
+        @delete_spot="delete_spot"
+        @change_name="change_name"
+        @move_page="move_page"
+      ></List>
 
-      <div v-show="!flag_order">
-        <div class="o-list"
-            v-for="(info) in spot_info" :key="info.spot_id">
-          <div class="l-image_text_burger">
-            <div class="l-image_text">
-              <div class="o-list_image"><img class="o-image_circle" src="../assets/kujira.svg" /></div>
-              <div class="l-list_text">
-                <div class="o-list_text_geosite u_pointer" 
-                  @click='onPlusStart(info)'>{{ info.spot_name }}</div>
-                <div class="o-list_text_update">最終更新 {{returnSended(info.updated)}}</div>
-              </div>
-            </div>
-          </div>
-          <div class="o-border u-mt10"></div>
-        </div>
-      </div>
+      <ListDrag
+        v-show="flag.order_start"
+        :spot_info="spot_info"
+      ></ListDrag>
 
-      <button class="o-button_save_sort u_pointer" v-on:click="startSort()" 
-        v-show="flag_order && !flag && !flag_name && !flag_create">並び替えを終了する</button>
+      <button 
+        class="o-button_save_sort u_pointer" 
+        v-on:click="start_sort()" 
+        v-show="flag.order_start"
+      >並び替えを終了する</button>
 
-      <button class="o-button_create_geosite u_pointer" @click="wakeCreateGeo()"
-        v-show="!flag_order && !flag && !flag_name && !flag_create">新しくジオサイトを登録する</button>
+      <button 
+        class="o-button_create_geosite u_pointer"
+        v-show="!flag.order_start"
+        @click="create_spot()"
+      >新しくジオサイトを登録する</button>
 
     </div>
   </div>
@@ -96,43 +76,45 @@
 
 <script>
 import axios from 'axios'
-import draggable from 'vuedraggable'
-import GeoLongPress from '../components/modals/geoLongPress'
-import GeoChangeName from '../components/modals/geoChageName'
-import GeoCreateGeo from '../components/modals/geoCreateGeo'
-import GeoDelete from '../components/modals/geoDelete'
+import List from '../components/Edit_Tour/List'
+import ListDrag from '../components/Edit_Tour/ListDrag'
+import Delete from '../components/Edit_Tour/Delete'
+import Create from '../components/Edit_Tour/CreateSpot'
+import ChangeName from '../components/Edit_Tour/ChangeName'
 
   export default {
     name: 'editTour',
     data() {
       return {
-          spot_info: [],
-          tour_id: Number,
-          tour_name: String,
-          flag: false,
-          flag_name: false,
-          flag_order: false,
-          flag_create: false,
-          flag_delete: false,
-          spot_id_avoid: '', //名前を変更する時に呼び出し
-          spot_name_avoid: '', //名前を変更する時に呼び出し
+        tour_info: '',
+        spot_info: [],
+        spot_info_selected: '',
+        flag: {
+          delete: false,
+          order_start: false,
+          create: false,
+          change_name: false,
+        }
       }
     },
-    created: function () {
-      if(JSON.stringify(this.$route.params) == "{}") {
-        // 更新されたときはトップに戻る
-        this.jumpPage("HelloWorld");
-      } else {
-        this.tour_id = Number(this.$route.params.tour_id);
-        this.tour_name = this.$route.params.tour_name;
-        this.get_spot_info();
-      }
+    mounted() {
+      this.init()
     },
     methods: {
-      get_spot_info: function () {
-        const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/get_spot_info.php';
+      init() {
+        //localstrageに登録するときはJSON.stringify, 取得するときはJSON.parseする必要あり
+        if(JSON.stringify(this.$route.params) != "{}") {
+          this.$localStorage.set('now_tour_info',JSON.stringify(this.$route.params.tour_info));
+          this.tour_info = this.$route.params.tour_info;
+        } else {
+          this.tour_info = JSON.parse(this.$localStorage.get('now_tour_info'));
+        }
+        this.fetch_spot_info();
+      },
+      fetch_spot_info: function () {
+        const url = 'https://www2.yoslab.net/~nishimura/docogeo/PHP_C/Edit_Tour/fetch_spot_info.php';
         let params = new URLSearchParams();
-        params.append('tour_id', this.tour_id);
+        params.append('tour_id', this.tour_info.tour_id);
         axios.post(url, params
         ).then(response => {
           this.spot_info = response.data;
@@ -141,120 +123,76 @@ import GeoDelete from '../components/modals/geoDelete'
           console.log(error);
         });
       },
-      update_spot_name: function (spot_name_updated) {
-            const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/update_spot_name.php';
-            let params = new URLSearchParams();
-            params.append('spot_id', this.spot_id_avoid);
-            params.append('spot_name_updated', spot_name_updated);
-            axios.post(url, params
-            ).then(response => {
-                this.closeModal();
-            }).catch(error => {
-                // エラーを受け取る
-                console.log(error);
-            });
-      },
-      update_order_spot_name: function() {
-            const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/update_order_spot_name.php';
-            for(let i=0; i<this.spot_info.length; i++) {
-              let params = new URLSearchParams();
-              let arr= this.spot_info[i].spot_id;
-              params.append('spot_id_arr', arr);
-              params.append('order', i);
-              axios.post(url, params
-              ).then(response => {
-              }).catch(error => {
-                  // エラーを受け取る
-                  console.log(error);
-              });
-            }
-            this.get_spot_info();
-      },
-      jumpPage: function(where, spot_id, spot_name) {
+      move_page: function(where, spot_info) {
+        console.log(spot_info)
           this.$router.push({
               name: where,
               params: {
-                tour_id: this.tour_id,
-                spot_id: spot_id,
-                spot_name: spot_name
+                tour_info: this.tour_info,
+                spot_info: spot_info
               }
           });
       },
-      onPlusStart: function(spot)  {
-        this.spot_id_avoid = spot.spot_id;
-        this.spot_name_avoid = spot.spot_name;
-        console.log(spot.spot_name)
-        this.flag = true; //戻す
+      close_modal: function() {
+        this.flag.delete = false;
+        this.flag.create = false;
+        this.flag.change_name = false;
+        this.init()
       },
-      closeModal: function() {
-        console.log("heuuu")
-        this.flag = false;
-        this.flag_name = false;
-        this.flag_create = false;
-        this.flag_delete = false;
-        this.get_spot_info(); //名前の更新を反映
+      delete_spot(spot_info) {
+        this.spot_info_selected = spot_info;
+        this.flag.delete = true;
       },
-      wakeChangeNameModal: function() {
-        this.flag = false; //前のモーダルを閉じる
-        this.flag_name = true;
-      },
-      onEnd: function() {
-        this.update_order_spot_name();  //ここで発火させればオートセーブも可能
-      },
-      startSort: function() {
-        if(this.flag_order) {
-          this.flag_order = false;
+      start_sort: function() {
+        if(this.flag.order_start) {
+          this.flag.order_start = false;
         } else {
-          this.flag_order = true;
+          this.flag.order_start = true;
         }
+        this.close_modal();
       },
-      returnSortColor: function() {
+      create_spot() {
+        this.flag.create = true;
+      },
+      change_name(spot_info) {
+        this.spot_info_selected = spot_info;
+        this.flag.change_name = true;
+      },
+      return_button_color: function() {
         if(this.flag_order) {
           return '#4B8E8D';
         } else {
           return 'rgba(0,0,0,.26)';
         }
-      },
-      wakeCreateGeo: function() {
-        this.flag_create = true;
-      },
-      returnSended(sended) {
-            let month = sended.substr(5, 2) + '月';
-            let day = sended.substr(8, 2) + '日';
-            let time = ' ' + sended.substr(10, 6);
-            return month + day + time;
-      },
-      confDelete() {
-        this.flag_delete = true;
       }
     },
     components: {
-      GeoLongPress: GeoLongPress,
-      GeoChangeName: GeoChangeName,
-      GeoCreateGeo: GeoCreateGeo,
-      draggable: draggable,
-      GeoDelete: GeoDelete
+      List: List,
+      ListDrag: ListDrag,
+      Delete: Delete,
+      Create: Create,
+      ChangeName: ChangeName,
     },
   }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-  ul {
-    margin: 0;
-    padding: 0;
-  }
-
-  button {
-    outline: none;
-  }
-
-  #editTour, .o-background {
+  #editTour {
     height: 100%;
     width: 100%;
 
     background-color: #F5F5F5;
     color: rgba(0,0,0,.87);
+
+    position: fixed;
+    overflow: hidden;
+  }
+
+  .o-background {
+    height: 100%;
+    width: 100%;
+    overflow: scroll;
   }
 
   .l-header_above {
@@ -296,7 +234,7 @@ import GeoDelete from '../components/modals/geoDelete'
     .o-text_tour_min {
       padding: 0 0 0 20px;
 
-      font-size: 18px;
+      font-size: 14px;
       font-weight: bold;
     }
 
