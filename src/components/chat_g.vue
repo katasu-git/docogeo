@@ -125,7 +125,7 @@
     },
     methods: {
         init() {
-            this.get_spot_name_arr();
+            this.get_spot_info_arr();
             this.closeModal();
         },
         refresh() {
@@ -133,7 +133,7 @@
             this.get_spot_image();
             this.closeModal();
         },
-        get_spot_name_arr() {
+        get_spot_info_arr() {
             const url =　"https://www2.yoslab.net/~nishimura/geotour/PHP/get_spot_info.php";
             let params = new URLSearchParams();
             params.append("tour_id", this.tour_info.tour_id);
@@ -253,7 +253,7 @@
                 axios
                     .post(url3, params3)
                     .then(response => {
-                        this.get_post();
+                        this.refresh();
                     })
                     .catch(error => {
                         // エラーを受け取る
@@ -263,6 +263,7 @@
             }
         },
         post_img(image) {
+                console.log("----------------" + JSON.stringify(image));
 
                 if(image.isPosted == 0) {
                     const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/POST/post_img.php';
@@ -273,7 +274,7 @@
                     params.append("img_path", image.image_path);
                     axios
                         .post(url, params).then(()=>{
-                            this.get_post(); //isPostedの値更新処理
+                            this.refresh(); //isPostedの値更新処理
                         })
                         .catch(error => {
                             // エラーを受け取る
@@ -289,10 +290,9 @@
                     params.append("tour_id", image.tour_id);
                     params.append("spot_id", image.spot_id);
                     params.append("image_id", image.image_id);
-                    console.log(image);
                     axios
                         .post(url, params).then(response => {
-                            this.get_post(); //isPostedの値更新処理
+                            this.refresh(); //isPostedの値更新処理
                         })
                         .catch(error => {
                             // エラーを受け取る

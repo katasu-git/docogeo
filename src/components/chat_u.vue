@@ -39,7 +39,8 @@
         <Footer
             :place="place"
             :user="user"
-            @move_page="move_page"></Footer>
+            @move_page="move_page">
+        </Footer>
 
       </div>
   </div>
