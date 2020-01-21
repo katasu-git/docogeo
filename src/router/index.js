@@ -9,7 +9,6 @@ import TopU from '@/components/top_u'
 import Images from '@/components/Images.vue'
 import Camera from '@/components/Camera'
 import CallCanvas from '@/components/CallCanvas'
-import CameraInit from '@/components/CameraInit'
 import Maps from '@/components/Map'
 
 Vue.use(Router)
@@ -40,11 +39,6 @@ export default new Router({
       path: '/draw',
       name: 'draw',
       component: CallCanvas
-    },
-    {
-      path: '/cameraInit',
-      name: 'cameraInit',
-      component: CameraInit
     },
     {
       path: '/editTour',

@@ -55,6 +55,7 @@ import Footer from '../components/parts/Footer'
         tour_id: '',
         tour_name: '',
         spot_id: '',
+        isNotReload: true,
         video: {},
         canvas: {},
         captures: [],
@@ -124,7 +125,7 @@ import Footer from '../components/parts/Footer'
         if(this.captures == '' || this.captures == undefined || this.captures == null) {
           return;
         }
-         this.$router.push({
+        this.$router.push({
             name: 'draw',
             params: {
               width: this.video_w,
@@ -132,7 +133,8 @@ import Footer from '../components/parts/Footer'
               captures: this.captures,
               tour_id: this.tour_id,
               tour_name: this.tour_name,
-              spot_id: this.spot_id
+              spot_id: this.spot_id,
+              isNotReload: this.isNotReload
             }
         })
       },

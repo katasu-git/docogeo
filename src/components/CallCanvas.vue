@@ -32,13 +32,19 @@ export default {
     captures: ''
   }),
   created() {
-    this.tour_id = this.$route.params.tour_id;
-    this.tour_name = this.$route.params.tour_name;
-    this.spot_id = this.$route.params.spot_id;
-    this.width = this.$route.params.width;
-    this.height = this.$route.params.height;
-    this.captures = this.$route.params.captures;
-  },
+    if(this.$route.params.isNotReload) {
+      this.tour_id = this.$route.params.tour_id;
+      this.tour_name = this.$route.params.tour_name;
+      this.spot_id = this.$route.params.spot_id;
+      this.width = this.$route.params.width;
+      this.height = this.$route.params.height;
+      this.captures = this.$route.params.captures;
+    } else {
+      this.$router.push({
+            name: 'camera'
+      })
+    }
+  },  
   mounted: function() {
     this.init();
   },
