@@ -39,15 +39,9 @@ import axios from 'axios'
         },
         start_tour() {
 
-          ////////////////////////
-
-          //ここに開催中のツアーがある場合はreturnする処理
-          //ツアー終了後でないと次のツアーは開催できない
-
-          ////////////////////////
-
-          //該当ツアー開始処理
-          const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/start_tour.php';
+          if(this.tour_info.isActive == 0) {
+            //該当ツアー開始処理
+            const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/start_tour.php';
             let params = new URLSearchParams();
             params.append('tour_id', this.tour_info.tour_id);
             axios
@@ -59,6 +53,10 @@ import axios from 'axios'
                     // エラーを受け取る
                     console.log(error);
                 });
+          } else {
+            this.move_page('chat_g');
+          }
+
         }
     },
   }
