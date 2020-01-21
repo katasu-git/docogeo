@@ -6,6 +6,7 @@
             <TourEnd
                 v-show="flag.end"
                 :tour_name="tour_info.tour_name"
+                :user_info="user_info"
             ></TourEnd>
         </transition>
       
@@ -14,7 +15,13 @@
                 <div class="o-text_tour">{{ tour_info.tour_name }}</div>
             </div>
             <div class="l-header_under u-mb20">
-                <div class="o-text_tour_min"><span class="u-color-green"></span></div>
+                <button 
+                    class="o-text_tour_min"
+                    @click="change_name()"
+                >あなたの名前:
+                    <span class="u-color-green">{{ user_info.name }}</span>
+                    <img class="u-ml5" src="../assets/Polygon 1.svg" />
+                </button>
             </div>
         </div>
 
@@ -50,6 +57,7 @@
   import axios from 'axios'
   import Footer from '../components/parts/Footer'
   import TourEnd from '../components/Chat_Guest/TourEnd'
+import { async } from 'q'
   export default {
     name: 'chat_u',
     data() {
@@ -57,6 +65,7 @@
           place: 'chat',
           user: 'guest',
           tour_info: '',
+          user_info: '',
           spot_ex: JSON,
           flag: {
               end: false
@@ -75,18 +84,47 @@
         } else {
           this.tour_info = JSON.parse(this.$localStorage.get('now_tour_info'));
         }
-
-        setInterval(function() {
-        this.getPost();
-
-        //ツアー終了の処理
-        this.judge_tour_isActive();
-        this.break_tour_timer();
-        //////////////
-
-        }.bind(this), 1000);
+        this.fetch_user_name_arr();
+        this.init();
     },
     methods: {
+        init() {
+            setInterval(function() {
+                this.getPost();
+                //ツアー終了の処理
+                this.judge_tour_isActive();
+                this.break_tour_timer();
+                //////////////
+            }.bind(this), 1000);
+        },
+        async fetch_user_name_arr() {
+            if(!JSON.parse(this.$localStorage.get('user_info'))) {
+                console.log("発火");
+                const url = "https://www2.yoslab.net/~nishimura/docogeo/PHP_C/Chat_U/fetch_user_name.php";
+                const res1 = await axios.post(url);
+                
+                let user_info_json = {
+                    "id": res1.data[0].user_name_id,
+                    "tour_id": this.tour_info.tour_id,
+                    "init_name": res1.data[0].init_name,
+                    "name": res1.data[0].init_name
+                }
+                this.$localStorage.set('user_info',JSON.stringify(user_info_json));
+                
+                //actice_userに登録する
+                const url2 = "https://www2.yoslab.net/~nishimura/docogeo/PHP_C/Chat_U/set_active_user.php";
+                let params = new URLSearchParams();
+                params.append("id", user_info_json.id);
+                params.append("tour_id", user_info_json.tour_id);
+                params.append("init_name", user_info_json.init_name);
+
+                const res2 = await axios.post(url2, params);
+
+
+            }
+            this.user_info = JSON.parse(this.$localStorage.get('user_info'));
+            console.log( this.user_info );
+        },
         break_tour_timer() {
             const url ="https://www2.yoslab.net/~nishimura/geotour/PHP/GET/get_tour_start_time.php";
             let params = new URLSearchParams();
@@ -195,36 +233,61 @@
 }
 
 .o-header {
-    position: fixed;
-    height: 80px;
-    width: 100%;
-    background-color: #fff;
-    filter: drop-shadow(0 0 5px rgba(0,0,0,.26));
-    z-index: 1;
-}
+      position: fixed;
+      height: 80px;
+      width: 100%;
+      background-color: #fff;
+      filter: drop-shadow(0 0 5px rgba(0,0,0,.26));
+      z-index: 1;
+  }
 
-.l-header_above {
+  .l-header_above {
     width: 100%;
     display: flex;
     justify-content: space-between;
-    align-items: flex-end;
+    align-items: flex-start;
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
-}
+  }
 
 .o-text_tour {
-    padding: 10px 0 0 20px;
+    padding: 10px 20px 0 20px;
     font-size: 24px;
+    line-height: calc(24px * 1.5);
     font-weight: bold;
 }
 
+.o-image_image_button {
+    padding: 10px 20px 0 0;
+}
+
+.o-button_sort {
+    fill: #4B8E8D;
+}
+
 .l-header_under {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+width: 100%;
+
+display: flex;
+justify-content: space-between;
+align-items: center;
+}
+
+.o-text_tour_min {
+    padding: 0 0 0 20px;
+
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.o-text_add_image {
+    padding: 0 10px 0 0;
+
+    font-size: 12px;
+    font-weight: bold;
+    color: rgba(0,0,0, .26);
 }
 
 .l-comment {

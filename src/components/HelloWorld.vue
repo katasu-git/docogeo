@@ -118,9 +118,9 @@ export default {
   },
   mounted() {
     //ローカルストレージの初期化
-    //this.$localStorage.remove('now_tour_info');
-    //this.$localStorage.remove('now_spot_info');
-    //this.$localStorage.remove('user');
+    this.$localStorage.remove('now_tour_info');
+    this.$localStorage.remove('now_spot_info');
+    this.$localStorage.remove('user');
   },
   methods: {
     init() {

@@ -8,7 +8,7 @@
           <div class="o-text_sub">このイベントは終了しました</div>
           <div class="l_button">
             <div
-                @click="jumpPage()"
+                @click="end_tour()"
               class="o_button_cancel u_pointer">トップに戻る</div>
           </div>
         </div>
@@ -23,13 +23,25 @@
   export default {
     name: 'tourEnd',
     props: {
-        tour_id: '',
-        tour_name: ''
+        tour_name: '',
+        user_info: '',
     },
     methods: {
-        jumpPage() {
-            this.$router.push({
-                name: "top_u"
+        async end_tour() {
+            const url = "https://www2.yoslab.net/~nishimura/docogeo/PHP_C/Chat_U/end_tour.php";
+            let params = new URLSearchParams();
+            params.append("id", this.user_info.id);
+            params.append("tour_id", this.user_info.tour_id);
+            axios.post(url, params).then(response => {
+              //ユーザ情報のリセット
+              this.$localStorage.remove('user_info');
+              this.$router.push({
+                  name: "top_u"
+              });
+            })
+            .catch(error => {
+              // エラーを受け取る
+              console.log(error);
             });
         }
     },
