@@ -49,7 +49,7 @@
 <script>
   import axios from 'axios'
   import Footer from '../components/parts/Footer'
-  import TourEnd from '../components/modals/TourEnd'
+  import TourEnd from '../components/Chat_Guest/TourEnd'
   export default {
     name: 'chat_u',
     data() {
