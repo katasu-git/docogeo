@@ -75,16 +75,17 @@ import { async } from 'q'
     created: function () {
         this.$localStorage.set('user','guest');
         if(JSON.stringify(this.$route.params) != "{}") {
-            
-          //再読み込み対策のローカル値
-          this.$localStorage.set('now_tour_info',JSON.stringify(this.$route.params.tour_info[0]));
-          //通常の呼び出し先
-          this.tour_info = this.$route.params.tour_info[0];
+            //トップページから遷移してきた場合
+            //再読み込み対策のローカル値
+            this.$localStorage.set('now_tour_info',JSON.stringify(this.$route.params.tour_info));
+            //通常の呼び出し先
+            this.tour_info = this.$route.params.tour_info;
 
         } else {
           this.tour_info = JSON.parse(this.$localStorage.get('now_tour_info'));
         }
-        this.fetch_user_name_arr();
+
+        this.set_user_info()
         this.init();
     },
     methods: {
@@ -97,33 +98,89 @@ import { async } from 'q'
                 //////////////
             }.bind(this), 1000);
         },
-        async fetch_user_name_arr() {
-            if(!JSON.parse(this.$localStorage.get('user_info'))) {
-                console.log("発火");
-                const url = "https://www2.yoslab.net/~nishimura/docogeo/PHP_C/Chat_U/fetch_user_name.php";
-                const res1 = await axios.post(url);
-                
-                let user_info_json = {
-                    "id": res1.data[0].user_name_id,
-                    "tour_id": this.tour_info.tour_id,
-                    "init_name": res1.data[0].init_name,
-                    "name": res1.data[0].init_name
+        async set_user_info() {
+            if(this.is_exist_local_user_info()) {
+                this.user_info = JSON.parse(this.$localStorage.get('user_info'));
+                if( this.is_created_over_time(this.user_info.created) 
+                    ||  (this.tour_info.tour_id != this.user_info.tour_id)) {
+                    //最初にログインした時から9時間以上けいかしている場合 or ツアーが違う場合
+                    await this.reset_user_info()
+                    this.fetch_user_name_arr()
                 }
-                this.$localStorage.set('user_info',JSON.stringify(user_info_json));
-                
-                //actice_userに登録する
-                const url2 = "https://www2.yoslab.net/~nishimura/docogeo/PHP_C/Chat_U/set_active_user.php";
-                let params = new URLSearchParams();
-                params.append("id", user_info_json.id);
-                params.append("tour_id", user_info_json.tour_id);
-                params.append("init_name", user_info_json.init_name);
 
-                const res2 = await axios.post(url2, params);
-
-
+            } else {
+                //ローカルにデータが残っていない場合は新たに名前を設定する
+                this.fetch_user_name_arr()
             }
-            this.user_info = JSON.parse(this.$localStorage.get('user_info'));
-            console.log( this.user_info );
+        },
+        async reset_user_info() {
+            //isActivceを解除する処理
+            const url = "https://www2.yoslab.net/~nishimura/docogeo/PHP_C/Chat_U/reset_user_info.php";
+            let params = new URLSearchParams();
+            params.append("id", this.user_info.id);
+            params.append("user_name_id", this.user_info.user_name_id);
+            const res = await axios.post(url, params);
+            this.$localStorage.remove('user_info');
+        },
+        is_exist_local_user_info() {
+            if(this.$localStorage.get('user_info')) {
+                return true;
+            } else {
+                return false;
+            }
+        },
+        is_created_over_time(s_date) {
+            let timestamp = Date.parse(s_date)
+            //http://yut.hatenablog.com/entry/20111015/1318633937
+            let now = Date.now()
+            let dif = now - timestamp;
+            let pass_min = dif/60/1000;
+            //9時間経過に設定
+            if(pass_min > 5400) {
+                return true;
+            } else {
+                return false;
+            }
+        },
+        async fetch_user_name_arr() {
+            //名前を取ってくる
+            const url = "https://www2.yoslab.net/~nishimura/docogeo/PHP_C/Chat_U/fetch_user_name.php";
+            const res1 = await axios.post(url);
+
+            var random = Math.floor( Math.random() * res1.data.length )
+            console.log( res1.data[random] )
+            const id = res1.data[random].user_name_id
+            const init_name = res1.data[random].init_name
+            const changeble_name = res1.data[random].init_name
+
+            //user_infoをセット
+            this.user_info = {
+                "id": "",
+                "user_name_id": id,
+                "tour_id": this.tour_info.tour_id,
+                "init_name": init_name,
+                "name": changeble_name,
+                "created": ""
+            }
+            //actice_userに登録する
+            this.set_active_user(this.user_info)
+        },
+        async set_active_user(user_info_json) {
+            const url2 = "https://www2.yoslab.net/~nishimura/docogeo/PHP_C/Chat_U/set_active_user.php";
+            let params = new URLSearchParams();
+            console.log(this.user_info)
+            params.append("user_name_id", user_info_json.user_name_id);
+            params.append("tour_id", user_info_json.tour_id);
+            params.append("init_name", user_info_json.init_name);
+
+            const res2 = await axios.post(url2, params);
+            
+            this.user_info.id = res2.data[0].id;
+            this.user_info.created = res2.data[0].created;
+            
+            //ローカルを更新
+            this.$localStorage.set('user_info',JSON.stringify(this.user_info));
+            console.log("ユーザ情報が更新されました" + this.user_info);
         },
         break_tour_timer() {
             const url ="https://www2.yoslab.net/~nishimura/geotour/PHP/GET/get_tour_start_time.php";
@@ -133,12 +190,7 @@ import { async } from 'q'
                 .post(url, params)
                 .then(response => {
                     let s_date = response.data.start_time;
-                    let timestamp = Date.parse(s_date)
-                    //http://yut.hatenablog.com/entry/20111015/1318633937
-                    let now = Date.now()
-                    let dif = now - timestamp;
-                    let pass_min = dif/60/1000;
-                    if(pass_min > 5400) {
+                    if(this.is_created_over_time(response.data.start_time)) {
                         //開始から9時間でアクセス不可にする
                         this.flag.end = true;
                         this.finish_tour();
@@ -169,11 +221,15 @@ import { async } from 'q'
         },
         finish_tour() {
             //isAcive == 0にする
-            const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/finish_tour.php';
+            const url = 'https://www2.yoslab.net/~nishimura/docogeo/PHP_C/Chat_U/finish_tour.php';
             let params = new URLSearchParams();
             params.append('tour_id', this.tour_info.tour_id);
+            params.append('user_name_id', this.user_info.user_name_id);
             axios
                 .post(url, params)
+                .then(()=>{
+                    this.reset_user_info();
+                })
                 .catch(error => {
                     // エラーを受け取る
                     console.log(error);

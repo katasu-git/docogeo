@@ -15,7 +15,7 @@
         <div class="o-card"
           v-for="info in tour_info"
           :key="info.tour_id"
-          @click="move_page('chat_u', info.tour_id, info.tour_name)"
+          @click="move_page('chat_u', info)"
         >
           <img src="../assets/kujira.svg" class="o-image_tour" />
           <div class="o-transparent">
@@ -75,11 +75,11 @@
           console.log(error);
         });
       },
-      move_page: function(where, tour_id, tour_name) {
+      move_page: function(where, tour_info) {
         this.$router.push({
             name: where,
             params: {
-              tour_info: this.tour_info,
+              tour_info: tour_info,
             }
         })
       },
