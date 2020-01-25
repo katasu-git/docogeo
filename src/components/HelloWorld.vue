@@ -47,6 +47,7 @@
 
       <div class="o-slider">
         <div
+          class="wrapper"
           v-for="info in tour_info"
           :key="info.tour_id"
         >
@@ -248,6 +249,10 @@ export default {
     overflow-x: scroll;
     overflow-y: hidden;
     -webkit-overflow-scrolling: touch; /*ios*/
+  }
+
+  .wrapper:last-of-type {
+    padding: 0 20px 0 0;
   }
 
   .o-card {

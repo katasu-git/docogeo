@@ -54,11 +54,12 @@
 </template>
 
 <script>
-  import axios from 'axios'
-  import Footer from '../components/parts/Footer'
-  import TourEnd from '../components/Chat_Guest/TourEnd'
+import axios from 'axios'
+import Footer from '../components/parts/Footer'
+import TourEnd from '../components/Chat_Guest/TourEnd'
 import { async } from 'q'
-  export default {
+
+export default {
     name: 'chat_u',
     data() {
       return {
@@ -73,19 +74,14 @@ import { async } from 'q'
       }
     },
     created: function () {
-        this.$localStorage.set('user','guest');
-        if(JSON.stringify(this.$route.params) != "{}") {
-            //トップページから遷移してきた場合
-            //再読み込み対策のローカル値
-            this.$localStorage.set('now_tour_info',JSON.stringify(this.$route.params.tour_info));
-            //通常の呼び出し先
-            this.tour_info = this.$route.params.tour_info;
-
-        } else {
-          this.tour_info = JSON.parse(this.$localStorage.get('now_tour_info'));
+        //URLを直接叩かれた場合
+        if(JSON.stringify(this.$route.params) != "{}" 
+            && JSON.parse(this.$localStorage.get('now_tour_info'))) {
+                this.move_page('top_u');
         }
 
-        this.set_user_info()
+        this.set_tour_info();
+        this.set_user_info();
         this.init();
     },
     methods: {
@@ -95,8 +91,22 @@ import { async } from 'q'
                 //ツアー終了の処理
                 this.judge_tour_isActive();
                 this.break_tour_timer();
-                //////////////
+
             }.bind(this), 1000);
+        },
+        set_tour_info() {
+            this.$localStorage.set('user','guest');
+
+            if(JSON.stringify(this.$route.params) != "{}") {
+            //トップページから遷移してきた場合
+            //再読み込み対策のローカル値
+            this.$localStorage.set('now_tour_info',JSON.stringify(this.$route.params.tour_info));
+            //通常の呼び出し先
+            this.tour_info = this.$route.params.tour_info;
+
+            } else {
+            this.tour_info = JSON.parse(this.$localStorage.get('now_tour_info'));
+            }
         },
         async set_user_info() {
             if(this.is_exist_local_user_info()) {
@@ -147,7 +157,7 @@ import { async } from 'q'
             const url = "https://www2.yoslab.net/~nishimura/docogeo/PHP_C/Chat_U/fetch_user_name.php";
             const res1 = await axios.post(url);
 
-            var random = Math.floor( Math.random() * res1.data.length )
+            let random = Math.floor( Math.random() * res1.data.length )
             console.log( res1.data[random] )
             const id = res1.data[random].user_name_id
             const init_name = res1.data[random].init_name
@@ -275,7 +285,7 @@ import { async } from 'q'
         Footer: Footer,
         TourEnd: TourEnd
     }
-  }
+}
 
 </script>
 
