@@ -72,6 +72,36 @@ button, input {
   animation-name: slideOut;
 }
 
+@keyframes slideInRight {
+  0% {
+    display:none;
+    transform: translateX(-100%);
+  }
+  100% {
+    display:flex;
+    transform: translateX(0);
+  }
+}
+.slideInRight, .slideOutRight {
+  animation-name: slideInRight;
+  animation-duration: .2s;
+  animation-timing-function: ease;
+  animation-fill-mode: forwards;
+}
+@keyframes slideOutRight {
+    0% {
+      display:flex;
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-100%);
+      display:none;
+    }
+}
+.slideOutRight {
+  animation-name: slideOutRight;
+}
+
 .v-lazy-image {
   filter: blur(2px);
   transition: filter 0.2s;

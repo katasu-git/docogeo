@@ -2,7 +2,7 @@
   <div id="chat_g">
       <div class="o-background">
 
-          <transition name="fade">
+        <transition name="fade">
             <ToggleSpot
                 :tour_info="tour_info"
                 :spot_info="spot_info"
@@ -11,36 +11,31 @@
                 @change_spot_name="change_spot_name"
                 v-show="flag.change_spot"
             ></ToggleSpot>
-          </transition>
+        </transition>
 
-          <transition name="fade">
+        <transition name="fade">
             <FinishTour
                 :tour_info="tour_info"
                 @closeModal="closeModal"
                 @move_page="move_page"
                 v-show="flag.finish_tour"
             ></FinishTour>
-          </transition>
-      
-        <div class="o-header">
-            <div class="l-header_above">
-                <div class="o-text_tour">{{ tour_info.tour_name }}</div>
-                <div 
-                    class="o-image_image_button"
-                    v-on:click='finish_tour()'
-                ><img src="../assets/close_button.svg" /></div>
-            </div>
-            <div class="l-header_under u-mb20">
-                <button 
-                    class="o-text_tour_min"
-                    @click="changeSpot()"
-                >
-                    <span class="u-color-green">{{ spot_info.spot_name }}</span>
-                    <img class="u-ml5" src="../assets/Polygon 1.svg" />
-                </button>
-                <div class="o-text_add_image">ツアー終了</div>
-            </div>
-        </div>
+        </transition>
+
+        <GuestList
+            @closeModal="closeModal"
+            v-show="flag.isMounted"
+
+            v-bind:class="{ slideInRight: flag.guest_list, slideOutRight: !flag.guest_list }"
+        />
+
+        <VueHeader
+            :tour_info="tour_info"
+            :spot_info="spot_info"
+            @changeSpot="changeSpot"
+            @finish_tour="finish_tour"
+            @show_guestList="show_guestList"
+        />
 
         <div class="l-slider_images" :animation="150">
             <div class="o-image" 
@@ -81,16 +76,20 @@
         <Footer
             :place="place"
             :user="user"
-            @move_page="move_page"></Footer>
+            @move_page="move_page"
+        />
       </div>
   </div>
 </template>
 
 <script>
-  import axios from 'axios'
-  import Footer from '../components/parts/Footer'
-  import ToggleSpot from '../components/Chat_Guide/ToggleSpot'
-  import FinishTour from '../components/Chat_Guide/FinishTour'
+import axios from 'axios'
+import VueHeader from './parts/Header'
+import Footer from '../components/parts/Footer'
+import ToggleSpot from '../components/Chat_Guide/ToggleSpot'
+import FinishTour from '../components/Chat_Guide/FinishTour'
+import GuestList from '../components/Chat_Guide/GuestList'
+
   export default {
     name: 'chat_g',
     data() {
@@ -104,7 +103,9 @@
           spot_ex: JSON,
           flag: {
               change_spot: false,
-              finish_tour: false
+              finish_tour: false,
+              guest_list: false,
+              isMounted: false,
           }
       }
     },
@@ -196,9 +197,6 @@
             this.$router.push({
                 name: where,
                 params: {
-                    //tour_id: this.tour_info.tour_id,
-                    //tour_name: this.tour_name,
-                    //spot_id: this.spot_id
                     tour_info: this.tour_info,
                     spot_info: this.spot_info
                 }
@@ -327,10 +325,15 @@
         changeSpot() {
             this.flag.change_spot = true;
         },
+        show_guestList() {
+            this.flag.isMounted = true;
+            this.flag.guest_list = true;
+        },
         closeModal() {
             setTimeout(() => {
                 this.flag.change_spot = false;
                 this.flag.finish_tour = false;
+                this.flag.guest_list = false;
             }, 200)
         },
         returnSended(sended) {
@@ -338,11 +341,11 @@
         }
     },
     components: {
-        //ChangeSpot: ChangeSpot,
-        //FinishTour: FinishTour,
+        VueHeader: VueHeader,
         Footer: Footer,
         ToggleSpot: ToggleSpot,
-        FinishTour: FinishTour
+        FinishTour: FinishTour,
+        GuestList: GuestList
     }
   }
 
@@ -350,77 +353,20 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-  #chat_g {
+#chat_g {
     height: 100%;
     width: 100%;
-
     background-color: #F5F5F5;
     color: rgba(0,0,0,.87);
-  }
+    z-index: 1;
+}
 
-  .o-background {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-  }
-
-  .o-header {
-      position: fixed;
-      height: 80px;
-      width: 100%;
-      background-color: #fff;
-      filter: drop-shadow(0 0 5px rgba(0,0,0,.26));
-      z-index: 1;
-  }
-
-  .l-header_above {
-    width: 100%;
+.o-background {
     display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-  }
-
-    .o-text_tour {
-        padding: 10px 20px 0 20px;
-        font-size: 24px;
-        line-height: calc(24px * 1.5);
-        font-weight: bold;
-    }
-
-    .o-image_image_button {
-        padding: 10px 20px 0 0;
-    }
-
-    .o-button_sort {
-      fill: #4B8E8D;
-    }
-
-  .l-header_under {
-    width: 100%;
-
-    display: flex;
-    justify-content: space-between;
+    flex-direction: column;
     align-items: center;
-  }
-
-    .o-text_tour_min {
-      padding: 0 0 0 20px;
-
-      font-size: 14px;
-      font-weight: bold;
-    }
-
-    .o-text_add_image {
-      padding: 0 10px 0 0;
-
-      font-size: 12px;
-      font-weight: bold;
-      color: rgba(0,0,0, .26);
-    }
+    z-index: 1;
+}
 
 .l-slider_images {
     margin: 100px 0 0 0;
@@ -454,6 +400,10 @@
 
   .o-image:not(:first-of-type) {
     margin-left: 10px;
+  }
+
+  .o-image:last-of-type {
+    padding-right: 20px;
   }
 
   .l-border {
@@ -506,22 +456,6 @@
       font-size: 10px;
       font-weight: bold;
       color: #A2A6A5;
-  }
-
-  .l-footer {
-      position: fixed;
-      right: 20px;
-      bottom: 20px;
-      height: 80px;
-      width: calc(100% - 40px);
-      background-color: #fff;
-      border-radius: 100px;
-      filter: drop-shadow(0 3px 10px rgba(0,0,0,.26));
-
-      display: flex;
-      justify-content: space-evenly;
-      align-items: center;
-      z-index: 1;
   }
 
   .o-icon {
