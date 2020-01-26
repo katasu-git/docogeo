@@ -23,9 +23,9 @@
         </transition>
 
         <GuestList
+            :userList="userList"
             @closeModal="closeModal"
             v-show="flag.isMounted"
-
             v-bind:class="{ slideInRight: flag.guest_list, slideOutRight: !flag.guest_list }"
         />
 
@@ -101,6 +101,7 @@ import GuestList from '../components/Chat_Guide/GuestList'
           spot_info_arr: '',
           img_info: '',
           spot_ex: JSON,
+          userList: '',
           flag: {
               change_spot: false,
               finish_tour: false,
@@ -127,6 +128,7 @@ import GuestList from '../components/Chat_Guide/GuestList'
     methods: {
         init() {
             this.get_spot_info_arr();
+            this.fetch_active_user();
             this.closeModal();
         },
         refresh() {
@@ -326,6 +328,7 @@ import GuestList from '../components/Chat_Guide/GuestList'
             this.flag.change_spot = true;
         },
         show_guestList() {
+            this.fetch_active_user();
             this.flag.isMounted = true;
             this.flag.guest_list = true;
         },
@@ -338,7 +341,12 @@ import GuestList from '../components/Chat_Guide/GuestList'
         },
         returnSended(sended) {
             return sended.substr(10, 6);
-        }
+        },
+        async fetch_active_user() {
+            const url = "https://www2.yoslab.net/~nishimura/docogeo/PHP_C/Chat_G/fetch_active_user.php";
+            const res = await axios.post(url);
+            this.userList = res.data;
+        },
     },
     components: {
         VueHeader: VueHeader,

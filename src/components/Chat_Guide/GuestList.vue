@@ -3,7 +3,7 @@
       <div class="modal">
         <div class="header">
             <div class="header-text">
-            <span class="header-text-num">{{return_user_num()}}</span>
+            <span class="header-text-num">{{return_user_num}}</span>
             頭が参加中
             <img 
                 class="header-img" 
@@ -20,10 +20,10 @@
 
         <div class="userList">
         <div
-            v-for="(userName, i) in userList" :key=i
+            v-for="(userName, i) in userList" :key=userName.id
             class="userName"
         >
-            {{i}} . {{userName.name}}
+            {{i + 1}} . {{userName.name}}
         </div>
         </div>
 
@@ -42,28 +42,23 @@
   export default {
     name: 'guestList',
     props: {
+        userList: '',
     },
     data() {
       return {
-          userList: Array,
           flag: {
               isUserBlank: false
           }
       }
     },
-    created() {
-        this.fetch_active_user();
+    computed: {
+        return_user_num() {
+            return this.userList.length;
+        }
     },
     methods: {
         closeModal: function() {
             this.$emit('closeModal');
-        },
-        async fetch_active_user() {
-            //isActivceを解除する処理
-            const url = "https://www2.yoslab.net/~nishimura/docogeo/PHP_C/Chat_G/fetch_active_user.php";
-            const res = await axios.post(url);
-            this.userList = res.data;
-            this.show_isUser_blank(this.userList);
         },
         show_isUser_blank(userList) {
             if(userList.length === 0) {
@@ -72,9 +67,6 @@
                 this.flag.isUserBlank = false;
             }
         },
-        return_user_num() {
-            return this.userList.length;
-        }
     },
   }
 </script>
@@ -84,7 +76,7 @@
 #guestList {
     height: 100%;
     width: 100%;
-    background-color: rgba(0,0,0, .30);
+    background-color: rgba(0,0,0, .40);
     position: fixed;
     z-index: 2;
     -webkit-user-select: none;
@@ -104,13 +96,15 @@
     width: 100%;
     height: 80px;
     border-bottom: solid 1px rgba(0,0,0, .12);
+    font-weight: bold;
 
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
 }
 
 .header-text-num {
+    margin-left: 17px;
     font-size: 24px;
     font-weight: bold;
     color: #4B8E8D;
