@@ -56,15 +56,28 @@
         </div>
 
         <div class="l-comment_container">
-            <div class="l-comment_row" v-for="ex in spot_ex" :key="ex.ex_id">
+            <div 
+                class="l-comment_row" 
+                v-for="ex in spot_ex" 
+                :key="ex.ex_id"
+            >
                 <div class="l-flex_end">
-                    <div class="l-comment" :style="{ opacity:returnOpacity(ex.isPosted) }">{{ ex.spot_ex }}</div>
+                    <div 
+                        :class="return_hidden_style(ex)"
+                        :style="{ opacity:returnOpacity(ex.isPosted) }"
+                        @click="hide_message(ex)"
+                    >
+                        {{ ex.spot_ex }}
+                    </div>
                     <div 
                         class="o-send_time"
                         :style="{ color:returnTimeCol(ex.isPosted) }"
-                    >{{returnSended(ex.sended)}}</div>
+                    >
+                        {{returnSended(ex.sended)}}
+                    </div>
                 </div>
-                <div class="o-button_hoe"
+                <div
+                    class="o-button_hoe"
                     :style="{ opacity:returnOpacity(ex.isPosted) }"
                     @click="post_ex(ex)"
                 >
@@ -101,6 +114,7 @@ import GuestList from '../components/Chat_Guide/GuestList'
           spot_info_arr: '',
           img_info: '',
           spot_ex: JSON,
+          hidden_message: [],
           userList: '',
           flag: {
               change_spot: false,
@@ -204,15 +218,54 @@ import GuestList from '../components/Chat_Guide/GuestList'
                 }
             });
         },
+        hide_message(ex) {
+            if(this.isExist(ex)) {
+                this.delete_hidden_message(ex);
+            } else {
+                this.hidden_message.push(ex);
+            }
+        },
+        isExist(ex) {
+            if(this.hidden_message.length === 0) {
+                return false;
+            }
+            let flag = false;
+            for(let i=0; i<this.hidden_message.length; i++) {
+                if(this.hidden_message[i].ex_id === ex.ex_id) {
+                    flag = true;
+                }
+            }
+            return flag;
+        },
+        delete_hidden_message(ex) {
+            for(let i=0; i<this.hidden_message.length; i++) {
+                if(this.hidden_message[i].ex_id === ex.ex_id) {
+                    this.hidden_message.splice(i,1);
+                    break;
+                }
+            }
+        },
+        return_hidden_style(ex) {
+            if(this.isExist(ex)) {
+                return 'l-comment-hidden';
+            } else {
+                return 'l-comment';
+            }
+        },
         post_ex(ex) {
             if(ex.isPosted == 0) {
 
-                const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/post_ex.php';
+                const url = 'https://www2.yoslab.net/~nishimura/docogeo/PHP_C/Chat_G/post_ex.php';
                 let params = new URLSearchParams();
                 params.append("tour_id", ex.tour_id);
                 params.append("spot_id", ex.spot_id);
                 params.append("ex_id", ex.ex_id);
                 params.append("posted_ex", ex.spot_ex);
+                if(this.isExist(ex)) {
+                    params.append("isHidden", 1);
+                } else {
+                    params.append("isHidden", 0);
+                }
                 axios
                     .post(url, params)
                     .catch(error => {
@@ -454,6 +507,13 @@ import GuestList from '../components/Chat_Guide/GuestList'
       padding: 10px;
       background-color: #E3E5E5;
       border-radius: 10px;
+  }
+
+  .l-comment-hidden {
+    padding: 8px;
+    background-color: rgba(0,0,0,0);
+    border: solid 2px #4B8E8D;
+    border-radius: 10px;
   }
 
   .o-send_time {
