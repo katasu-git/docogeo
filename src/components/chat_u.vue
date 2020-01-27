@@ -23,7 +23,17 @@
                 :key="ex.ex_id"
             >
                 <div class="l-flex_end">
-                    <div class="l-comment">
+                    <div 
+                        v-if="isHidden(ex) && !isExistInShowList(ex.ex_id)"
+                        class="l-comment-hidden"
+                        @click="show_message(ex.ex_id)"
+                    >
+                        <p>ここをタッチすると</p>
+                        <p>メッセージが表示されます</p>
+                    </div>
+                    <div 
+                        v-else
+                        class="l-comment">
                         {{ ex.spot_ex }}
                     </div>
                     <div class="o-send_time">{{returnSended(ex.created)}}</div>
@@ -65,6 +75,7 @@ export default {
           flag: {
               end: false
           },
+          showList: []
       }
     },
     created: function () {
@@ -256,6 +267,29 @@ export default {
         },
         returnSended(sended) {
             return sended.substr(10, 6);
+        },
+        isHidden(ex) {
+            if(ex.isHidden == 0) {
+                return false;
+            } else {
+                return true;
+            }
+        },
+        show_message(id) {
+            this.showList.push(id);
+        },
+        isExistInShowList(id) {
+            if(this.showList.length === 0) {
+                return false;
+            }
+            let flag = false;
+            for(let i=0; i<this.showList.length; i++) {
+                if(this.showList[i] === id) {
+                    flag = true;
+                    break;
+                }
+            }
+            return flag;
         }
     },
     components: {
@@ -307,10 +341,12 @@ export default {
 }
 
 .l-comment-hidden {
-padding: 8px;
-background-color: rgba(0,0,0,0);
-border: solid 2px #4B8E8D;
-border-radius: 10px;
+    padding: 20px 10px;
+    background-color: #4B8E8D;
+    border-radius: 10px;
+    color: #fff;
+    font-size: 14px;
+    font-weight: bold;
 }
 
 .hidden-text {

@@ -85,7 +85,6 @@ name: 'vueHeader',
 .title-tourName {
     font-size: 24px;
     font-weight: bold;
-    margin-left: -3px;
 }
 
 .title-spotName {
