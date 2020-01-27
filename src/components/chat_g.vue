@@ -62,12 +62,20 @@
                 :key="ex.ex_id"
             >
                 <div class="l-flex_end">
-                    <div 
-                        :class="return_hidden_style(ex)"
-                        :style="{ opacity:returnOpacity(ex.isPosted) }"
-                        @click="hide_message(ex)"
-                    >
-                        {{ ex.spot_ex }}
+                    <div>
+                        <div 
+                            :class="return_hidden_style(ex)"
+                            :style="{ opacity:returnOpacity(ex.isPosted) }"
+                            @click="hide_message(ex)"
+                        >
+                            {{ ex.spot_ex }}
+                        </div>
+                        <div 
+                            v-show="isExist(ex)"
+                            class="hidden-text"
+                        >
+                            この説明は見えない状態で配信されます
+                        </div>
                     </div>
                     <div 
                         class="o-send_time"
@@ -219,6 +227,9 @@ import GuestList from '../components/Chat_Guide/GuestList'
             });
         },
         hide_message(ex) {
+            if(ex.isPosted == 1) {
+                return;
+            }
             if(this.isExist(ex)) {
                 this.delete_hidden_message(ex);
             } else {
@@ -514,6 +525,13 @@ import GuestList from '../components/Chat_Guide/GuestList'
     background-color: rgba(0,0,0,0);
     border: solid 2px #4B8E8D;
     border-radius: 10px;
+  }
+
+  .hidden-text {
+      margin-top: 5px;
+      color: #4B8E8D;
+      font-size: 10px;
+      text-align: center;
   }
 
   .o-send_time {

@@ -10,37 +10,29 @@
                 @reset_user_info="reset_user_info"
             ></TourEnd>
         </transition>
-      
-        <div class="o-header">
-            <div class="l-header_above">
-                <div class="o-text_tour">{{ tour_info.tour_name }}</div>
-            </div>
-            <div class="l-header_under u-mb20">
-                <button 
-                    class="o-text_tour_min"
-                    @click="change_name()"
-                >あなたの名前:
-                    <span class="u-color-green">{{ user_info.name }}</span>
-                    <img class="u-ml5" src="../assets/Polygon 1.svg" />
-                </button>
-            </div>
-        </div>
 
-        <div class="l-comment">
-            <div class="l-commnet_row" v-for="ex in spot_ex" :key="ex.id">
-                <div class="l-flex-end">
-                    <img 
-                        class="o-image"
-                        :src="return_spot_img(ex)"
-                        v-if="returnFlag(!ex.spot_ex)"
-                    />
-                    <div 
-                        class="o-commnet"
-                        v-if="returnFlag(ex.spot_ex)"
-                    >{{ return_spot_ex(ex) }}</div>
+        <HeaderGuest
+            :tour_info="tour_info"
+            :user_info="user_info"
+        />
+
+        <div class="l-comment_container">
+            <div 
+                class="l-comment_row" 
+                v-for="ex in spot_ex" 
+                :key="ex.ex_id"
+            >
+                <div class="l-flex_end">
+                    <div class="l-comment">
+                        {{ ex.spot_ex }}
+                    </div>
                     <div class="o-send_time">{{returnSended(ex.created)}}</div>
                 </div>
-                <img src="../assets/hoe_button_gray.svg" />
+                <div
+                    class="o-button_hoe"
+                >
+                    <img src="../assets/hoe_button_gray.svg" />
+                </div>
             </div>
         </div>
 
@@ -56,6 +48,7 @@
 
 <script>
 import axios from 'axios'
+import HeaderGuest from './parts/HeaderGuest'
 import Footer from '../components/parts/Footer'
 import TourEnd from '../components/Chat_Guest/TourEnd'
 import { async } from 'q'
@@ -230,7 +223,7 @@ export default {
                 });
         },
         getPost: function() {
-            const url ="https://www2.yoslab.net/~nishimura/geotour/PHP/getPostedPost.php";
+            const url ="https://www2.yoslab.net/~nishimura/docogeo/PHP_C/Chat_U/getPostedPost.php";
             let params = new URLSearchParams();
             params.append("tour_id", this.tour_info.tour_id);
             axios
@@ -266,6 +259,7 @@ export default {
         }
     },
     components: {
+        HeaderGuest: HeaderGuest,
         Footer: Footer,
         TourEnd: TourEnd
     }
@@ -282,153 +276,82 @@ export default {
     color: rgba(0,0,0,.87);
 }
 
-.o-header {
-      position: fixed;
-      height: 80px;
-      width: 100%;
-      background-color: #fff;
-      filter: drop-shadow(0 0 5px rgba(0,0,0,.26));
-      z-index: 1;
-  }
+.l-comment_container {
+    width: calc(100% - 40px);
+    padding: 100px 0 0 20px;
+}
 
-  .l-header_above {
+.l-comment_row {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.l-comment_row:not(:first-of-type) {
+    margin-top: 20px;
+}
+
+.l-comment_row:last-of-type {
+    margin-bottom: 120px;
+}
+
+.l-flex_end {
     width: 100%;
     display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-  }
-
-.o-text_tour {
-    padding: 10px 20px 0 20px;
-    font-size: 24px;
-    line-height: calc(24px * 1.5);
-    font-weight: bold;
-}
-
-.o-image_image_button {
-    padding: 10px 20px 0 0;
-}
-
-.o-button_sort {
-    fill: #4B8E8D;
-}
-
-.l-header_under {
-width: 100%;
-
-display: flex;
-justify-content: space-between;
-align-items: center;
-}
-
-.o-text_tour_min {
-    padding: 0 0 0 20px;
-
-    font-size: 14px;
-    font-weight: bold;
-}
-
-.o-text_add_image {
-    padding: 0 10px 0 0;
-
-    font-size: 12px;
-    font-weight: bold;
-    color: rgba(0,0,0, .26);
 }
 
 .l-comment {
-    position: absolute;
-    top: 100px;
-    width: 100%;
-    overflow-y: scroll;
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.l-commnet_row {
-    width: calc(100% - 40px);
-    display: flex;
-    align-items: center;
-}
-
-.l-commnet_row:not(:first-of-type) {
-    margin-top: 10px;
-}
-
-.l-commnet_row:last-of-type {
-    margin-bottom: 100px;
-}
-
-.o-commnet {
-    width: calc(100% - 55px);
-    margin-right: 10px;
     padding: 10px;
     background-color: #E3E5E5;
     border-radius: 10px;
 }
 
-.o-image {
-    width: calc(100% - 45px);
-    margin-right: 10px;
-    border-radius: 10px;
+.l-comment-hidden {
+padding: 8px;
+background-color: rgba(0,0,0,0);
+border: solid 2px #4B8E8D;
+border-radius: 10px;
 }
 
-.l-flex-end {
-    display: flex;
-    flex-direction: row;
-    align-items: flex-end;
+.hidden-text {
+    margin-top: 5px;
+    color: #4B8E8D;
+    font-size: 10px;
+    text-align: center;
 }
 
 .o-send_time {
-    width: 25px;
-    margin-right: 10px;
+    margin: 0 5px;
+    display: flex;
+    align-items: flex-end;
+
     font-size: 10px;
+    font-weight: bold;
     color: #A2A6A5;
 }
 
-  .l-footer {
-      position: fixed;
-      right: 20px;
-      bottom: 20px;
-      height: 80px;
-      width: calc(100% - 40px);
-      background-color: #fff;
-      border-radius: 100px;
-      filter: drop-shadow(0 3px 10px rgba(0,0,0,.26));
+.o-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
 
-      display: flex;
-      justify-content: space-evenly;
-      align-items: center;
-  }
+.o-icon_img {
+    height: 35px;
+}
 
-  .o-icon {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-  }
+.o-footer_text {
+    margin-top: 10px;
+    font-size: 12px;
+    color: #C2C7C6;
+}
 
-  .o-icon_img {
-      height: 35px;
-  }
+.u-color-green {
+color: #4B8E8D;
+}
 
-  .o-footer_text {
-      margin-top: 10px;
-      font-size: 12px;
-      color: #C2C7C6;
-  }
-
-  .u-color-green {
-    color: #4B8E8D;
-  }
-
-  .u-color-red {
-    color: #CC544D;
-  }
+.u-color-red {
+color: #CC544D;
+}
 
 </style>
