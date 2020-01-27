@@ -14,6 +14,7 @@
         <HeaderGuest
             :tour_info="tour_info"
             :user_info="user_info"
+            @change_name="change_name"
         />
 
         <div class="l-comment_container">
@@ -52,6 +53,14 @@
             @move_page="move_page">
         </Footer>
 
+        <ChageName
+            v-show="flag.isMounted"
+            v-bind:class="{ slideIn: flag.change_name, slideOut: !flag.change_name }"
+            :user_info="user_info"
+            @close_modal="close_modal"
+            @set_local_user_name="set_local_user_name"
+        />
+
       </div>
   </div>
 </template>
@@ -61,6 +70,7 @@ import axios from 'axios'
 import HeaderGuest from './parts/HeaderGuest'
 import Footer from '../components/parts/Footer'
 import TourEnd from '../components/Chat_Guest/TourEnd'
+import ChageName from '../components/Chat_Guest/ChangeName'
 import { async } from 'q'
 
 export default {
@@ -73,7 +83,9 @@ export default {
           user_info: '',
           spot_ex: JSON,
           flag: {
-              end: false
+              end: false,
+              chage_name: false,
+              isMounted: false
           },
           showList: []
       }
@@ -98,6 +110,9 @@ export default {
                 this.break_tour_timer();
 
             }.bind(this), 1000);
+        },
+        close_modal: function() {
+            this.flag.change_name = false;
         },
         set_tour_info() {
             this.$localStorage.set('user','guest');
@@ -290,12 +305,22 @@ export default {
                 }
             }
             return flag;
+        },
+        change_name() {
+            this.flag.isMounted = true;
+            this.flag.change_name = true;
+        },
+        set_local_user_name(user_name_changed) {
+          this.user_info.name = user_name_changed;
+          this.$localStorage.remove('user_info');
+          this.$localStorage.set('user_info',JSON.stringify(this.user_info));
         }
     },
     components: {
         HeaderGuest: HeaderGuest,
         Footer: Footer,
-        TourEnd: TourEnd
+        TourEnd: TourEnd,
+        ChageName: ChageName
     }
 }
 
@@ -304,6 +329,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 #chat_u {
+    position: fixed;
     height: 100%;
     width: 100%;
     background-color: #F5F5F5;

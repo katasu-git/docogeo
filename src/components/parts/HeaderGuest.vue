@@ -6,6 +6,7 @@
         </div>
         <div 
             class="title-spotName"
+            @click="change_name"
         >
             {{user_info.name}}
             <img class="u-ml5" src="../../assets/Polygon 1.svg" />
@@ -26,7 +27,9 @@ name: 'vueHeader',
         }
     },
     methods: {
-
+        change_name() {
+          this.$emit('change_name');
+        },
     },
 }
 </script>
