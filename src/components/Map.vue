@@ -1,23 +1,10 @@
 <template>
     <div id="maps">
 
-
-        <div class="o-header">
-            <div class="l-header_above">
-                <div class="o-text_tour">{{ tour_info.tour_name }}</div>
-                <div 
-                    class="o-image_image_button"
-                ><img :style="{opacity : 0}" src="../assets/close_button.svg" /></div>
-            </div>
-            <div class="l-header_under u-mb20">
-                <button 
-                    class="o-text_tour_min"
-                >
-                    <span class="u-color-green">{{spot_info.spot_name}}</span>
-                </button>
-            </div>
-        </div>
-
+        <HeaderGuest 
+            :tour_info="tour_info"
+            :user_info="user_info"
+        />
 
         <div class="l_altitude">
             <div class="o_altitude">
@@ -60,6 +47,7 @@
 
 <script>
 import axios from 'axios'
+import HeaderGuest from '../components/parts/HeaderGuest'
 import Footer from '../components/parts/Footer'
 
   export default {
@@ -70,6 +58,7 @@ import Footer from '../components/parts/Footer'
         user: this.$localStorage.get('user'),
         tour_info: '',
         spot_info: '',
+        user_info: '',
         src: String,
         lat: Number,
         lng: Number,
@@ -87,6 +76,7 @@ import Footer from '../components/parts/Footer'
         this.tour_info = JSON.parse(this.$localStorage.get('now_tour_info'));
         console.log(this.user)
         this.spot_info = JSON.parse(this.$localStorage.get('now_spot_info'));
+        this.user_info = JSON.parse(this.$localStorage.get('user_info'));
     },
     mounted() {
         this.init();
@@ -131,6 +121,7 @@ import Footer from '../components/parts/Footer'
     },
     components: {
         Footer: Footer,
+        HeaderGuest: HeaderGuest
     }
   }
 

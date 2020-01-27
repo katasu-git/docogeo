@@ -5,6 +5,7 @@
             {{tour_info.tour_name}}
         </div>
         <div 
+            v-if="user_info"
             class="title-spotName"
             @click="change_name"
         >
