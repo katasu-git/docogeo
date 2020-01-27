@@ -8,7 +8,7 @@
           <div class="o-text_sub">このイベントは終了しました</div>
           <div class="l_button">
             <div
-                @click="jumpPage()"
+                @click="reset_user_info()"
               class="o_button_cancel u_pointer">トップに戻る</div>
           </div>
         </div>
@@ -23,14 +23,15 @@
   export default {
     name: 'tourEnd',
     props: {
-        tour_id: '',
-        tour_name: ''
+        tour_name: '',
+        user_info: '',
     },
     methods: {
-        jumpPage() {
-            this.$router.push({
-                name: "top_u"
-            });
+        async reset_user_info() {
+          await this.$emit('reset_user_info');
+          this.$router.push({
+            name: 'top_u'
+          });
         }
     },
   }
