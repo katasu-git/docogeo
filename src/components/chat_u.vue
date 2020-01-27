@@ -7,6 +7,7 @@
                 v-show="flag.end"
                 :tour_name="tour_info.tour_name"
                 :user_info="user_info"
+                @reset_user_info="reset_user_info"
             ></TourEnd>
         </transition>
       
@@ -125,6 +126,7 @@ export default {
         },
         async reset_user_info() {
             //isActivceを解除する処理
+            console.log("発火")
             const url = "https://www2.yoslab.net/~nishimura/docogeo/PHP_C/Chat_U/reset_user_info.php";
             let params = new URLSearchParams();
             params.append("id", this.user_info.id);
@@ -145,8 +147,8 @@ export default {
             let now = Date.now()
             let dif = now - timestamp;
             let pass_min = dif/60/1000;
-            //9時間経過に設定
-            if(pass_min > 5400) {
+            //540分 = 9時間経過に設定
+            if(pass_min > 540) {
                 return true;
             } else {
                 return false;
@@ -203,7 +205,6 @@ export default {
                     if(this.is_created_over_time(response.data.start_time)) {
                         //開始から9時間でアクセス不可にする
                         this.flag.end = true;
-                        this.finish_tour();
                     }
                 })
                 .catch(error => {
@@ -221,24 +222,7 @@ export default {
                     if(response.data[0].isActive == 0) {
                         //開始から9時間でアクセス不可にする
                         this.flag.end = true;
-                        this.finish_tour();
                     }
-                })
-                .catch(error => {
-                    // エラーを受け取る
-                    console.log(error);
-                });
-        },
-        finish_tour() {
-            //isAcive == 0にする
-            const url = 'https://www2.yoslab.net/~nishimura/docogeo/PHP_C/Chat_U/finish_tour.php';
-            let params = new URLSearchParams();
-            params.append('tour_id', this.tour_info.tour_id);
-            params.append('user_name_id', this.user_info.user_name_id);
-            axios
-                .post(url, params)
-                .then(()=>{
-                    this.reset_user_info();
                 })
                 .catch(error => {
                     // エラーを受け取る

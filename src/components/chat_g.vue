@@ -10,7 +10,7 @@
                 @closeModal="closeModal"
                 @change_spot_name="change_spot_name"
                 v-show="flag.change_spot"
-            ></ToggleSpot>
+            />
         </transition>
 
         <transition name="fade">
@@ -19,7 +19,7 @@
                 @closeModal="closeModal"
                 @move_page="move_page"
                 v-show="flag.finish_tour"
-            ></FinishTour>
+            />
         </transition>
 
         <GuestList
