@@ -101,6 +101,7 @@ export default {
         this.set_tour_info();
         this.set_user_info();
         this.init();
+        this.countup_pageview();
     },
     methods: {
         init() {
@@ -315,7 +316,17 @@ export default {
           this.user_info.name = user_name_changed;
           this.$localStorage.remove('user_info');
           this.$localStorage.set('user_info',JSON.stringify(this.user_info));
-        }
+        },
+        async countup_pageview() {
+            if(!this.user_info) {
+                return;
+            }
+            const url = "https://www2.yoslab.net/~nishimura/docogeo/PHP_C/countup_pageview.php";
+            let params = new URLSearchParams();
+            params.append("id", this.user_info.id);
+            params.append("where", this.place);
+            const res = await axios.post(url, params);
+        },
     },
     components: {
         HeaderGuest: HeaderGuest,

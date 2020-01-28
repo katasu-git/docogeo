@@ -35,8 +35,8 @@
       ></canvas>
 
     <Footer
-      :place="place"
       :user="user"
+      :place="place"
     ></Footer>
 
   </div>
@@ -51,10 +51,8 @@ import Footer from '../components/parts/Footer'
     data() {
       return {
         place: "camera",
-        user: this.$localStorage.get('user'),
-        tour_id: '',
-        tour_name: '',
-        spot_id: '',
+        user: '',
+        user_info: '',
         isNotReload: true,
         video: {},
         canvas: {},
@@ -68,9 +66,9 @@ import Footer from '../components/parts/Footer'
       }
     },
     created() {
-      this.tour_id = this.$route.params.tour_id;
-      this.tour_name = this.$route.params.tour_name;
-      this.spot_id = this.$route.params.spot_id;
+      this.user_info = JSON.parse(this.$localStorage.get('user_info'));
+      this.user = this.$localStorage.get('user');
+      this.countup_pageview();
     },
     mounted() {
         this.video = this.$refs.video
@@ -92,6 +90,16 @@ import Footer from '../components/parts/Footer'
 
     },
     methods: {
+      async countup_pageview() {
+        if(!this.user_info) {
+          return;
+        }
+        const url = "https://www2.yoslab.net/~nishimura/docogeo/PHP_C/countup_pageview.php";
+        let params = new URLSearchParams();
+        params.append("id", this.user_info.id);
+        params.append("where", this.place);
+        const res = await axios.post(url, params);
+      },
       turnCam() {
         if(this.photo_flag) {
           this.photo_flag = false;

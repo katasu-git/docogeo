@@ -41,7 +41,7 @@
     name: 'footer_comp',
     props: {
       place: '',
-      user: ''
+      user: '',
     },
     data() {
       return {
@@ -49,9 +49,7 @@
     },
     methods: {
         move_page(where) {
-          console.log("発火")
           let page = where;
-          console.log(this.user)
           if(this.user == "guide" && where == 'chat') {
             page = 'chat_g'
           } else if(this.user == "guest" && where == 'chat') {

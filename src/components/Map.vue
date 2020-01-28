@@ -74,12 +74,12 @@ import Footer from '../components/parts/Footer'
     created() {
         navigator.geolocation.getCurrentPosition(this.create_src);
         this.tour_info = JSON.parse(this.$localStorage.get('now_tour_info'));
-        console.log(this.user)
         this.spot_info = JSON.parse(this.$localStorage.get('now_spot_info'));
         this.user_info = JSON.parse(this.$localStorage.get('user_info'));
     },
     mounted() {
         this.init();
+        this.countup_pageview()
     },
     methods: {
         init() {
@@ -117,7 +117,17 @@ import Footer from '../components/parts/Footer'
             } else {
                 return '20px'
             }
-        }
+        },
+        async countup_pageview() {
+            if(!this.user_info) {
+                return;
+            }
+            const url = "https://www2.yoslab.net/~nishimura/docogeo/PHP_C/countup_pageview.php";
+            let params = new URLSearchParams();
+            params.append("id", this.user_info.id);
+            params.append("where", this.place);
+            const res = await axios.post(url, params);
+        },
     },
     components: {
         Footer: Footer,
