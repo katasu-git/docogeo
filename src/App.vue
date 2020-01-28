@@ -29,6 +29,10 @@ a, p, button {
   padding: 0;
 }
 
+.kaigyo {
+    white-space: pre-line; /*改行の指定に必要*/
+}
+
 button, input {
   border: none;
   background-color: rgba(0,0,0,0);

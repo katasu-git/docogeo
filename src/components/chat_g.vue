@@ -68,7 +68,7 @@
                             :style="{ opacity:returnOpacity(ex.isPosted) }"
                             @click="hide_message(ex)"
                         >
-                            {{ ex.spot_ex }}
+                            <div class="kaigyo">{{ ex.spot_ex }}</div>
                         </div>
                         <div 
                             v-show="isExist(ex)"
@@ -515,7 +515,7 @@ import GuestList from '../components/Chat_Guide/GuestList'
   }
 
   .l-comment {
-      padding: 10px;
+      padding: 10px 10px 10px 10px;
       background-color: #E3E5E5;
       border-radius: 10px;
   }

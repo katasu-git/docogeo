@@ -34,8 +34,9 @@
                     </div>
                     <div 
                         v-else
-                        class="l-comment">
-                        {{ ex.spot_ex }}
+                        class="l-comment"
+                    >
+                        <div class="kaigyo">{{ ex.spot_ex }}</div>
                     </div>
                     <div class="o-send_time">{{returnSended(ex.created)}}</div>
                 </div>

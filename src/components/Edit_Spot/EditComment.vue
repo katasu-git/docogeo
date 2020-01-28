@@ -2,7 +2,7 @@
   <div id="edit">
     <div class="o-image u-mt20"></div>
     <form class="u-mt20">
-        <input type="text" placeholder="説明を入力" v-model="selected_changed" />
+        <textarea placeholder="説明を入力" v-model="selected_changed" cols="50" rows="5"></textarea>
     </form>
     <div class="o-border u-mt40"></div>
     <div class="l-button">
@@ -138,6 +138,15 @@
 
   .u-mt40 {
       margin-top: 40px;
+  }
+
+  textarea {
+    padding: 20px;
+    font-size: 16px;
+    width: calc(100vw - 80px);
+    border-radius: 10px;
+    border: 1px solid rgba(0,0,0, .12);
+    outline: none;
   }
 
 </style>

@@ -6,6 +6,7 @@ header("Access-Control-Allow-Origin: *"); //CORS回避
 function create_comment() {
     //必要な引数を用意
     $comment = $_POST['comment'];
+    //$comment = nl2br($comment);//改行
     $tour_id = $_POST['tour_id'];
     $spot_id = $_POST['spot_id'];
     $date = date("Y/m/d H:i:s");

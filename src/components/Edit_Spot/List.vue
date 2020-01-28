@@ -87,6 +87,7 @@ export default {
       padding: 10px;
       background-color: #E3E5E5;
       border-radius: 10px;
+      white-space: pre-line; /*改行の指定に必要*/
   }
 
   .o-send_time {
