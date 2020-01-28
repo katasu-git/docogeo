@@ -32,11 +32,18 @@
                         <p>ここをタッチすると</p>
                         <p>メッセージが表示されます</p>
                     </div>
-                    <div 
-                        v-else
-                        class="l-comment"
-                    >
-                        <div class="kaigyo">{{ ex.spot_ex }}</div>
+                    <div v-else>
+                        <div
+                            class="l-comment"
+                            v-if="ex.spot_ex"
+                        >
+                            <div class="kaigyo">{{ ex.spot_ex }}</div>
+                        </div>
+                        <img 
+                            v-if="ex.imgPath"
+                            class="o-image"
+                            :src="(ex.imgPath)"
+                        />
                     </div>
                     <div class="o-send_time">{{returnSended(ex.created)}}</div>
                 </div>
@@ -82,7 +89,7 @@ export default {
           user: 'guest',
           tour_info: '',
           user_info: '',
-          spot_ex: JSON,
+          spot_ex: [],
           flag: {
               end: false,
               chage_name: false,
@@ -105,8 +112,9 @@ export default {
     },
     methods: {
         init() {
+            this.get_all_post();//全件取得
             setInterval(function() {
-                this.getPost();
+                this.get_added_post();
                 //ツアー終了の処理
                 this.judge_tour_isActive();
                 this.break_tour_timer();
@@ -250,7 +258,7 @@ export default {
                     console.log(error);
                 });
         },
-        getPost: function() {
+        get_all_post() {
             const url ="https://www2.yoslab.net/~nishimura/docogeo/PHP_C/Chat_U/getPostedPost.php";
             let params = new URLSearchParams();
             params.append("tour_id", this.tour_info.tour_id);
@@ -264,23 +272,55 @@ export default {
                     console.log(error);
                 });
         },
+        get_added_post() {
+            const url ="https://www2.yoslab.net/~nishimura/docogeo/PHP_C/Chat_U/getPostedPost.php";
+            let params = new URLSearchParams();
+            params.append("tour_id", this.tour_info.tour_id);
+            axios
+                .post(url, params)
+                .then(response => {
+                    let dif = this.count_dif_spot_ex(response.data)
+
+                    if( this.isAddedPost(dif) ) {
+                        //新しく説明が追加された場合
+                        this.insert_new_post(response.data);
+                    } else {
+                        //変化がない場合
+                        this.get_all_post();
+                    }
+                })
+                .catch(error => {
+                    // エラーを受け取る
+                    console.log(error);
+                });
+        },
+        count_dif_spot_ex(added_data) {
+            let now_len = this.spot_ex.length;
+            let new_len = added_data.length;
+            let dif = new_len - now_len;
+            return dif;
+        },
+        isAddedPost(dif) {
+            if(dif > 0) {
+                console.log("新しい説明が配信されました");
+                return true;
+            } else if(dif < 0) {
+                console.log("説明が取り消されました");
+                return false;
+            }
+        },
+        insert_new_post(added_data) {
+            let new_len = added_data.length;
+            let dif = this.count_dif_spot_ex(added_data);
+            added_data.splice(0, new_len - dif);
+            for(let i=0; i<dif; i++) {
+                this.spot_ex.push(added_data[i]);
+            }
+        },
         move_page: function(where) {
             this.$router.push({
                 name: where
             });
-        },
-        return_spot_ex(ex) {
-            return ex.spot_ex;
-        },
-        return_spot_img(ex) {
-            return ex.imgPath;
-        },
-        returnFlag(contents) {
-            if(contents == '' || contents == undefined || contents == null) {
-                return false;
-            } else {
-                return true;
-            }
         },
         returnSended(sended) {
             return sended.substr(10, 6);
@@ -402,6 +442,12 @@ export default {
     font-size: 10px;
     font-weight: bold;
     color: #A2A6A5;
+}
+
+.o-image {
+    width: calc(100% - 45px);
+    margin-right: 10px;
+    border-radius: 10px;
 }
 
 .o-icon {
