@@ -445,7 +445,8 @@ export default {
 }
 
 .o-image {
-    width: calc(100% - 45px);
+    width: 100%;
+    max-width: 300px;
     margin-right: 10px;
     border-radius: 10px;
 }
