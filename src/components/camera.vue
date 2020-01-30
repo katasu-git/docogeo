@@ -72,6 +72,8 @@ import Footer from '../components/parts/Footer'
     },
     mounted() {
         this.video = this.$refs.video
+        console.log(navigator.mediaDevices)
+        console.log(navigator.mediaDevices.getUserMedia)
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
             const constraints = {
                 audio: false,
@@ -124,7 +126,7 @@ import Footer from '../components/parts/Footer'
         //canvasのサイズ変更
         let canvas = document.getElementById("canvas");
         this.video_w = document.getElementById("video").clientWidth;
-        //this.video_h = document.getElementById("video").clientHeight;
+        this.video_h = document.getElementById("video").clientHeight;
 
         canvas.width = this.video_w;
         canvas.height = this.video_h;
