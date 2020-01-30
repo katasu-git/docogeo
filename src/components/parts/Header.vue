@@ -65,6 +65,12 @@ name: 'vueHeader',
             }
             this.$emit('changeSpot');
         },
+        show_guestList() {
+            if(this.place === "map") {
+                return;
+            }
+            this.$emit('show_guestList');
+        }
     },
 }
 </script>

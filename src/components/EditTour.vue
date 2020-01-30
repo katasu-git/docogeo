@@ -102,7 +102,10 @@ import ChangeName from '../components/Edit_Tour/ChangeName'
     },
     methods: {
       init() {
-        //localstrageに登録するときはJSON.stringify, 取得するときはJSON.parseする必要あり
+        //ローカルストレージの初期化
+        this.$localStorage.remove('now_tour_info');
+        this.$localStorage.remove('now_spot_info');
+
         if(JSON.stringify(this.$route.params) != "{}") {
           this.$localStorage.set('now_tour_info',JSON.stringify(this.$route.params.tour_info));
           this.tour_info = this.$route.params.tour_info;

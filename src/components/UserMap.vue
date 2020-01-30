@@ -15,7 +15,7 @@
                         class="o_alt_green"
                         :style="{ 'font-size': return_font_size()}" 
                     >{{return_altitude()}}</div>
-                </div>
+                m</div>
             </div>
         </div>
         <div class="body">

@@ -12,7 +12,7 @@ function countup_pageview() {
         $sql = "UPDATE active_user SET camera = camera + 1 WHERE id = $id";
     } else if($where == 'userChat') {
         $sql = "UPDATE active_user SET chat = chat + 1 WHERE id = $id";
-    } else if($where == 'userMaps') {
+    } else if($where == 'userMap') {
         $sql = "UPDATE active_user SET map = map + 1 WHERE id = $id";
     }
 
