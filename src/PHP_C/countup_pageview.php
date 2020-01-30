@@ -8,11 +8,11 @@ function countup_pageview() {
     $id = $_POST['id'];
     $where = $_POST['where'];
 
-    if($where == 'camera') {
+    if($where == 'userCamera') {
         $sql = "UPDATE active_user SET camera = camera + 1 WHERE id = $id";
-    } else if($where == 'chat') {
+    } else if($where == 'userChat') {
         $sql = "UPDATE active_user SET chat = chat + 1 WHERE id = $id";
-    } else if($where == 'map') {
+    } else if($where == 'userMaps') {
         $sql = "UPDATE active_user SET map = map + 1 WHERE id = $id";
     }
 

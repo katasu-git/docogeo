@@ -1,10 +1,10 @@
 <template>
-    <div id="maps">
+    <div id="userMap">
 
-        <VueHeader
-            :place="place"
+        <HeaderGuest 
             :tour_info="tour_info"
-            :spot_info="spot_info"
+            :user_info="user_info"
+            :place="place"
         />
 
         <div class="l_altitude">
@@ -15,7 +15,7 @@
                         class="o_alt_green"
                         :style="{ 'font-size': return_font_size()}" 
                     >{{return_altitude()}}</div>
-                m</div>
+                </div>
             </div>
         </div>
         <div class="body">
@@ -48,15 +48,15 @@
 
 <script>
 import axios from 'axios'
-import VueHeader from '../components/parts/Header'
+import HeaderGuest from '../components/parts/HeaderGuest'
 import Footer from '../components/parts/Footer'
 
   export default {
-    name: 'maps',
+    name: 'userMap',
     data() {
       return {
-        place: "map",
-        user: "guide",
+        place: "userMap",
+        user: 'guest',
         tour_info: '',
         spot_info: '',
         user_info: '',
@@ -84,7 +84,7 @@ import Footer from '../components/parts/Footer'
     },
     methods: {
         init() {
-            this.width = (document.getElementById("maps").clientWidth - 40 ) + "px";
+            this.width = (document.getElementById("userMap").clientWidth - 40 ) + "px";
         },
         create_src(position) {
             this.lat =  Number(position.coords.latitude);
@@ -132,7 +132,7 @@ import Footer from '../components/parts/Footer'
     },
     components: {
         Footer: Footer,
-        VueHeader: VueHeader
+        HeaderGuest: HeaderGuest
     }
   }
 
@@ -140,7 +140,7 @@ import Footer from '../components/parts/Footer'
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-#maps {
+#userMap {
     position: relative;
     height: 100%;
     width: 100%;

@@ -116,7 +116,7 @@ import GuestList from '../components/Chat_Guide/GuestList'
     data() {
       return {
           place: "chat",
-          user: this.$localStorage.get('user'), //guide or guest
+          user: "guide",
           tour_info: '',
           spot_info: '',
           spot_info_arr: '',

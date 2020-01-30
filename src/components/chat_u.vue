@@ -83,7 +83,7 @@ export default {
     name: 'chat_u',
     data() {
       return {
-          place: 'chat',
+          place: 'userChat',
           user: 'guest',
           tour_info: '',
           user_info: '',

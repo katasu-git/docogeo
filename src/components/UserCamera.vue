@@ -1,5 +1,5 @@
 <template>
-  <div id="camera">
+  <div id="userCamera">
 
     <div class="video_wrapper">
 
@@ -14,11 +14,6 @@
         class="pile_image"
         v-show="pile_flag"
       />
-
-      <button 
-        class="button_capture"
-        @click="capture"
-      ></button>
 
       <img
         class="button_turnoff"
@@ -46,11 +41,11 @@ import axios from 'axios'
 import { async } from 'q';
 import Footer from '../components/parts/Footer'
   export default {
-    name: 'camera',
+    name: 'userCamera',
     data() {
       return {
-        place: "camera",
-        user: 'guide',
+        place: "userCamera",
+        user: 'guest',
         user_info: '',
         isNotReload: true,
         video: {},
@@ -66,6 +61,7 @@ import Footer from '../components/parts/Footer'
     },
     created() {
       this.user_info = JSON.parse(this.$localStorage.get('user_info'));
+      this.countup_pageview();
     },
     mounted() {
         this.video = this.$refs.video
@@ -89,6 +85,13 @@ import Footer from '../components/parts/Footer'
 
     },
     methods: {
+      async countup_pageview() {
+        const url = "https://www2.yoslab.net/~nishimura/docogeo/PHP_C/countup_pageview.php";
+        let params = new URLSearchParams();
+        params.append("id", this.user_info.id);
+        params.append("where", this.place);
+        const res = await axios.post(url, params);
+      },
       turnCam() {
         if(this.photo_flag) {
           this.photo_flag = false;
@@ -162,7 +165,7 @@ import Footer from '../components/parts/Footer'
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-  #camera, .o-img-area{
+  #userCamera, .o-img-area{
     height: 100%;
     width: 100%;
 

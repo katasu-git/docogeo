@@ -10,7 +10,11 @@
             @click="change_name"
         >
             {{user_info.name}}
-            <img class="u-ml5" src="../../assets/Polygon 1.svg" />
+            <img 
+                v-if="place !== 'userMap'"
+                class="u-ml5" 
+                src="../../assets/Polygon 1.svg" 
+            />
         </div>
     </div>
   </div>
@@ -22,6 +26,7 @@ name: 'vueHeader',
     props: {
         tour_info: '',
         user_info: '',
+        place: ''
     },
     data() {
         return {
