@@ -9,11 +9,17 @@
             class="title-spotName"
         >
             {{spot_info.spot_name}}
-            <img class="u-ml5" src="../../assets/Polygon 1.svg" />
+            <img 
+                v-if="place !== 'map'"
+                class="u-ml5" 
+                src="../../assets/Polygon 1.svg" 
+            />
         </div>
     </div>
 
-    <div class="button-wrapper">
+    <div 
+        v-if="place !== 'map'"
+        class="button-wrapper">
         <div 
             @click="show_guestList()"
             class="button-userList">
@@ -36,7 +42,8 @@ export default {
 name: 'vueHeader',
     props: {
         tour_info: '',
-        spot_info: ''
+        spot_info: '',
+        place: ''
     },
     data() {
         return {
@@ -46,13 +53,22 @@ name: 'vueHeader',
         closeModal: function() {
             this.$emit('closeModal');
         },
-        changeSpot: function() {
-            this.$emit('changeSpot');
-        },
         finish_tour() {
+            if(this.place === "map") {
+                return;
+            }
             this.$emit('finish_tour');
         },
+        changeSpot: function() {
+            if(this.place === "map") {
+                return;
+            }
+            this.$emit('changeSpot');
+        },
         show_guestList() {
+            if(this.place === "map") {
+                return;
+            }
             this.$emit('show_guestList');
         }
     },

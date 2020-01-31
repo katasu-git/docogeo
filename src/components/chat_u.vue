@@ -83,7 +83,7 @@ export default {
     name: 'chat_u',
     data() {
       return {
-          place: 'chat',
+          place: 'userChat',
           user: 'guest',
           tour_info: '',
           user_info: '',
@@ -105,6 +105,9 @@ export default {
 
         this.set_tour_info();
         this.set_user_info();
+        //ツアー終了の処理
+        this.judge_tour_isActive();
+        this.break_tour_timer();
         this.init();
         this.countup_pageview();
     },
@@ -113,27 +116,22 @@ export default {
             this.get_all_post();//全件取得
             setInterval(function() {
                 this.get_added_post();
-                //ツアー終了の処理
-                this.judge_tour_isActive();
-                this.break_tour_timer();
-
             }.bind(this), 1000);
         },
         close_modal: function() {
             this.flag.change_name = false;
         },
         set_tour_info() {
-            this.$localStorage.set('user','guest');
-
             if(JSON.stringify(this.$route.params) != "{}") {
-            //トップページから遷移してきた場合
-            //再読み込み対策のローカル値
-            this.$localStorage.set('now_tour_info',JSON.stringify(this.$route.params.tour_info));
-            //通常の呼び出し先
-            this.tour_info = this.$route.params.tour_info;
+                //ローカルストレージの初期化
+                this.$localStorage.remove('now_tour_info');
+                //再読み込み対策のローカル値
+                this.$localStorage.set('now_tour_info',JSON.stringify(this.$route.params.tour_info));
+                //通常の呼び出し先
+                this.tour_info = this.$route.params.tour_info;
 
             } else {
-            this.tour_info = JSON.parse(this.$localStorage.get('now_tour_info'));
+                this.tour_info = JSON.parse(this.$localStorage.get('now_tour_info'));
             }
         },
         async set_user_info() {

@@ -49,12 +49,31 @@
     },
     methods: {
         move_page(where) {
-          let page = where;
-          if(this.user == "guide" && where == 'chat') {
-            page = 'chat_g'
-          } else if(this.user == "guest" && where == 'chat') {
-            page = 'chat_u'
+          console.log(where)
+          console.log(this.user)
+          let page;
+
+          if(this.user === "guest") {
+            if(where === "camera") {
+              page = "userCamera"
+            } else if(where === "chat") {
+              page = "chat_u"
+            } else if(where === "maps") {
+              page = "userMap"
+            }
+
+          } else if(this.user === "guide") {
+            if(where === "camera") {
+              page =  "camera"
+            } else if(where === "chat") {
+              page = "chat_g"
+            } else if(where === "maps") {
+              page = "maps"
+            }
+
           }
+          console.log(page)
+
           this.$router.push({
                 name: page
           });

@@ -116,7 +116,7 @@ import GuestList from '../components/Chat_Guide/GuestList'
     data() {
       return {
           place: "chat",
-          user: this.$localStorage.get('user'), //guide or guest
+          user: "guide",
           tour_info: '',
           spot_info: '',
           spot_info_arr: '',
@@ -133,14 +133,14 @@ import GuestList from '../components/Chat_Guide/GuestList'
       }
     },
     created: function () {
-        //再読み込み対策のローカル値
-        this.$localStorage.set('user','guide');
         if(JSON.stringify(this.$route.params) != "{}") {
             
-          //再読み込み対策のローカル値
-          this.$localStorage.set('now_tour_info',JSON.stringify(this.$route.params.tour_info));
-          //通常の呼び出し先
-          this.tour_info = this.$route.params.tour_info;
+            //ローカルストレージの初期化
+            this.$localStorage.remove('now_tour_info');
+            //再読み込み対策のローカル値
+            this.$localStorage.set('now_tour_info',JSON.stringify(this.$route.params.tour_info));
+            //通常の呼び出し先
+            this.tour_info = this.$route.params.tour_info;
 
         } else {
           this.tour_info = JSON.parse(this.$localStorage.get('now_tour_info'));
@@ -170,6 +170,7 @@ import GuestList from '../components/Chat_Guide/GuestList'
                     //通常の呼び出し先
                     this.spot_info = response.data[0];
                     if(!this.$localStorage.get('now_spot_info')) {
+                        this.$localStorage.remove('now_spot_info');
                         //再読み込み対策のローカル値
                         this.$localStorage.set('now_spot_info',JSON.stringify(response.data[0]));
                     } else {
@@ -214,6 +215,7 @@ import GuestList from '../components/Chat_Guide/GuestList'
         },
         change_spot_name(spot_selected) {
             this.spot_info = spot_selected;
+            this.$localStorage.remove('now_spot_info');
             this.$localStorage.set('now_spot_info',JSON.stringify(spot_selected));
             this.refresh();
         },
