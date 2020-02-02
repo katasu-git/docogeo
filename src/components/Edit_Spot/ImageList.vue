@@ -65,7 +65,6 @@
   width: 100px;
   min-height: 100px;
   min-width: 100px;
-  background-color: rgba(0,0,0, .05);
   border-radius: 10px;
   -webkit-user-select: none;
   -moz-user-select: none;

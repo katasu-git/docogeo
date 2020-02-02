@@ -8,7 +8,7 @@ function get_spot_image() {
 
     $pdo = connect_mysql();  //mysqlに接続
     
-    $sql = "SELECT * FROM spot_image WHERE tour_id=$tour_id AND spot_id=$spot_id AND isDeleted=0 ORDER BY order_num ASC";
+    $sql = "SELECT * FROM spot_image WHERE tour_id=$tour_id AND spot_id=$spot_id AND isDeleted=0 ORDER BY id DESC";
     $stmt = $pdo -> query($sql);
     $result = array();
     foreach($stmt as $row) {

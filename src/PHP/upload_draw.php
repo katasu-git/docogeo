@@ -17,6 +17,7 @@ function add_img_db($data) {
 
     $path = "/~nishimura/docogeo/pic_draw/" . $dir;
 
+    //drawにインサートする
     $pdo = connect_mysql();  //mysqlに接続
 
     $stmt = $pdo -> prepare("INSERT INTO 
@@ -26,6 +27,8 @@ function add_img_db($data) {
 
     $stmt->execute();
 
+
+    //images にインサートする
     $pdo = connect_mysql();  //mysqlに接続
 
     $stmt = $pdo -> prepare("INSERT INTO 
@@ -34,9 +37,6 @@ function add_img_db($data) {
     $stmt->bindParam(':image_path', $path, PDO::PARAM_STR);
 
     $stmt->execute();
-
-    return $img_path;
-
 }
 
 function base64url_decode($data) { 
@@ -44,30 +44,22 @@ function base64url_decode($data) {
     return base64_decode(str_pad(strtr($data, '-_', '+/'), strlen($data) % 4, '=', STR_PAD_RIGHT)); 
 }
 
-//撮影した画像を配信する
-function post_image($image_path) {
-    //必要な引数を用意
-    $tour_id = $_POST['tour_id'];
-    $spot_id = $_POST['spot_id'];
-
+function get_all_image() {
     $pdo = connect_mysql();  //mysqlに接続
-
-    $stmt = $pdo -> prepare("INSERT INTO 
-    dist_post (tour_id, spot_id, img_id, img_path) 
-    VALUES (:tour_id, :spot_id, :img_id, :img_path)");
-    $stmt->bindValue(':tour_id', $tour_id, PDO::PARAM_INT);
-    $stmt->bindValue(':spot_id', $spot_id, PDO::PARAM_INT);
-    $stmt->bindParam(':img_path', $img_path, PDO::PARAM_STR);
-
-    $stmt->execute();
-    echo "成功！";
-
+    $sql = "SELECT * FROM images WHERE isDeleted=0 ORDER BY id DESC";
+    $stmt = $pdo -> query($sql);
+    $result = array();
+    foreach($stmt as $row) {
+        //帰り値の設定
+        $image = array('id' => $row['id'], 'image_path' => $row['image_path']);
+        array_push($result, $image);
+    }
+    return $result;
 }
 
 try {
     add_img_db($_POST['canvasData']);
-    //post_image($image_path);
-    return "成功";
+    echo json_encode(get_all_image());
 } catch(PDOException $e) {
     echo $e;
     return $e;

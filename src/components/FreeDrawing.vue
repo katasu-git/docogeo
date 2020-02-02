@@ -228,7 +228,7 @@ export default {
           axios
             .post(url, params)
             .then(response => {
-              //console.log(response.data);
+              this.add_image_to_spot(response.data[0]);
               this.jump("camera");
             })
             .catch(error => {
@@ -236,20 +236,14 @@ export default {
               console.log(error);
             });
         },
-        base64ToBlob(base64) {
-            var base64Data = base64.split(',')[1], // Data URLからBase64のデータ部分のみを取得
-                  data = window.atob(base64Data), // base64形式の文字列をデコード
-                  buff = new ArrayBuffer(data.length),
-                  arr = new Uint8Array(buff),
-                  blob,
-                  i,
-                  dataLen;
-            // blobの生成
-            for (i = 0, dataLen = data.length; i < dataLen; i++) {
-                arr[i] = data.charCodeAt(i);
-            }
-            blob = new Blob([arr], {type: 'image/png'});
-            return blob;
+        add_image_to_spot(image) {
+          const url = "https://www2.yoslab.net/~nishimura/docogeo/PHP_C/add_image_to_spot.php";
+          let params = new URLSearchParams();
+          params.append('tour_id', this.tour_info.tour_id);
+          params.append('spot_id', this.spot_info.spot_id);
+          params.append('image_id', image.id);
+          params.append('image_path', image.image_path);
+          axios.post(url, params)
         },
         jump(where) {
          this.$router.push({

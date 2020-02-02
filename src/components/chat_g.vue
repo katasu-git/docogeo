@@ -336,7 +336,7 @@ import GuestList from '../components/Chat_Guide/GuestList'
                     let params = new URLSearchParams();
                     params.append("tour_id", image.tour_id);
                     params.append("spot_id", image.spot_id);
-                    params.append("img_id", image.image_id);
+                    params.append("image_id", image.image_id);
                     params.append("img_path", image.image_path);
                     axios
                         .post(url, params).then(()=>{
@@ -457,7 +457,6 @@ import GuestList from '../components/Chat_Guide/GuestList'
     min-width: 100px;
     max-height: 100px;
     max-width: 100px;
-    background-color: rgba(0,0,0, .05);
     border-radius: 10px;
   }
 
