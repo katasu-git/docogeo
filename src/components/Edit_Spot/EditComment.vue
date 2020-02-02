@@ -140,10 +140,16 @@
       margin-top: 40px;
   }
 
+  form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
   textarea {
     padding: 20px;
     font-size: 16px;
-    width: calc(100vw - 80px);
+    width: calc(100% - 80px);
     border-radius: 10px;
     border: 1px solid rgba(0,0,0, .12);
     outline: none;
