@@ -89,21 +89,6 @@
     font-weight: bold;
   }
 
-  input {
-      width: calc(100vw - 20px);
-      font-size: 18px;
-      font-weight: bold;
-      color: rgba(0,0,0, .87);
-      text-align: center;
-  }
-
-  input::placeholder {
-      font-size: 18px;
-      font-weight: bold;
-      color: rgba(0,0,0, .12);
-      text-align: center;
-  }
-
   .l-button {
       width: 100%;
       display: flex;
@@ -139,10 +124,16 @@
       margin-top: 40px;
   }
 
+  form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
   textarea {
     padding: 20px;
     font-size: 16px;
-    width: calc(100vw - 80px);
+    width: calc(100% - 80px);
     border-radius: 10px;
     border: 1px solid rgba(0,0,0, .12);
     outline: none;
