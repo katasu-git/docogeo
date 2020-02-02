@@ -1,74 +1,76 @@
 <template>
   <div id="chat_u">
+    <div class="o-background">
 
-    <transition name="fade">
-        <TourEnd
-            v-show="flag.end"
-            :tour_name="tour_info.tour_name"
+        <transition name="fade">
+            <TourEnd
+                v-show="flag.end"
+                :tour_name="tour_info.tour_name"
+                :user_info="user_info"
+                @reset_user_info="reset_user_info"
+            ></TourEnd>
+        </transition>
+        
+        <ChageName
+            v-show="flag.isMounted"
+            v-bind:class="{ slideIn: flag.change_name, slideOut: !flag.change_name }"
             :user_info="user_info"
-            @reset_user_info="reset_user_info"
-        ></TourEnd>
-    </transition>
+            @close_modal="close_modal"
+            @set_local_user_name="set_local_user_name"
+        />
 
-    <HeaderGuest
-        :tour_info="tour_info"
-        :user_info="user_info"
-        @change_name="change_name"
-    />
+        <HeaderGuest
+            :tour_info="tour_info"
+            :user_info="user_info"
+            @change_name="change_name"
+        />
 
-    <div class="l-comment_container">
-        <div 
-            class="l-comment_row" 
-            v-for="ex in spot_ex" 
-            :key="ex.ex_id"
-        >
-            <div class="l-flex_end">
-                <div 
-                    v-if="isHidden(ex) && !isExistInShowList(ex.ex_id)"
-                    class="l-comment-hidden"
-                    @click="show_message(ex.ex_id)"
-                >
-                    <p>ここをタッチすると</p>
-                    <p>メッセージが表示されます</p>
-                </div>
-                <div v-else>
-                    <div
-                        class="l-comment"
-                        v-if="ex.spot_ex"
-                    >
-                        <div class="kaigyo">{{ ex.spot_ex }}</div>
-                    </div>
-                    <v-lazy-image 
-                        v-if="ex.imgPath"
-                        class="o-image"
-                        :src="(ex.imgPath)"
-                    />
-                </div>
-                <div class="o-send_time">{{returnSended(ex.created)}}</div>
-            </div>
-            <div
-                class="o-button_hoe"
+        <div class="l-comment_container">
+            <div 
+                class="l-comment_row" 
+                v-for="ex in spot_ex" 
+                :key="ex.ex_id"
             >
-                <img src="../assets/hoe_button_gray.svg" />
+                <div class="l-flex_end">
+                    <div 
+                        v-if="isHidden(ex) && !isExistInShowList(ex.ex_id)"
+                        class="l-comment-hidden"
+                        @click="show_message(ex.ex_id)"
+                    >
+                        <p>ここをタッチすると</p>
+                        <p>メッセージが表示されます</p>
+                    </div>
+                    <div v-else>
+                        <div
+                            class="l-comment"
+                            v-if="ex.spot_ex"
+                        >
+                            <div class="kaigyo">{{ ex.spot_ex }}</div>
+                        </div>
+                        <v-lazy-image 
+                            v-if="ex.imgPath"
+                            class="o-image"
+                            :src="(ex.imgPath)"
+                        />
+                    </div>
+                    <div class="o-send_time">{{returnSended(ex.created)}}</div>
+                </div>
+                <div
+                    class="o-button_hoe"
+                >
+                    <img src="../assets/hoe_button_gray.svg" />
+                </div>
             </div>
         </div>
+
+        <Footer
+            :place="place"
+            :user="user"
+            @move_page="move_page">
+        </Footer>
+
     </div>
-
-    <Footer
-        :place="place"
-        :user="user"
-        @move_page="move_page">
-    </Footer>
-
-    <ChageName
-        v-show="flag.isMounted"
-        v-bind:class="{ slideIn: flag.change_name, slideOut: !flag.change_name }"
-        :user_info="user_info"
-        @close_modal="close_modal"
-        @set_local_user_name="set_local_user_name"
-    />
-
-      </div>
+  </div>
 </template>
 
 <script>
@@ -382,7 +384,12 @@ export default {
     width: 100%;
     background-color: #F5F5F5;
     color: rgba(0,0,0,.87);
-    overflow: scroll;
+}
+
+.o-background {
+  height: 100%;
+  width: 100%;
+  overflow: scroll;
 }
 
 .l-comment_container {
