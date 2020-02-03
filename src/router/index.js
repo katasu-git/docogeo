@@ -14,6 +14,8 @@ import UserCamera from '@/components/UserCamera'
 import UserMap from '@/components/UserMap'
 import ChatUser from '@/components/chat_u'
 
+import Location from '@/components/Location'
+
 Vue.use(Router)
 
 export default new Router({
@@ -77,6 +79,11 @@ export default new Router({
       path: '/maps',
       name: 'maps',
       component: Maps
+    },
+    {
+      path: '/location',
+      name: 'location',
+      component: Location
     },
   ]
 })

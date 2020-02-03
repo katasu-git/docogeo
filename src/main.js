@@ -8,6 +8,9 @@ import { VLazyImagePlugin } from "v-lazy-image";
 import VueLocalStorage from 'vue-localstorage'
 import * as VueGoogleMaps from 'vue2-google-maps'
 import VueJsonp from 'vue-jsonp'
+import VueScrollTo from 'vue-scrollto'
+
+Vue.use(VueScrollTo)
 
 Vue.use(VLazyImagePlugin);
 Vue.config.productionTip = false

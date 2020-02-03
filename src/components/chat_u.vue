@@ -25,7 +25,7 @@
             @change_name="change_name"
         />
 
-        <div class="l-comment_container">
+        <div id="l-comment_container">
             <div 
                 class="l-comment_row" 
                 v-for="ex in spot_ex" 
@@ -58,10 +58,20 @@
                 <div
                     class="o-button_hoe"
                 >
-                    <img src="../assets/hoe_button_gray.svg" />
+                    <img 
+                        @click="done_like(ex.ex_id)"
+                        src="../assets/hoe_button_gray.svg"
+                        v-if="!isLiked(ex.ex_id)"
+                    />
+                    <img 
+                        @click="done_like(ex.ex_id)"
+                        src="../assets/hoe_button.svg"
+                        v-else
+                    />
                 </div>
             </div>
         </div>
+        <div id="chat-log" />
 
         <Footer
             :place="place"
@@ -91,11 +101,14 @@ export default {
           user_info: '',
           spot_ex: [],
           flag: {
-              end: false,
-              chage_name: false,
-              isMounted: false
+            end: false,
+            chage_name: false,
+            isMounted: false,
+            toBottom: '#bottom',
+            toTop: '#top'
           },
-          showList: []
+          showList: [],
+          showLike: []
       }
     },
     created: function () {
@@ -365,6 +378,30 @@ export default {
             params.append("where", this.place);
             const res = await axios.post(url, params);
         },
+        isLiked(id) {
+            let len = this.showLike.length;
+            let flag = false;
+            for(let i=0; i<len; i++) {
+                if(this.showLike[i] === id) {
+                    flag = true;
+                    break;
+                }
+            }
+            return flag;
+        },
+        done_like(id) {
+            if(!this.isLiked(id)) {
+                this.showLike.push(id);
+            } else {
+                let len = this.showLike.length;
+                for(let i=0; i<len; i++) {
+                    if(this.showLike[i] === id) {
+                        this.showLike.splice(i,1);
+                        break;
+                    }
+                }
+            }
+        }
     },
     components: {
         HeaderGuest: HeaderGuest,
@@ -389,10 +426,11 @@ export default {
 .o-background {
   height: 100%;
   width: 100%;
+  -webkit-overflow-scrolling: touch; /*ios対応*/
   overflow: scroll;
 }
 
-.l-comment_container {
+#l-comment_container {
     width: calc(100% - 40px);
     padding: 100px 0 0 20px;
 }
