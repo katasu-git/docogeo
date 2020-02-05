@@ -24,6 +24,21 @@
             :user_info="user_info"
             @change_name="change_name"
         />
+        
+        <div 
+            v-if="!isPostExist()"
+            class="nothing_here"
+        >
+            <img 
+                src="../assets/kujira.svg"
+                class=""
+            />
+            <p>ようこそ<span class="fs20"> {{user_info.name}} </span>さん！</p>
+            <p class="u-mt20 sub-text">ここにはガイドの解説が表示されます</p>
+            <!--
+            <p class="u-mt20 sub-text">くじらの名前をもじったニックネームです</p>
+            -->
+        </div>
 
         <div id="l-comment_container">
             <div 
@@ -401,6 +416,13 @@ export default {
                     }
                 }
             }
+        },
+        isPostExist() {
+            if(this.spot_ex.length > 0) {
+                return true;
+            } else {
+                return false;
+            }
         }
     },
     components: {
@@ -424,10 +446,10 @@ export default {
 }
 
 .o-background {
-  height: 100%;
-  width: 100%;
-  -webkit-overflow-scrolling: touch; /*ios対応*/
-  overflow: scroll;
+    height: 100%;
+    width: 100%;
+    -webkit-overflow-scrolling: touch; /*ios対応*/
+    overflow: scroll;
 }
 
 #l-comment_container {
@@ -515,6 +537,26 @@ color: #4B8E8D;
 
 .u-color-red {
 color: #CC544D;
+}
+
+.nothing_here {
+    position: absolute;
+    top: -10%;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin: auto;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+}
+
+.fs20 {
+    font-size: 30px;
+    font-weight: bold;
+    color: #4B8E8D;
 }
 
 </style>

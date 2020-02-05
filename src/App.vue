@@ -134,12 +134,29 @@ button, input {
   margin-bottom: 20px;  
 } 
 
+.u-mt10 {
+  margin-top: 10px;
+}
+
+.u-mt20 {
+  margin-top: 20px;
+}
+
+.u-mt40 {
+  margin-top: 40px;
+}
+
 .u-color-green {
   color: #4B8E8D;
 }
 
 .u-color-red {
   color: #CC544D;
+}
+
+.sub-text {
+  color: rgba(0,0,0,.54);
+  font-size: 14px;
 }
 
 </style>
