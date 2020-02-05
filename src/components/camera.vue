@@ -178,6 +178,7 @@ import Footer from '../components/parts/Footer'
 
   #video {
     width: calc(100% - 10px);
+    max-height: calc(100% - 80px);
   }
 
   .pile_image {

@@ -79,29 +79,29 @@
           });
         },
         return_color(button) {
-          if(button == 'camera' && this.place == 'camera') {
+          if(button == 'camera' && (this.place == 'camera' || this.place == 'userCamera')) {
             return '#4B8E8D';
-          } else if(button == 'chat' && this.place == 'chat') {
+          } else if(button == 'chat' && (this.place == 'chat' || this.place == 'userChat')) {
             return '#4B8E8D';
-          } else if(button == 'map' && this.place == 'map') {
+          } else if(button == 'map' && (this.place == 'map' || this.place == 'userMap')) {
             return '#4B8E8D';
           }
         },
         return_src(button) {
           if(button == 'camera') {
-            if(this.place == 'camera') {
+            if(this.place == 'camera' || this.place == 'userCamera') {
               return require('../../assets/camera_active.svg')
             } else {
               return require('../../assets/camera_button.svg')
             }
           } else if(button == 'chat') {
-            if(this.place == 'chat') {
+            if(this.place == 'chat' || this.place == 'userChat') {
               return require('../../assets/comment_active.svg')
             } else {
               return require('../../assets/comment_button.svg')
             }
           } else if(button == 'map') {
-            if(this.place == 'map') {
+            if(this.place == 'map' || this.place == 'userMap') {
               return require('../../assets/map_active.svg')
             } else {
               return require('../../assets/map_button.svg')

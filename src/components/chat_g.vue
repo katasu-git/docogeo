@@ -129,6 +129,7 @@ import GuestList from '../components/Chat_Guide/GuestList'
               finish_tour: false,
               guest_list: false,
               isMounted: false,
+              isTourChanged: false
           }
       }
     },
@@ -141,6 +142,8 @@ import GuestList from '../components/Chat_Guide/GuestList'
             this.$localStorage.set('now_tour_info',JSON.stringify(this.$route.params.tour_info));
             //通常の呼び出し先
             this.tour_info = this.$route.params.tour_info;
+
+            this.flag.isTourChanged = true;
 
         } else {
           this.tour_info = JSON.parse(this.$localStorage.get('now_tour_info'));
@@ -169,7 +172,7 @@ import GuestList from '../components/Chat_Guide/GuestList'
                     this.spot_info_arr = response.data;
                     //通常の呼び出し先
                     this.spot_info = response.data[0];
-                    if(!this.$localStorage.get('now_spot_info')) {
+                    if(!this.$localStorage.get('now_spot_info') || this.flag.isTourChanged) {
                         this.$localStorage.remove('now_spot_info');
                         //再読み込み対策のローカル値
                         this.$localStorage.set('now_spot_info',JSON.stringify(response.data[0]));

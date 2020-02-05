@@ -40,7 +40,7 @@
     height: 100%;
     width: 100%;
     position: fixed;
-    z-index: 1;
+    z-index: 2;
     pointer-events: none;
   }
 
@@ -64,7 +64,7 @@
 
   .o-modal {
     width: calc(100% - 40px);
-    border-radius: 30px;
+    border-radius: 10px;
     background-color: #fff;
 
     display: flex;

@@ -1,9 +1,16 @@
 <template>
   <div id="drawing">
 
+    <transition name="fade">
+        <Uploading
+          v-if="flag_uploading"></Uploading>
+    </transition>
+
+    <!--
     <img 
       class="button_gear"
       src="../assets/gear_icon.svg" />
+    -->
 
     <div
       class="container" 
@@ -19,14 +26,21 @@
     </div>
 
     <div class="l-button">
-      <button @click="jump('camera')">撮影し直す</button>
+      <button 
+        class="re_shot"
+        @click="jump('camera')"
+      >
+        撮影し直す
+      </button>
       <button 
         class="button_capture"
         @click="capture"
       >OK</button>
+      <!--
       <img
         class="button_pen" 
         src="../assets/pen_icon.svg" />
+        -->
     </div>
 
     <canvas 
@@ -45,6 +59,7 @@
 import axios from 'axios'
 import Konva from 'konva';
 import Footer from '../components/parts/Footer'
+import Uploading from '../components/modals/imgUploading'
 
 export default {
   name: 'FreeDrawing',
@@ -88,6 +103,7 @@ export default {
     backgroundLayer: null,
     backgroundImageScope: null,
     file: '',
+    flag_uploading: false,
   }),
   created() {
     this.tour_info = JSON.parse(this.$localStorage.get('now_tour_info'))
@@ -220,6 +236,7 @@ export default {
       })
       },
       postFile: function() {
+          this.flag_uploading = true;
           const url = "https://www2.yoslab.net/~nishimura/geotour/PHP/upload_draw.php";
           let params = new URLSearchParams();
           params.append('canvasData', this.file);
@@ -229,7 +246,6 @@ export default {
             .post(url, params)
             .then(response => {
               this.add_image_to_spot(response.data[0]);
-              this.jump("camera");
             })
             .catch(error => {
               // エラーを受け取る
@@ -243,16 +259,20 @@ export default {
           params.append('spot_id', this.spot_info.spot_id);
           params.append('image_id', image.id);
           params.append('image_path', image.image_path);
-          axios.post(url, params)
+          axios.post(url, params).then(()=>{
+            this.flag_uploading = false;
+            this.jump("camera");
+          })
         },
         jump(where) {
-         this.$router.push({
+          this.$router.push({
             name: where,
-        })
+          })
       },
   },
   components: {
-    Footer: Footer
+    Footer: Footer,
+    Uploading: Uploading
   }
 }
 </script>
@@ -308,6 +328,15 @@ export default {
   position: absolute;
   top: 10px;
   right: 10px;
-  z-index: 2;
+  z-index: 1;
+}
+
+.re_shot {
+  width: 100px;
+  height: 60px;
+  border-radius: 10px;
+  border: solid 3px #fff;
+  background-color: rgba(0,0,0,.12);
+  font-size: 16px;
 }
 </style>
