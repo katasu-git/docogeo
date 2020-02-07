@@ -24,6 +24,14 @@
             :user_info="user_info"
             @change_name="change_name"
         />
+
+        <transition name="fade">
+        <LookImage
+            v-show="flag.lookImage"
+            :src="src_selected"
+            @close_modal="close_modal"
+        />
+        </transition>
         
         <div 
             v-if="!isPostExist()"
@@ -55,7 +63,9 @@
                         <p>ここをタッチすると</p>
                         <p>メッセージが表示されます</p>
                     </div>
-                    <div v-else>
+                    <div 
+                        @click="lookImage(ex.imgPath)"
+                        v-else>
                         <div
                             class="l-comment"
                             v-if="ex.spot_ex"
@@ -104,6 +114,7 @@ import HeaderGuest from './parts/HeaderGuest'
 import Footer from '../components/parts/Footer'
 import TourEnd from '../components/Chat_Guest/TourEnd'
 import ChageName from '../components/Chat_Guest/ChangeName'
+import LookImage from '../components/Chat_Guest/LookImage'
 import { async } from 'q'
 
 export default {
@@ -119,11 +130,11 @@ export default {
             end: false,
             chage_name: false,
             isMounted: false,
-            toBottom: '#bottom',
-            toTop: '#top'
+            lookImage: false
           },
           showList: [],
-          showLike: []
+          showLike: [],
+          src_selected: ''
       }
     },
     created: function () {
@@ -150,6 +161,7 @@ export default {
         },
         close_modal: function() {
             this.flag.change_name = false;
+            this.flag.lookImage = false;
         },
         set_tour_info() {
             if(JSON.stringify(this.$route.params) != "{}") {
@@ -423,13 +435,19 @@ export default {
             } else {
                 return false;
             }
+        },
+        lookImage(src) {
+            this.src_selected = src;
+            this.flag.lookImage  = true;
+            console.log("click")
         }
     },
     components: {
         HeaderGuest: HeaderGuest,
         Footer: Footer,
         TourEnd: TourEnd,
-        ChageName: ChageName
+        ChageName: ChageName,
+        LookImage: LookImage
     }
 }
 
