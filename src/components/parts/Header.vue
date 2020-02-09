@@ -12,7 +12,7 @@
             <img 
                 v-if="place !== 'map'"
                 class="u-ml5" 
-                src="../../assets/Polygon 1.svg" 
+                src="../../assets/Polygon.svg" 
             />
         </div>
     </div>
@@ -81,7 +81,7 @@ name: 'vueHeader',
     width: 100%;
     height: 80px;
     position: fixed;
-    background-color: #fff;
+    background-color: #4B8E8D;
     border-bottom: solid 1px rgba(0,0,0, .12);
     -webkit-user-select: none;
     -moz-user-select: none;
@@ -101,20 +101,21 @@ name: 'vueHeader',
 .title-tourName {
     font-size: 24px;
     font-weight: bold;
+    color: #fff;
 }
 
 .title-spotName {
     margin-top: 2px;
     font-size: 14px;
     font-weight: bold;
-    color: #4B8E8D;
+    color: #fff;
 }
 
 .button-wrapper {
     padding: 10px 10px 0 0;
     font-size: 12px;
     font-weight: bold;
-    color: #A6A2A2;
+    color: #fff;
     display: flex;
 }
 
