@@ -10,7 +10,7 @@ function get_draw_image() {
     $i = 0;
     foreach($stmt as $row) {
         //帰り値の設定
-        $image = array('id' => $row['id'], 'image_path' => $row['image_path']);
+        $image = array('id' => $row['id'], 'image_path' => $row['image_path'], 'opacity' => $row['opacity']);
         array_push($result, $image);
         break;
     }

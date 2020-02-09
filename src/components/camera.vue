@@ -13,6 +13,12 @@
         :src="pile_image"
         class="pile_image"
         v-show="pile_flag"
+        :style="{ opacity: return_opacity()}"
+      />
+
+      <img 
+        class="button_upImage"
+        src="../assets/upImage.svg"
       />
 
       <button 
@@ -20,11 +26,21 @@
         @click="capture"
       ></button>
 
+      <input 
+        type="range" 
+        min="0" 
+        max="100" 
+        step="1" 
+        v-model="opacity_value"
+      />
+
+      <!--
       <img
         class="button_turnoff"
         @click="turnOffPile()"
         src="../assets/turnoff.svg"
       />
+      -->
 
     </div>
 
@@ -62,6 +78,7 @@ import Footer from '../components/parts/Footer'
         video_w: '200',
         video_h: '200',
         pile_image: '',
+        opacity_value: 50,
       }
     },
     created() {
@@ -139,6 +156,7 @@ import Footer from '../components/parts/Footer'
               .then(response => {
               //画像を受け取ったときの処理
                 this.pile_image = response.data[0].image_path;
+                this.opacity_value = response.data[0].opacity;
               })
               .catch(error => {
               // エラーを受け取る
@@ -152,6 +170,9 @@ import Footer from '../components/parts/Footer'
           this.pile_flag = true;
         }
       },
+      return_opacity() {
+         return this.opacity_value + "%";
+      },
     },
     components: {
       Footer: Footer
@@ -162,61 +183,93 @@ import Footer from '../components/parts/Footer'
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-  #camera, .o-img-area{
-    height: 100%;
-    width: 100%;
+#camera, .o-img-area{
+  height: 100%;
+  width: 100%;
 
-    background-color: #F5F5F5;
-    color: rgba(0,0,0,.87);
-  }
+  background-color: #F5F5F5;
+  color: rgba(0,0,0,.87);
+}
 
-  .video_wrapper {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-  }
+.video_wrapper {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+}
 
-  #video {
-    width: calc(100% - 10px);
-    max-height: calc(100% - 80px);
-  }
+#video {
+  width: calc(100% - 10px);
+  max-height: calc(100% - 80px);
+}
 
-  .pile_image {
-    width: calc(100% - 10px);
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 2;
-    opacity: .3;
-  }
+.pile_image {
+  width: calc(100% - 10px);
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  opacity: .3;
+}
 
-  #canvas {
-    position: absolute;
-    top: 0;
-    visibility: hidden;
-  }
+#canvas {
+  position: absolute;
+  top: 0;
+  visibility: hidden;
+}
 
-  .button_capture {
-    z-index: 3;
-    position: absolute;
-    bottom: 10px;
-    right: 0;
-    left: 0;
-    margin: auto;
-    width: 60px;
-    height: 60px;
-    border-radius: 100px;
-    background-color: #C4C4C4;
-    border: solid 3px #fff;
-  }
+.button_capture {
+  z-index: 3;
+  position: absolute;
+  bottom: 10px;
+  right: 0;
+  left: 0;
+  margin: auto;
+  width: 60px;
+  height: 60px;
+  border-radius: 100px;
+  background-color: #C4C4C4;
+  border: solid 3px #fff;
+}
 
-  .button_turnoff {
-    z-index: 3;
-    position: absolute;
-    bottom: 25px;
-    right: 40px;
-    width: 40px;
-    height: 30px;
-  }
+.button_upImage {
+  z-index: 3;
+  position: absolute;
+  bottom: 15px;
+  left: 50px;
+}
+
+.button_turnoff {
+  z-index: 3;
+  position: absolute;
+  bottom: 25px;
+  right: 40px;
+  width: 40px;
+  height: 30px;
+}
+
+input[type=range] {
+  position: absolute;
+  z-index: 3;
+  top: 30px;
+  right: 0;
+  left: 0;
+  margin: auto;
+  width: calc(100% - 40px);
+
+  -webkit-appearance:none;
+  background:#000;
+  height: 5px;
+  border-radius: 100px;
+}
+
+input[type=range]::-webkit-slider-thumb{
+  z-index: 3;
+  -webkit-appearance:none;
+  background:#fff;
+  border: solid 3px #000;
+  height: 30px;
+  width: 30px;
+  border-radius:50%;
+}
 
 </style>

@@ -2,6 +2,34 @@
   <div id="drawing">
 
     <transition name="fade">
+      <div 
+        v-show="flag.check"
+        class="checkImage"
+      >
+        <canvas 
+          id="cvs1"
+          ref="cvs1"
+          :width="width"
+          :height="height"
+          :style="{ opacity: return_opacity()}"
+        />
+        <div class="modal_message">この画像を配信しますか？</div>
+        <div class="modal_opacity">透明度{{opacity_value}}%</div>
+        <div class="button_wrapper">
+          <button 
+            @click="hidden_modal()"
+            class="button_re"
+          >
+            やり直す
+          </button>
+          <button 
+            @click="postFile()"
+            class="button_post">配信</button>
+        </div>
+      </div>
+    </transition>
+
+    <transition name="fade">
         <Uploading
           v-if="flag_uploading"></Uploading>
     </transition>
@@ -14,28 +42,64 @@
 
     <div
       class="container" 
-      ref="container">
+      ref="container"
+      :style="{ opacity: return_opacity()}"
+    >
       
       <canvas
         :width="width"
         :height="height"
         ref="canvas"
-        id="canvas">
-      </canvas>
+        id="canvas"
+      />
 
     </div>
 
+    <input 
+      type="range" 
+      min="0" 
+      max="100" 
+      step="1" 
+      v-model="opacity_value"
+    />
+
     <div class="l-button">
-      <button 
-        class="re_shot"
-        @click="jump('camera')"
-      >
-        撮影し直す
-      </button>
+
+      <div class="flex_colmn">
+        <img
+          @click="jump('camera')"
+          class="button_back"
+          src="../assets/back.svg"
+        />
+        戻る
+      </div>
+
       <button 
         class="button_capture"
         @click="capture"
       >OK</button>
+
+      <div 
+        v-if="flag.half"
+        class="flex_colmn">
+        <img
+          @click="set_width()"
+          class="button_back"
+          src="../assets/half_button.svg"
+        />
+        半分
+      </div>
+      <div 
+        v-else
+        class="flex_colmn">
+        <img
+          @click="set_width()"
+          class="button_back"
+          src="../assets/all_button.svg"
+        />
+        全体
+      </div>
+
       <!--
       <img
         class="button_pen" 
@@ -43,14 +107,10 @@
         -->
     </div>
 
-    <canvas 
-      id="cvs1"
-      ref="cvs1"
-      :width="width"
-      :height="height"
-    ></canvas>
-
-    <img id="back_image_hidden" :src="backgroundImage" />
+    <img 
+      id="back_image_hidden" 
+      :src="backgroundImage" 
+    />
 
   </div>
 </template>
@@ -104,6 +164,11 @@ export default {
     backgroundImageScope: null,
     file: '',
     flag_uploading: false,
+    opacity_value: 50,
+    flag: {
+      half: false,
+      check: false,
+    }
   }),
   created() {
     this.tour_info = JSON.parse(this.$localStorage.get('now_tour_info'))
@@ -228,20 +293,24 @@ export default {
 
       let image = document.getElementById("back_image_hidden")
       this.cvs1 = this.$refs.cvs1;
-      this.cvs1.getContext('2d').drawImage(image, 0, 0, this.width, this.height); //背景
+      this.cvs1.getContext('2d').clearRect(0, 0, this.width, this.height); //キャンバスのリセット
+      if(this.flag.half) {
+        this.cvs1.getContext('2d').drawImage(image, 0, 0, this.width / 2, this.height, 0, 0, this.width / 2, this.height); //背景
+        // http://www.htmq.com/canvas/drawImage_s.shtml
+      } else {
+        this.cvs1.getContext('2d').drawImage(image, 0, 0, this.width, this.height, 0, 0, this.width, this.height); //背景
+      }
       this.cvs1.getContext('2d').drawImage(this.canvas, 0, 0, this.width, this.height); //線
       this.file = this.cvs1.toDataURL('image/png');
-      this.$nextTick(function(){
-        this.postFile();
-      })
+      this.flag.check = true;
       },
       postFile: function() {
+          this.flag.check = false;
           this.flag_uploading = true;
           const url = "https://www2.yoslab.net/~nishimura/geotour/PHP/upload_draw.php";
           let params = new URLSearchParams();
           params.append('canvasData', this.file);
-          params.append('tour_id', this.tour_info.tour_id);
-          params.append('spot_id', this.spot_info.spot_id);
+          params.append('opacity', this.opacity_value);
           axios
             .post(url, params)
             .then(response => {
@@ -268,7 +337,21 @@ export default {
           this.$router.push({
             name: where,
           })
-      },
+       },
+       return_opacity() {
+         return this.opacity_value + "%";
+       },
+       set_width() {
+         if(this.flag.half) {
+           this.flag.half = false;
+         } else {
+           this.flag.half = true;
+         }
+       },
+       hidden_modal() {
+         this.flag.check = false;
+         this.onClearCanvas();
+       }
   },
   components: {
     Footer: Footer,
@@ -284,10 +367,6 @@ export default {
   height: 100%;
 }
 
-#cvs1 {
-  visibility: hidden;
-}
-
 #back_image_hidden {
   visibility: hidden;
 }
@@ -301,27 +380,27 @@ export default {
 .l-button {
   width: 100%;
   position: absolute;
-  bottom: 20px;
+  bottom: 30px;
   right: 0;
   left: 0;
   margin: auto;
 
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
 }
 
 .button_capture {
   width: 60px;
   height: 60px;
   border-radius: 100px;
-  background-color: #C4C4C4;
-  border: solid 3px #fff;
+  background-color: #fff;
+  border: solid 4px #4B8E8D;
 
   font-size: 18px;
   font-weight: bold;
-  color: #fff;
-  margin: 0 40px;
+  color: #4B8E8D;
+  margin: -5px 30px 0 30px;
 }
 
 .button_gear {
@@ -339,4 +418,94 @@ export default {
   background-color: rgba(0,0,0,.12);
   font-size: 16px;
 }
+
+.button_back {
+  margin-bottom: 5px;
+}
+
+.flex_colmn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+input[type=range] {
+  position: absolute;
+  top: 30px;
+  right: 0;
+  left: 0;
+  margin: auto;
+  width: calc(100% - 40px);
+
+  -webkit-appearance:none;
+  background:#000;
+  height: 5px;
+  border-radius: 100px;
+}
+
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;
+  background:#fff;
+  border: solid 3px #000;
+  height: 30px;
+  width: 30px;
+  border-radius:50%;
+}
+
+.checkImage {
+  position: fixed;
+  z-index: 3;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,.90);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.modal_message {
+  margin-top: 30px;
+  font-weight: bold;
+  color: #fff;
+}
+
+.modal_opacity {
+  margin-top: 5px;
+  color: #fff;
+  font-size: 12px;
+}
+
+#cvs1 {
+  max-height: calc(100% - 300px);
+}
+
+.button_wrapper {
+  position: absolute;
+  bottom: 20px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.button_re {
+  margin-right: 100px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #fff;
+}
+
+.button_post {
+  width: 80px;
+  height: 40px;
+  background-color: #4B8E8D;
+  font-size: 16px;
+  font-weight: bold;
+  color: #fff;
+  border-radius: 3px;
+}
+
 </style>

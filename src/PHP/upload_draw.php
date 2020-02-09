@@ -19,11 +19,13 @@ function add_img_db($data) {
 
     //drawにインサートする
     $pdo = connect_mysql();  //mysqlに接続
+    $opacity = $_POST['opacity'];
 
     $stmt = $pdo -> prepare("INSERT INTO 
-    draw (image_path) 
-    VALUES (:image_path)");
+    draw (image_path, opacity) 
+    VALUES (:image_path, :opacity)");
     $stmt->bindParam(':image_path', $path, PDO::PARAM_STR);
+    $stmt->bindParam(':opacity', $opacity, PDO::PARAM_INT);
 
     $stmt->execute();
 
