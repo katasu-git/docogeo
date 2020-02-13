@@ -11,7 +11,7 @@ function get_post() {
     $result = array();
     foreach($stmt as $row) {
         //帰り値の設定
-        $spot_ex = array('ex_id' => $row['id'], 'tour_id' => $row['tour_id'], 'spot_id' => $row['spot_id'], 'spot_ex' => $row['posted_ex'], 'img_flag' => $row['img_flag'], 'imgPath' => $row['img_path'], 'isHidden' => $row['isHidden'], 'created' => $row['created']);
+        $spot_ex = array('ex_id' => $row['id'], 'tour_id' => $row['tour_id'], 'spot_id' => $row['spot_id'], 'img_id' => $row['img_id'], 'exp_id' => $row['ex_id'], 'spot_ex' => $row['posted_ex'], 'imgPath' => $row['img_path'], 'isHidden' => $row['isHidden'], 'created' => $row['created']);
         array_push($result, $spot_ex);
     }
     return $result;

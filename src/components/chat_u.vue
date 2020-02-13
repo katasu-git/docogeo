@@ -84,7 +84,7 @@
                     class="o-button_hoe"
                 >
                     <img 
-                        @click="done_like(ex.ex_id)"
+                        @click="done_like(ex)"
                         src="../assets/hoe_button_gray.svg"
                         v-if="!isLiked(ex.ex_id)"
                     />
@@ -144,6 +144,10 @@ export default {
                 this.move_page('top_u');
         }
 
+        if(JSON.parse(this.$localStorage.get('like_array'))) {
+            this.showLike = JSON.parse(this.$localStorage.get('like_array'))
+        }
+
         this.set_tour_info();
         this.set_user_info();
         //ツアー終了の処理
@@ -156,7 +160,8 @@ export default {
         init() {
             this.get_all_post();//全件取得
             setInterval(function() {
-                this.get_added_post();
+                //this.get_added_post();
+                this.get_all_post();//全件取得
             }.bind(this), 1000);
         },
         close_modal: function() {
@@ -416,17 +421,50 @@ export default {
             }
             return flag;
         },
-        done_like(id) {
-            if(!this.isLiked(id)) {
-                this.showLike.push(id);
+        done_like(ex) {
+            if(!this.isLiked(ex.ex_id)) {
+                this.showLike.push(ex.ex_id);
+                this.$localStorage.remove('like_array');
+                //再読み込み対策のローカル値
+                this.$localStorage.set('like_array',JSON.stringify(this.showLike));
+
+                console.log(ex)
+                this.countup_likes(ex);
             } else {
+
+                return; //いいねは取り消さない
+                /*
+                this.showLike = JSON.parse(this.$localStorage.get('like_array'));
                 let len = this.showLike.length;
                 for(let i=0; i<len; i++) {
                     if(this.showLike[i] === id) {
                         this.showLike.splice(i,1);
+                        this.$localStorage.remove('like_array');
+                        //再読み込み対策のローカル値
+                        this.$localStorage.set('like_array',JSON.stringify(this.showLike));
                         break;
                     }
                 }
+                */
+            }
+        },
+        async countup_likes(ex) {
+            console.log(this.isImage(ex.imgPath))
+            const url = "https://www2.yoslab.net/~nishimura/docogeo/PHP_C/Chat_U/countup_likes.php";
+            let params = new URLSearchParams();
+            params.append("dist_id", ex.ex_id); //distの主キー
+            params.append("img_flag", this.isImage(ex.imgPath));
+            params.append("ex_id", ex.exp_id); //spot_explanationの主キー
+            params.append("img_id", ex.img_id);
+            params.append("tour_id", ex.tour_id);
+            params.append("spot_id", ex.spot_id);
+            const res = await axios.post(url, params);
+        },
+        isImage(img_path) {
+            if(img_path) {
+                return true;
+            } else {
+                return false;
             }
         },
         isPostExist() {
@@ -437,6 +475,9 @@ export default {
             }
         },
         lookImage(src) {
+            if(!src) {
+                return;
+            }
             this.src_selected = src;
             this.flag.lookImage  = true;
             console.log("click")

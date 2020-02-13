@@ -57,6 +57,7 @@
       this.$localStorage.remove('now_tour_info');
       this.$localStorage.remove('now_spot_info');
       this.$localStorage.remove('user');
+      this.$localStorage.remove('like_array');
       //this.$localStorage.remove('user_info');
       this.get_tour_info();
     },
