@@ -51,11 +51,11 @@
           class="o-img_fit" 
           v-for="image in srcArray"
           :key="image.id"
-          @click="popup_image(image, image.id, image.isAdded, image.imgPath)"
+          @click="popup_image(image, image.id, image.isAdded, image.image_path)"
         >
           <v-lazy-image
             class="box"
-            :src="image.imgPath"
+            :src="image.image_path"
           />
         </div>
       </div>
@@ -84,10 +84,10 @@
 import axios from 'axios'
 import { async, resolve, reject } from 'q';
 import Compressor from 'compressorjs'
-import Success from '../components/modals/imgSuccess'
-import PopupImage from "../components/modals/imgPopup"
-import Uploading from "../components/modals/imgUploading"
-import DeleteImage from "../components/modals/imgDelete"
+import Success from '../components/Images_Modal/imgSuccess'
+import PopupImage from "../components/Images_Modal/imgPopup"
+import Uploading from "../components/Images_Modal/imgUploading"
+import DeleteImage from "../components/Images_Modal/imgDelete"
   export default {
     name: 'images',
     data() {
@@ -210,12 +210,13 @@ import DeleteImage from "../components/modals/imgDelete"
         postFile(file) {
             this.closeModal();
             this.flag_uploading = true;
-            const url = "https://www2.yoslab.net/~nishimura/geotour/PHP/upload.php";
+            const url = "https://www3.yoslab.net/~nishimura/docogeo/PHP/Images/upload.php";
             let params = new URLSearchParams();
             params.append('image_data', file);
             axios
               .post(url, params)
               .then(response => {
+                  console.log(response.data)
                   this.closeModal();
               })
               .catch(error => {
@@ -228,7 +229,7 @@ import DeleteImage from "../components/modals/imgDelete"
             console.log("reject");
             return; //editページ以外からの遷移時は登録しない
           }
-          const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/add_img_spot.php';
+          const url = 'https://www3.yoslab.net/~nishimura/docogeo/PHP/Images/add_img_spot.php';
               let params = new URLSearchParams();
               params.append('tour_id', this.tour_info.tour_id);
               params.append('spot_id', this.spot_info.spot_id);
@@ -245,7 +246,7 @@ import DeleteImage from "../components/modals/imgDelete"
               });
         },
         getAllImage() {
-          const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/GET/get_all_image.php';
+          const url = 'https://www3.yoslab.net/~nishimura/docogeo/PHP/Images/get_all_image.php';
               axios.post(url
               ).then(response => {
                 this.srcArray = response.data;
