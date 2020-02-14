@@ -122,7 +122,7 @@ export default {
       this.fetch_tour_info();
     },
     fetch_tour_info() {
-      const url = 'https://www2.yoslab.net/~nishimura/docogeo/PHP_C/Edit_Event/fetch_tour_info.php';
+      const url = 'https://www3.yoslab.net/~nishimura/docogeo/PHP/Edit_Event/fetch_tour_info.php';
       let params = new URLSearchParams();
       axios.post(url, params
       ).then(response => {
@@ -165,6 +165,9 @@ export default {
       this.flag.create_tour = true;
     },
     return_updated(sended) {
+          if(!sended) {
+            return;
+          }
           let month = sended.substr(5, 2) + '月';
           let day = sended.substr(8, 2) + '日';
           let time = ' ' + sended.substr(10, 6);

@@ -33,7 +33,6 @@
 </template>
 
 <script>
-import axios from 'axios'
 export default {
   name: 'list',
   props: {
@@ -41,6 +40,9 @@ export default {
   },
   methods: {
       return_sended(sended) {
+          if(!sended) {
+              return;
+          }
             let month = sended.substr(5, 2) + '月';
             let day = sended.substr(8, 2) + '日';
             let time = ' ' + sended.substr(10, 6);

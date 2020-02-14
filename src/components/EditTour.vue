@@ -6,6 +6,7 @@
         <Delete
           v-show="flag.delete"
           :spot_info="spot_info_selected"
+          :tour_info="tour_info"
           @close_modal="close_modal"
           ></Delete>
       </transition>
@@ -19,6 +20,7 @@
       <ChangeName
         v-bind:class="{ slideIn: flag.change_name, slideOut: !flag.change_name }"
         :spot_info="spot_info_selected"
+        :tour_info="tour_info"
         @close_modal="close_modal"
       ></ChangeName>
       
@@ -117,7 +119,7 @@ import ChangeName from '../components/Edit_Tour/ChangeName'
         this.fetch_spot_info();
       },
       fetch_spot_info: function () {
-        const url = 'https://www2.yoslab.net/~nishimura/docogeo/PHP_C/Edit_Tour/fetch_spot_info.php';
+        const url = 'https://www3.yoslab.net/~nishimura/docogeo/PHP/Edit_Tour/fetch_spot_info.php';
         let params = new URLSearchParams();
         params.append('tour_id', this.tour_info.tour_id);
         axios.post(url, params
