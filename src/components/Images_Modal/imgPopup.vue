@@ -11,7 +11,7 @@
             <div class="o-text">
                 <img
                     class="o-image" 
-                    :src="image.imgPath" />
+                    :src="image.image_path" />
             </div>
             <div class="l-button">
                 <button 

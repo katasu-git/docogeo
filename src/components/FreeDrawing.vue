@@ -119,7 +119,7 @@
 import axios from 'axios'
 import Konva from 'konva';
 import Footer from '../components/parts/Footer'
-import Uploading from '../components/modals/imgUploading'
+import Uploading from '../components/Images_Modal/imgUploading'
 
 export default {
   name: 'FreeDrawing',

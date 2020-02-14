@@ -7,6 +7,8 @@
           v-show="flag.delete"
           :selected="selected"
           :isImage="isImage"
+          :tour_info="tour_info"
+          :spot_info="spot_info"
           @close_modal="close_modal"
         ></Delete>
       </transition>
@@ -124,7 +126,7 @@ export default {
     },
     get_spot_ex: function() {
       const url =
-        "https://www2.yoslab.net/~nishimura/docogeo/PHP_C/Edit_Spot/get_spot_ex.php";
+        "https://www3.yoslab.net/~nishimura/docogeo/PHP/Edit_Spot/get_spot_ex.php";
       let params = new URLSearchParams();
       params.append("spot_id", this.spot_info.spot_id);
       axios
@@ -138,13 +140,14 @@ export default {
         });
     },
     get_spot_image() {
-        const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/GET/get_spot_img.php';
+        const url = 'https://www3.yoslab.net/~nishimura/docogeo/PHP/Edit_Spot/get_spot_img.php';
           let params = new URLSearchParams();
           params.append('tour_id', this.tour_info.tour_id);
           params.append('spot_id', this.spot_info.spot_id);
           axios.post(url, params
           ).then(response => {
             this.image_info = response.data;
+            console.log(this.image_info)
           }).catch(error => {
               // エラーを受け取る
               console.log(error);

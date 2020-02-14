@@ -30,8 +30,10 @@
   export default {
     name: 'delete',
     props: {
-        selected: '',
-        isImage: ''
+      tour_info: '',
+      spot_info: '',
+      selected: '',
+      isImage: ''
     },
     methods: {
         close_modal: function() {
@@ -40,12 +42,14 @@
         delete_spot_ex() {
           let url;
           if(this.isImage) {
-            url = "https://www2.yoslab.net/~nishimura/docogeo/PHP_C/Edit_Spot/delete_spot_image.php";
+            url = "https://www3.yoslab.net/~nishimura/docogeo/PHP/Edit_Spot/delete_spot_image.php";
           } else {
-            url = "https://www2.yoslab.net/~nishimura/docogeo/PHP_C/Edit_Spot/delete_spot_ex.php";
+            url = "https://www3.yoslab.net/~nishimura/docogeo/PHP/Edit_Spot/delete_spot_ex.php";
           }
             let params = new URLSearchParams();
             params.append("id", this.selected.id);
+            params.append("tour_id", this.tour_info.tour_id);
+            params.append("spot_id", this.spot_info.spot_id);
             axios
             .post(url, params)
             .then(response => {

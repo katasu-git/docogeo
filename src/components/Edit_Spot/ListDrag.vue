@@ -31,14 +31,19 @@ export default {
   },
   methods: {
       return_sended(sended) {
-            let month = sended.substr(5, 2) + '月';
-            let day = sended.substr(8, 2) + '日';
-            let time = ' ' + sended.substr(10, 6);
-            return month + day + time;
+        if(!sended) {
+            return;
+        }
+        let month = sended.substr(5, 2) + '月';
+        let day = sended.substr(8, 2) + '日';
+        let time = ' ' + sended.substr(10, 6);
+        return month + day + time;
       },
       update_order_spot_ex() {
-            const url = 'https://www2.yoslab.net/~nishimura/docogeo/PHP_C/Edit_Spot/update_order_spot_ex.php';
-            axios.post(url, this.spot_ex)
+            const url = 'https://www3.yoslab.net/~nishimura/docogeo/PHP/Edit_Spot/update_order_spot_ex.php';
+            let params = new URLSearchParams();
+            params.append("spot_ex", JSON.stringify(this.spot_ex));
+            axios.post(url, params)
                 .then(response => {})
                 .catch(error => {
                     // エラーを受け取る

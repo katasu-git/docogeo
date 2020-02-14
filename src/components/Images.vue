@@ -51,7 +51,7 @@
           class="o-img_fit" 
           v-for="image in srcArray"
           :key="image.id"
-          @click="popup_image(image, image.id, image.isAdded, image.image_path)"
+          @click="popup_image(image)"
         >
           <v-lazy-image
             class="box"
@@ -224,26 +224,27 @@ import DeleteImage from "../components/Images_Modal/imgDelete"
                 console.log(error);
               });
         },
-        addImgToSpot(index, isAdded, image_path) {
+        addImgToSpot(image) {
           if(this.tour_info.tour_id == '' || this.spot_info.spot_id == '') {
             console.log("reject");
             return; //editページ以外からの遷移時は登録しない
           }
+          console.log(image)
           const url = 'https://www3.yoslab.net/~nishimura/docogeo/PHP/Images/add_img_spot.php';
-              let params = new URLSearchParams();
-              params.append('tour_id', this.tour_info.tour_id);
-              params.append('spot_id', this.spot_info.spot_id);
-              params.append('image_id', index);
-              params.append('image_path', image_path);
-              console.log(image_path);
-              axios.post(url, params
-              ).then(response => {
-                //ここでeditに戻る処理
-                this.flag_success = true;
-              }).catch(error => {
-                  // エラーを受け取る
-                  console.log(error);
-              });
+          let params = new URLSearchParams();
+          params.append('tour_id', this.tour_info.tour_id);
+          params.append('spot_id', this.spot_info.spot_id);
+          params.append('image_id', image.id);
+          params.append('image_path', image.image_path);
+          
+          axios.post(url, params
+          ).then(response => {
+            //ここでeditに戻る処理
+            this.flag_success = true;
+          }).catch(error => {
+              // エラーを受け取る
+              console.log(error);
+          });
         },
         getAllImage() {
           const url = 'https://www3.yoslab.net/~nishimura/docogeo/PHP/Images/get_all_image.php';
@@ -255,9 +256,9 @@ import DeleteImage from "../components/Images_Modal/imgDelete"
                   console.log(error);
               });
         },
-        popup_image(image, index, isAdded, image_path) {
+        popup_image(image) {
           if(this.flag_add) {
-            this.addImgToSpot(index, isAdded, image_path)
+            this.addImgToSpot(image)
           } else {
             this.image_avoid = image;
             this.flag_popup_image = true;

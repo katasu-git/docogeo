@@ -8,7 +8,7 @@
                             <div
                             class="l-comment"
                             >{{ex.spot_ex}}</div>
-                            <div class="o-send_time">{{return_sended(ex.created)}}</div>
+                            <div class="o-send_time">{{return_sended(ex.updated)}}</div>
                         </div>
                         <img 
                             class="o_pen_icon u_ml10 u_pointer"
@@ -27,7 +27,6 @@
 </template>
 
 <script>
-import axios from "axios";
 export default {
   name: "list",
   props: {
@@ -35,10 +34,13 @@ export default {
   },
   methods: {
       return_sended(sended) {
-            let month = sended.substr(5, 2) + '月';
-            let day = sended.substr(8, 2) + '日';
-            let time = ' ' + sended.substr(10, 6);
-            return month + day + time;
+        if(!sended) {
+            return;
+        }
+        let month = sended.substr(5, 2) + '月';
+        let day = sended.substr(8, 2) + '日';
+        let time = ' ' + sended.substr(10, 6);
+        return month + day + time;
       },
       delete_selected(info, isImage) {
           this.$emit('delete_selected', info, isImage);
