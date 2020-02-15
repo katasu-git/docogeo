@@ -87,7 +87,7 @@
                 <div
                     class="o-button_hoe"
                     :style="{ opacity:returnOpacity(ex.isPosted) }"
-                    @click="post_ex(ex)"
+                    @click="onClickPostButton(ex)"
                 >
                     <img src="../assets/send_button.svg" />
                 </div>
@@ -146,75 +146,62 @@ import GuestList from '../components/Chat_Guide/GuestList'
             this.flag.isTourChanged = true;
 
         } else {
-          this.tour_info = JSON.parse(this.$localStorage.get('now_tour_info'));
+            this.tour_info = JSON.parse(this.$localStorage.get('now_tour_info'));
         }
         this.init()
     },
     methods: {
-        init() {
-            this.get_spot_info_arr();
+        async init() {
+            await this.get_spot_info_arr();
+            this.get_post()
+            this.get_spot_image();
             this.fetch_active_user();
+
             this.closeModal();
         },
         refresh() {
             this.get_post()
             this.get_spot_image();
+            
             this.closeModal();
         },
-        get_spot_info_arr() {
-            const url =　"https://www2.yoslab.net/~nishimura/geotour/PHP/get_spot_info.php";
+        async get_spot_info_arr() {
+            const url = "https://www3.yoslab.net/~nishimura/docogeo/PHP/Chat_G/get_spot_info.php";
             let params = new URLSearchParams();
             params.append("tour_id", this.tour_info.tour_id);
-            axios
-                .post(url, params)
-                .then(response => {
-                    //スポットのデータを丸ごと保存
-                    this.spot_info_arr = response.data;
-                    //通常の呼び出し先
-                    this.spot_info = response.data[0];
-                    if(!this.$localStorage.get('now_spot_info') || this.flag.isTourChanged) {
-                        this.$localStorage.remove('now_spot_info');
-                        //再読み込み対策のローカル値
-                        this.$localStorage.set('now_spot_info',JSON.stringify(response.data[0]));
-                    } else {
-                        this.spot_info = JSON.parse(this.$localStorage.get('now_spot_info'));
-                    }
+            const response = await axios.post(url, params);
 
-                    //後処理
-                    this.get_post()
-                    this.get_spot_image();
-                })
-                .catch(error => {
-                // エラーを受け取る
-                console.log(error);
-                });
+            this.spot_info_arr = response.data;
+            this.spot_info = response.data[0];
+            if(!this.$localStorage.get('now_spot_info') || this.flag.isTourChanged) {
+                this.$localStorage.remove('now_spot_info');
+                //再読み込み対策のローカル値
+                this.$localStorage.set('now_spot_info',JSON.stringify(response.data[0]));
+            } else {
+                this.spot_info = JSON.parse(this.$localStorage.get('now_spot_info'));
+            }
         },
-        get_post() {
-            const url ="https://www2.yoslab.net/~nishimura/geotour/PHP/getPost.php";
+        async get_post() {
+            const url = "https://www3.yoslab.net/~nishimura/docogeo/PHP/Chat_G/getPost.php";
             let params = new URLSearchParams();
             params.append("spot_id", this.spot_info.spot_id);
-            axios 
-                .post(url, params)
-                .then(response => {
-                    this.spot_ex = response.data;
-                })
-                .catch(error => {
-                    // エラーを受け取る
-                    console.log(error);
-                });
+            const response = await axios.post(url, params);
+
+            this.spot_ex = response.data;
         },
-        get_spot_image() {
-            const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/GET/get_spot_img.php';
-                let params = new URLSearchParams();
-                params.append('tour_id', this.tour_info.tour_id);
-                params.append('spot_id', this.spot_info.spot_id);
-                axios.post(url, params
-                ).then(response => {
-                    this.img_info = response.data;
-                }).catch(error => {
-                    // エラーを受け取る
-                    console.log(error);
-                });
+        async get_spot_image() {
+            const url = "https://www3.yoslab.net/~nishimura/docogeo/PHP/Chat_G/get_spot_img.php";
+            let params = new URLSearchParams();
+            params.append('tour_id', this.tour_info.tour_id);
+            params.append('spot_id', this.spot_info.spot_id);
+            const response = await axios.post(url, params);
+
+            this.img_info = response.data;
+        },
+        async fetch_active_user() {
+            const url = "https://www3.yoslab.net/~nishimura/docogeo/PHP/Chat_G/fetch_active_user.php";
+            const res = await axios.post(url);
+            this.userList = res.data;
         },
         change_spot_name(spot_selected) {
             this.spot_info = spot_selected;
@@ -268,69 +255,40 @@ import GuestList from '../components/Chat_Guide/GuestList'
                 return 'l-comment';
             }
         },
-        post_ex(ex) {
-            if(ex.isPosted == 0) {
 
-                const url = 'https://www2.yoslab.net/~nishimura/docogeo/PHP_C/Chat_G/post_ex.php';
-                let params = new URLSearchParams();
-                params.append("tour_id", ex.tour_id);
-                params.append("spot_id", ex.spot_id);
-                params.append("ex_id", ex.ex_id);
-                params.append("posted_ex", ex.spot_ex);
-                if(this.isExist(ex)) {
-                    params.append("isHidden", 1);
-                } else {
-                    params.append("isHidden", 0);
-                }
-                axios
-                    .post(url, params)
-                    .catch(error => {
-                        // エラーを受け取る
-                        console.log(error);
-                    });
-
-                const url2 = 'https://www2.yoslab.net/~nishimura/geotour/PHP/isPosted_t.php';
-                let params2 = new URLSearchParams();
-                params2.append("ex_id", ex.ex_id);
-                axios
-                    .post(url2, params2).then(response => {
-                        this.get_post();
-                    })
-                    .catch(error => {
-                        // エラーを受け取る
-                        console.log(error);
-                    });
-
-            } else if(ex.isPosted == 1) {
-
-                //配信済みの場合の処理
-                const url2 = 'https://www2.yoslab.net/~nishimura/geotour/PHP/isPosted_f.php';
-                let params2 = new URLSearchParams();
-                params2.append("ex_id", ex.ex_id);
-                axios
-                    .post(url2, params2).then(response => {
-                    })
-                    .catch(error => {
-                        // エラーを受け取る
-                        console.log(error);
-                    });
-
-                //配信済みの場合の処理
-                const url3 = 'https://www2.yoslab.net/~nishimura/geotour/PHP/DELETE/delete_posted_post.php';
-                let params3 = new URLSearchParams();
-                params3.append("ex_id", ex.ex_id);
-                axios
-                    .post(url3, params3)
-                    .then(response => {
-                        this.refresh();
-                    })
-                    .catch(error => {
-                        // エラーを受け取る
-                        console.log(error);
-                    });
-
+        async onClickPostButton(ex_info) {
+            console.log(ex_info)
+            if(ex_info.isPosted == 0) {
+                await this.post_ex(ex_info)
+            } else {
+                await this.undo_post_ex(ex_info)
             }
+            this.refresh()
         },
+
+        async post_ex(ex_info) {
+            const url = "https://www3.yoslab.net/~nishimura/docogeo/PHP/Chat_G/post_ex.php";
+            let params = new URLSearchParams();
+            params.append("tour_id", ex_info.tour_id);
+            params.append("spot_id", ex_info.spot_id);
+            params.append("ex_id", ex_info.ex_id);
+            params.append("posted_ex", ex_info.spot_ex);
+            
+           if(this.isExist(ex_info)) {
+                params.append("isHidden", 1);
+            } else {
+                params.append("isHidden", 0);
+            }
+            const response = await axios.post(url, params);
+        },
+
+        async undo_post_ex(ex_info) {
+            const url = "https://www3.yoslab.net/~nishimura/docogeo/PHP/Chat_G/delete_posted_post.php";
+            let params = new URLSearchParams();
+            params.append("ex_id", ex_info.ex_id);
+            const response = await axios.post(url, params);
+        },
+
         post_img(image) {
                 console.log("----------------" + JSON.stringify(image));
 
@@ -370,22 +328,18 @@ import GuestList from '../components/Chat_Guide/GuestList'
                 }
 
         },
-        isActive(isPosted) {
-            if(isPosted == 1) {
-                return false;
-            } else {
-                return true;
-            }
-        },
+
         finish_tour () {
             this.flag.finish_tour = true;
         },
+
         returnTimeCol(isPosted) {
             if(isPosted == 0) {
                 return 'rgba(0,0,0,0)';
             }
             return '#4B8E8D';
         },
+
         returnOpacity(isPosted) {
             if(isPosted == 0) {
                 return '1';
@@ -393,29 +347,29 @@ import GuestList from '../components/Chat_Guide/GuestList'
                 return '0.4';
             }
         },
+
         changeSpot() {
             this.flag.change_spot = true;
         },
+
         show_guestList() {
             this.fetch_active_user();
             this.flag.isMounted = true;
             this.flag.guest_list = true;
         },
+
         closeModal() {
-            setTimeout(() => {
-                this.flag.change_spot = false;
-                this.flag.finish_tour = false;
-                this.flag.guest_list = false;
-            }, 200)
+            this.flag.change_spot = false;
+            this.flag.finish_tour = false;
+            this.flag.guest_list = false;
         },
+        
         returnSended(sended) {
+            if(!sended) {
+                return;
+            }
             return sended.substr(10, 6);
-        },
-        async fetch_active_user() {
-            const url = "https://www2.yoslab.net/~nishimura/docogeo/PHP_C/Chat_G/fetch_active_user.php";
-            const res = await axios.post(url);
-            this.userList = res.data;
-        },
+        }
     },
     components: {
         VueHeader: VueHeader,

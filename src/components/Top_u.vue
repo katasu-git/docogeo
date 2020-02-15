@@ -63,7 +63,7 @@
     },
     methods: {
       get_tour_info: function () {
-        axios.post('https://www2.yoslab.net/~nishimura/geotour/PHP/get_tour_info.php'
+        axios.post('https://www3.yoslab.net/~nishimura/docogeo/PHP/Edit_Event/fetch_tour_info.php'
         ).then(response => {
             for(let i=0; i<response.data.length; i++) {
                 if(response.data[i].isActive == 1) {
