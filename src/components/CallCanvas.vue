@@ -27,6 +27,7 @@ export default {
   }),
   created() {
     if(this.$route.params.isNotReload) {
+      console.log(this.$route.params.width)
       this.width = this.$route.params.width;
       this.height = this.$route.params.height;
       this.captures = this.$route.params.captures;
@@ -35,6 +36,7 @@ export default {
             name: 'camera'
       })
     }
+    console.log(this.captures)
   },  
   mounted: function() {
     this.init();

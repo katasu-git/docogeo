@@ -41,7 +41,7 @@
             <div class="o-image" 
                 v-for="image in img_info"
                 :key="image.id"
-                @click="post_img(image)"
+                @click="onClickPostImage(image)"
             >
                 <img 
                     class="img"
@@ -99,6 +99,13 @@
             :user="user"
             @move_page="move_page"
         />
+
+        <canvas
+            ref="canvas"
+            id="canvas"
+        />
+
+        <img id="hidden_image" :src="selected_image" />
       </div>
   </div>
 </template>
@@ -130,7 +137,11 @@ import GuestList from '../components/Chat_Guide/GuestList'
               guest_list: false,
               isMounted: false,
               isTourChanged: false
-          }
+          },
+          video_h: '',
+          video_w: '',
+          captures: [],
+          selected_image: ''
       }
     },
     created: function () {
@@ -149,6 +160,9 @@ import GuestList from '../components/Chat_Guide/GuestList'
             this.tour_info = JSON.parse(this.$localStorage.get('now_tour_info'));
         }
         this.init()
+    },
+    mounted() {
+        this.setCanvas()
     },
     methods: {
         async init() {
@@ -289,43 +303,79 @@ import GuestList from '../components/Chat_Guide/GuestList'
             const response = await axios.post(url, params);
         },
 
-        post_img(image) {
-                console.log("----------------" + JSON.stringify(image));
+        capture(image) {
+            //canvs再描画
+            this.setCanvas();
+            let hidden_image = document.getElementById("hidden_image");
+            this.canvas = this.$refs.canvas
+            this.canvas.getContext('2d').drawImage(hidden_image, 0, 0, this.video_w, this.video_h);
+            this.captures.push(this.canvas.toDataURL('image/png'))
 
-                if(image.isPosted == 0) {
-                    const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/POST/post_img.php';
-                    let params = new URLSearchParams();
-                    params.append("tour_id", image.tour_id);
-                    params.append("spot_id", image.spot_id);
-                    params.append("image_id", image.image_id);
-                    params.append("img_path", image.image_path);
-                    axios
-                        .post(url, params).then(()=>{
-                            this.refresh(); //isPostedの値更新処理
-                        })
-                        .catch(error => {
-                            // エラーを受け取る
-                            console.log(error);
-                        });
-
-                } else {
-                    //配信済みの場合の処理
-                    //delete処理もまとめた
-                    const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/undo_posted_post.php';
-                    let params = new URLSearchParams();
-                    params.append("id", image.id);
-                    params.append("tour_id", image.tour_id);
-                    params.append("spot_id", image.spot_id);
-                    params.append("image_id", image.image_id);
-                    axios
-                        .post(url, params).then(response => {
-                            this.refresh(); //isPostedの値更新処理
-                        })
-                        .catch(error => {
-                            // エラーを受け取る
-                            console.log(error);
-                        });
+            //お絵かきページに移動
+            
+            this.$router.push({
+            name: 'draw',
+                params: {
+                width: this.video_w,
+                height: this.video_h,
+                captures: this.captures,
+                isNotReload: true
                 }
+            })
+            
+        },
+
+        setCanvas() {
+            //canvasのサイズ変更
+            let canvas = document.getElementById("canvas");
+            this.video_w = document.getElementById("chat_g").clientWidth;
+            this.video_w = this.video_w - 20;
+            this.video_h = this.video_w * 3 / 2;
+
+            canvas.width = this.video_w;
+            canvas.height = this.video_h;
+        },
+
+        onClickPostImage(image) {
+
+            console.log(image); //idはspot_imageの主キー
+            this.capture(image)
+            /*
+            if(image.isPosted == 0) {
+                const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/POST/post_img.php';
+                let params = new URLSearchParams();
+                params.append("tour_id", image.tour_id);
+                params.append("spot_id", image.spot_id);
+                params.append("image_id", image.image_id);
+                params.append("img_path", image.image_path);
+                axios
+                    .post(url, params).then(()=>{
+                        this.refresh(); //isPostedの値更新処理
+                    })
+                    .catch(error => {
+                        // エラーを受け取る
+                        console.log(error);
+                    });
+
+            } else {
+                //配信済みの場合の処理
+                //delete処理もまとめた
+                const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/undo_posted_post.php';
+                let params = new URLSearchParams();
+                params.append("id", image.id);
+                params.append("tour_id", image.tour_id);
+                params.append("spot_id", image.spot_id);
+                params.append("image_id", image.image_id);
+                axios
+                    .post(url, params).then(response => {
+                        this.refresh(); //isPostedの値更新処理
+                    })
+                    .catch(error => {
+                        // エラーを受け取る
+                        console.log(error);
+                    });
+            }
+            */
 
         },
 
@@ -528,6 +578,22 @@ import GuestList from '../components/Chat_Guide/GuestList'
 
   .u-color-red {
     color: #CC544D;
+  }
+
+  #canvas {
+    position: fixed;
+    right: 2000px;
+    width: calc(100% - 20px);
+    height: calc( (100vw - 20px) * 3 / 2);
+    visibility: hidden;
+  }
+
+  #hidden_image {
+      position: fixed;
+    right: 2000px;
+    width: calc(100% - 20px);
+    height: calc( (100vw - 20px) * 3 / 2);
+    visibility: hidden;
   }
 
 </style>

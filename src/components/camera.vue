@@ -71,7 +71,7 @@ import Footer from '../components/parts/Footer'
         isNotReload: true,
         video: {},
         canvas: {},
-        captures: [],
+        captures: '',
         photo_flag: true,
         bottom_flag: false,
         pile_flag: true,
@@ -82,12 +82,12 @@ import Footer from '../components/parts/Footer'
       }
     },
     created() {
+      this.tour_info = JSON.parse(this.$localStorage.get('now_tour_info'));
+      this.spot_info = JSON.parse(this.$localStorage.get('now_spot_info'))
       this.user_info = JSON.parse(this.$localStorage.get('user_info'));
     },
     mounted() {
         this.video = this.$refs.video
-        console.log(navigator.mediaDevices)
-        console.log(navigator.mediaDevices.getUserMedia)
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
             const constraints = {
                 audio: false,
@@ -119,13 +119,33 @@ import Footer from '../components/parts/Footer'
         this.setCanvas();
 
         this.canvas = this.$refs.canvas
-        let w = this.video_h;
         this.canvas.getContext('2d').drawImage(this.video, 0, 0, this.video_w, this.video_h);
-        this.captures.push(this.canvas.toDataURL('image/png'))
+        this.captures = this.canvas.toDataURL('image/png')
 
         //お絵かきページに移動
-        this.jump();
+        //this.jump();
+        this.postFile();
       },
+
+      async postFile() {
+        //this.flag_uploading = true;
+        const url = "https://www3.yoslab.net/~nishimura/docogeo/PHP/Images/upload.php";
+        let params = new URLSearchParams();
+        params.append('image_data', this.captures);
+        params.append('tour_id', this.tour_info.tour_id);
+        params.append('spot_id', this.spot_info.spot_id);
+        axios
+          .post(url, params)
+          .then(response => {
+              console.log("処理完了")
+              //this.closeModal();
+          })
+          .catch(error => {
+            // エラーを受け取る
+            console.log(error);
+          });
+      },
+
       setCanvas() {
         //canvasのサイズ変更
         let canvas = document.getElementById("canvas");
