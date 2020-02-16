@@ -430,20 +430,24 @@ import GuestList from '../components/Chat_Guide/GuestList'
 }
 
 .l-slider_images {
-    margin: 100px 0 0 0;
+    position: fixed;
+    top: 80px;
+    padding: 20px;
     width: 100%;
     display: flex;
     overflow-x: scroll;
     overflow-y: hidden;
     -webkit-overflow-scrolling: touch; /*ios*/
+    z-index: 2;
+    background-color: #F5F5F5;
   }
 
   .o-image {
     position: relative;
-    min-height: 100px;
-    min-width: 100px;
-    max-height: 100px;
-    max-width: 100px;
+    min-height: 120px;
+    min-width: 120px;
+    max-height: 120px;
+    max-width: 120px;
     border-radius: 10px;
   }
 
@@ -463,14 +467,17 @@ import GuestList from '../components/Chat_Guide/GuestList'
   }
 
   .o-image:last-of-type {
-    padding-right: 20px;
+    padding-right: 40px;
   }
 
   .l-border {
-    margin: 20px 0;
+    position: fixed;
+    margin: 220px 0 0 0;
     width: 100vw;
     display: flex;
     justify-content: flex-end;
+    z-index: 2;
+    background-color: #F5F5F5;
   }
 
   .o-border {
@@ -480,7 +487,10 @@ import GuestList from '../components/Chat_Guide/GuestList'
   }
 
   .l-comment_container {
+      position: absolute;
+      top: 260px;
       width: calc(100% - 40px);
+      overflow-y: scroll;
   }
 
   .l-comment_row {
