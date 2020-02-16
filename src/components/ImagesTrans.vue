@@ -7,7 +7,7 @@
         </div>
         <div class="l-header_under">
             <div class="o-text_tour_min">
-            <p>画像を選択</p>
+            <p>透過させる画像を選択</p>
             </div>
 
         </div>

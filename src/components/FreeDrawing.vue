@@ -6,6 +6,7 @@
         v-show="flag.check"
         class="checkImage"
       >
+        <div class="modal_opacity">透明度{{opacity_value}}%</div>
         <canvas 
           id="cvs1"
           ref="cvs1"
@@ -13,8 +14,18 @@
           :height="height"
           :style="{ opacity: return_opacity()}"
         />
-        <div class="modal_message">この画像を配信しますか？</div>
-        <div class="modal_opacity">透明度{{opacity_value}}%</div>
+        <div
+          v-if="!isTrans" 
+          class="modal_message"
+        >
+          この画像を配信しますか？
+        </div>
+        <div
+          v-else 
+          class="modal_message"
+        >
+          この画像を透過させますか？
+        </div>
         <div class="button_wrapper">
           <button 
             @click="hidden_modal()"
@@ -24,7 +35,11 @@
           </button>
           <button 
             @click="postFile()"
-            class="button_post">配信</button>
+            class="button_post"
+          >
+            <p v-if="!isTrans">配信</p>
+            <p v-else>透過</p>
+          </button>
         </div>
       </div>
     </transition>
@@ -56,6 +71,7 @@
     </div>
 
     <input 
+      v-if="isTrans"
       type="range" 
       min="0" 
       max="100" 
@@ -80,7 +96,7 @@
       >OK</button>
 
       <div 
-        v-if="flag.half"
+        v-show="flag.half && isTrans"
         class="flex_colmn">
         <img
           @click="set_width()"
@@ -90,7 +106,7 @@
         半分
       </div>
       <div 
-        v-else
+        v-show="!flag.half && isTrans"
         class="flex_colmn">
         <img
           @click="set_width()"
@@ -481,6 +497,7 @@ input[type=range]::-webkit-slider-thumb{
 }
 
 #cvs1 {
+  margin-top: 20px;
   max-height: calc(100% - 300px);
 }
 
