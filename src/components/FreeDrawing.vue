@@ -67,7 +67,7 @@
 
       <div class="flex_colmn">
         <img
-          @click="jump('camera')"
+          @click="jump('chat_g')"
           class="button_back"
           src="../assets/back.svg"
         />
@@ -139,7 +139,6 @@ export default {
     },
     get_width: '',
     get_height: '',
-    get_captures: '',
   },
   data: () => ({
     tour_info: '',
@@ -213,6 +212,7 @@ export default {
     this.imageObj = new Image()
     this.imageObj.addEventListener('load', this.imageOnload)
     this.imageObj.src = this.backgroundImage
+    console.log(this.backgroundImage)
   },
   methods: {
     mousedown: function () {
@@ -330,7 +330,7 @@ export default {
           params.append('image_path', image.image_path);
           axios.post(url, params).then(()=>{
             this.flag_uploading = false;
-            this.jump("camera");
+            this.jump("chat_g");
           })
         },
         jump(where) {

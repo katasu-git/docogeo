@@ -307,12 +307,13 @@ import GuestList from '../components/Chat_Guide/GuestList'
             //canvs再描画
             this.setCanvas();
             let hidden_image = document.getElementById("hidden_image");
-            this.canvas = this.$refs.canvas
+            this.canvas = this.$refs.canvas;
             this.canvas.getContext('2d').drawImage(hidden_image, 0, 0, this.video_w, this.video_h);
-            this.captures.push(this.canvas.toDataURL('image/png'))
+            this.captures = this.canvas.toDataURL('image/png');
+
+            console.log(this.captures)
 
             //お絵かきページに移動
-            
             this.$router.push({
             name: 'draw',
                 params: {

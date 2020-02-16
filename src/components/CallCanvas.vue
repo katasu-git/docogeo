@@ -3,11 +3,10 @@
         <FreeDrawing
             class="freeDrawing"
             ref="freeDrawing"
-            :backgroundImage="captures[0]"
+            :backgroundImage="captures"
             :mode="mode"
             :get_width="width"
             :get_height="height"
-            :get_captures="captures"
         />
     </div>
 </template>
@@ -27,13 +26,12 @@ export default {
   }),
   created() {
     if(this.$route.params.isNotReload) {
-      console.log(this.$route.params.width)
       this.width = this.$route.params.width;
       this.height = this.$route.params.height;
       this.captures = this.$route.params.captures;
     } else {
       this.$router.push({
-            name: 'camera'
+            name: 'chat_g'
       })
     }
     console.log(this.captures)
