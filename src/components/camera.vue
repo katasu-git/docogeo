@@ -1,6 +1,10 @@
 <template>
   <div id="camera">
 
+    <transition name="fade">
+      <Uploading v-if="flag_uploading"/>
+    </transition>
+
     <div class="video_wrapper">
 
       <video
@@ -61,6 +65,8 @@
 import axios from 'axios'
 import { async } from 'q';
 import Footer from '../components/parts/Footer'
+import Uploading from '../components/Images_Modal/imgUploading'
+
   export default {
     name: 'camera',
     data() {
@@ -72,13 +78,12 @@ import Footer from '../components/parts/Footer'
         video: {},
         canvas: {},
         captures: '',
-        photo_flag: true,
-        bottom_flag: false,
+        flag_uploading: false,
         pile_flag: true,
         video_w: '200',
         video_h: '200',
         pile_image: '',
-        opacity_value: 50,
+        opacity_value: 0,
       }
     },
     created() {
@@ -106,13 +111,6 @@ import Footer from '../components/parts/Footer'
 
     },
     methods: {
-      turnCam() {
-        if(this.photo_flag) {
-          this.photo_flag = false;
-        } else {
-          this.photo_flag = true;
-        }
-      },
       capture() {
 
         //canvs再描画
@@ -128,7 +126,7 @@ import Footer from '../components/parts/Footer'
       },
 
       async postFile() {
-        //this.flag_uploading = true;
+        this.flag_uploading = true;
         const url = "https://www3.yoslab.net/~nishimura/docogeo/PHP/Images/upload.php";
         let params = new URLSearchParams();
         params.append('image_data', this.captures);
@@ -138,7 +136,7 @@ import Footer from '../components/parts/Footer'
           .post(url, params)
           .then(response => {
               console.log("処理完了")
-              //this.closeModal();
+              this.flag_uploading = false;
           })
           .catch(error => {
             // エラーを受け取る
@@ -176,7 +174,7 @@ import Footer from '../components/parts/Footer'
               .then(response => {
               //画像を受け取ったときの処理
                 this.pile_image = response.data[0].image_path;
-                this.opacity_value = response.data[0].opacity;
+                //this.opacity_value = response.data[0].opacity;
               })
               .catch(error => {
               // エラーを受け取る
@@ -195,7 +193,8 @@ import Footer from '../components/parts/Footer'
       },
     },
     components: {
-      Footer: Footer
+      Footer: Footer,
+      Uploading: Uploading
     }
   }
 
