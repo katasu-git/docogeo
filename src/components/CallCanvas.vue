@@ -35,6 +35,7 @@ export default {
             name: 'camera'
       })
     }
+    console.log(this.captures[0])
   },  
   mounted: function() {
     this.init();
