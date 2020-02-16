@@ -66,7 +66,7 @@
                         <p>メッセージが表示されます</p>
                     </div>
                     <div 
-                        @click="lookImage(ex.imgPath)"
+                        @click="lookImage(ex.image_path)"
                         v-else>
                         <div
                             class="l-comment"
@@ -75,9 +75,9 @@
                             <div class="kaigyo">{{ ex.spot_ex }}</div>
                         </div>
                         <v-lazy-image 
-                            v-if="ex.imgPath"
+                            v-if="ex.image_path"
                             class="o-image"
-                            :src="(ex.imgPath)"
+                            :src="(ex.image_path)"
                         />
                     </div>
                     <div class="o-send_time">{{returnSended(ex.created)}}</div>
@@ -458,11 +458,11 @@ export default {
         },
 
         async countup_likes(ex) {
-            console.log(this.isImage(ex.imgPath))
+            console.log(this.isImage(ex.image_path))
             const url = "https://www2.yoslab.net/~nishimura/docogeo/PHP_C/Chat_U/countup_likes.php";
             let params = new URLSearchParams();
             params.append("dist_id", ex.ex_id); //distの主キー
-            params.append("img_flag", this.isImage(ex.imgPath));
+            params.append("img_flag", this.isImage(ex.image_path));
             params.append("ex_id", ex.exp_id); //spot_explanationの主キー
             params.append("img_id", ex.img_id);
             params.append("tour_id", ex.tour_id);

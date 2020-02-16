@@ -45,6 +45,7 @@
             >
                 <img 
                     class="img"
+                    :id="return_image_name(image)"
                     :src="image.image_path"
                     :style="{ opacity:returnOpacity(image.isPosted) }"
                 />
@@ -105,7 +106,6 @@
             id="canvas"
         />
 
-        <img id="hidden_image" :src="selected_image" />
       </div>
   </div>
 </template>
@@ -140,8 +140,7 @@ import GuestList from '../components/Chat_Guide/GuestList'
           },
           video_h: '',
           video_w: '',
-          captures: [],
-          selected_image: ''
+          captures: '',
       }
     },
     created: function () {
@@ -304,14 +303,14 @@ import GuestList from '../components/Chat_Guide/GuestList'
         },
 
         capture(image) {
+            let select_name = "image" + image.id
             //canvs再描画
             this.setCanvas();
-            let hidden_image = document.getElementById("hidden_image");
-            this.canvas = this.$refs.canvas;
-            this.canvas.getContext('2d').drawImage(hidden_image, 0, 0, this.video_w, this.video_h);
-            this.captures = this.canvas.toDataURL('image/png');
+            let hidden_image = document.getElementById(select_name);
 
-            console.log(this.captures)
+            this.canvas = this.$refs.canvas
+            this.canvas.getContext('2d').drawImage(hidden_image, 0, 0, this.video_w, this.video_h);
+            this.captures = this.canvas.toDataURL('image/jpg')
 
             //お絵かきページに移動
             this.$router.push({
@@ -320,6 +319,7 @@ import GuestList from '../components/Chat_Guide/GuestList'
                 width: this.video_w,
                 height: this.video_h,
                 captures: this.captures,
+                spot_image_id: image.id, //spot_imagesの主キー
                 isNotReload: true
                 }
             })
@@ -420,6 +420,10 @@ import GuestList from '../components/Chat_Guide/GuestList'
                 return;
             }
             return sended.substr(10, 6);
+        },
+
+        return_image_name(image) {
+            return "image" + image.id;
         }
     },
     components: {
@@ -583,14 +587,6 @@ import GuestList from '../components/Chat_Guide/GuestList'
 
   #canvas {
     position: fixed;
-    right: 2000px;
-    width: calc(100% - 20px);
-    height: calc( (100vw - 20px) * 3 / 2);
-    visibility: hidden;
-  }
-
-  #hidden_image {
-      position: fixed;
     right: 2000px;
     width: calc(100% - 20px);
     height: calc( (100vw - 20px) * 3 / 2);

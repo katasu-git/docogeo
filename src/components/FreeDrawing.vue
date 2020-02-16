@@ -139,6 +139,7 @@ export default {
     },
     get_width: '',
     get_height: '',
+    spot_image_id: ''
   },
   data: () => ({
     tour_info: '',
@@ -163,7 +164,7 @@ export default {
     backgroundImageScope: null,
     file: '',
     flag_uploading: false,
-    opacity_value: 50,
+    opacity_value: 100,
     flag: {
       half: false,
       check: false,
@@ -212,7 +213,6 @@ export default {
     this.imageObj = new Image()
     this.imageObj.addEventListener('load', this.imageOnload)
     this.imageObj.src = this.backgroundImage
-    console.log(this.backgroundImage)
   },
   methods: {
     mousedown: function () {
@@ -278,8 +278,8 @@ export default {
         image: this.imageObj,
         x: 0,
         y: 0,
-        width: this.canvas.width, //キャンバスと同じサイズに設定
-        height: this.canvas.height
+        width: this.get_width,
+        height: this.get_height
       })
 
       // 背景レイヤに背景イメージを追加
@@ -303,55 +303,50 @@ export default {
       this.cvs1.getContext('2d').drawImage(this.canvas, 0, 0, this.width, this.height); //線
       this.file = this.cvs1.toDataURL('image/png');
       this.flag.check = true;
-      },
-      postFile: function() {
-          this.flag.check = false;
-          this.flag_uploading = true;
-          const url = "https://www2.yoslab.net/~nishimura/geotour/PHP/upload_draw.php";
-          let params = new URLSearchParams();
-          params.append('canvasData', this.file);
-          params.append('opacity', this.opacity_value);
-          axios
-            .post(url, params)
-            .then(response => {
-              this.add_image_to_spot(response.data[0]);
-            })
-            .catch(error => {
-              // エラーを受け取る
-              console.log(error);
-            });
-        },
-        add_image_to_spot(image) {
-          const url = "https://www2.yoslab.net/~nishimura/docogeo/PHP_C/add_image_to_spot.php";
-          let params = new URLSearchParams();
-          params.append('tour_id', this.tour_info.tour_id);
-          params.append('spot_id', this.spot_info.spot_id);
-          params.append('image_id', image.id);
-          params.append('image_path', image.image_path);
-          axios.post(url, params).then(()=>{
+
+    },
+    postFile: function() {
+        this.flag.check = false;
+        this.flag_uploading = true;
+
+        const url = "https://www3.yoslab.net/~nishimura/docogeo/PHP/Images/upload_draw.php";
+        let params = new URLSearchParams();
+        params.append('image_data', this.file);
+        params.append('tour_id', this.tour_info.tour_id);
+        params.append('spot_id', this.spot_info.spot_id);
+        params.append('spot_image_id', this.spot_image_id);
+        params.append('opacity', this.opacity_value);
+
+        axios
+          .post(url, params)
+          .then(response => {
+            //this.add_image_to_spot(response.data[0]);
             this.flag_uploading = false;
-            this.jump("chat_g");
           })
-        },
-        jump(where) {
-          this.$router.push({
-            name: where,
-          })
-       },
-       return_opacity() {
-         return this.opacity_value + "%";
-       },
-       set_width() {
-         if(this.flag.half) {
-           this.flag.half = false;
-         } else {
-           this.flag.half = true;
-         }
-       },
-       hidden_modal() {
-         this.flag.check = false;
-         this.onClearCanvas();
-       }
+          .catch(error => {
+            // エラーを受け取る
+            console.log(error);
+          });
+      },
+      jump(where) {
+        this.$router.push({
+          name: where,
+        })
+      },
+      return_opacity() {
+        return this.opacity_value + "%";
+      },
+      set_width() {
+        if(this.flag.half) {
+          this.flag.half = false;
+        } else {
+          this.flag.half = true;
+        }
+      },
+      hidden_modal() {
+        this.flag.check = false;
+        this.onClearCanvas();
+      }
   },
   components: {
     Footer: Footer,

@@ -7,6 +7,7 @@
             :mode="mode"
             :get_width="width"
             :get_height="height"
+            :spot_image_id="spot_image_id"
         />
     </div>
 </template>
@@ -22,13 +23,15 @@ export default {
     defaultBrushColor: '#FFFFFF',
     width: '',
     height: '',
-    captures: ''
+    captures: '',
+    spot_image_id: ''
   }),
   created() {
     if(this.$route.params.isNotReload) {
       this.width = this.$route.params.width;
       this.height = this.$route.params.height;
       this.captures = this.$route.params.captures;
+      this.spot_image_id = this.$route.params.spot_image_id;
     } else {
       this.$router.push({
             name: 'chat_g'
