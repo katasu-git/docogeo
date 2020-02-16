@@ -6,6 +6,7 @@ import EditSpot from '@/components/editSpot'
 import ChatGuide from '@/components/chat_g'
 import TopU from '@/components/top_u'
 import Images from '@/components/Images.vue'
+import ImagesTrans from'@/components/ImagesTrans'
 import Camera from '@/components/Camera'
 import CallCanvas from '@/components/CallCanvas'
 import Maps from '@/components/Map'
@@ -84,6 +85,11 @@ export default new Router({
       path: '/location',
       name: 'location',
       component: Location
+    },
+    {
+      path: '/imagesTrans',
+      name: 'imagesTrans',
+      component: ImagesTrans
     },
   ]
 })

@@ -8,6 +8,7 @@
             :get_width="width"
             :get_height="height"
             :spot_image_id="spot_image_id"
+            :isTrans="isTrans"
         />
     </div>
 </template>
@@ -24,7 +25,8 @@ export default {
     width: '',
     height: '',
     captures: '',
-    spot_image_id: ''
+    spot_image_id: '',
+    isTrans: false
   }),
   created() {
     if(this.$route.params.isNotReload) {
@@ -32,6 +34,7 @@ export default {
       this.height = this.$route.params.height;
       this.captures = this.$route.params.captures;
       this.spot_image_id = this.$route.params.spot_image_id;
+      this.isTrans = this.$route.params.isTrans;
     } else {
       this.$router.push({
             name: 'chat_g'

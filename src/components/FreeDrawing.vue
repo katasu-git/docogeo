@@ -139,7 +139,8 @@ export default {
     },
     get_width: '',
     get_height: '',
-    spot_image_id: ''
+    spot_image_id: '',
+    isTrans: Boolean
   },
   data: () => ({
     tour_info: '',
@@ -309,7 +310,11 @@ export default {
         this.flag.check = false;
         this.flag_uploading = true;
 
-        const url = "https://www3.yoslab.net/~nishimura/docogeo/PHP/Images/upload_draw.php";
+        if(this.isTrans) {
+          var url = "https://www3.yoslab.net/~nishimura/docogeo/PHP/Images/upload_trans_image.php";
+        } else {
+          var url = "https://www3.yoslab.net/~nishimura/docogeo/PHP/Images/upload_draw.php";
+        }
         let params = new URLSearchParams();
         params.append('image_data', this.file);
         params.append('tour_id', this.tour_info.tour_id);

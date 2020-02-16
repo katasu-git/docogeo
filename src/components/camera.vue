@@ -13,16 +13,19 @@
         autoplay muted playsinline
       ></video>
 
-      <img
-        :src="pile_image"
-        class="pile_image"
-        v-show="pile_flag"
-        :style="{ opacity: return_opacity()}"
-      />
+      <div class="image_wrapper">
+        <img
+          :src="pile_image"
+          class="pile_image"
+          v-show="pile_flag"
+          :style="{ opacity: return_opacity()}"
+        />
+      </div>
 
       <img 
         class="button_upImage"
         src="../assets/upImage.svg"
+        @click="choice_image()"
       />
 
       <button 
@@ -37,14 +40,6 @@
         step="1" 
         v-model="opacity_value"
       />
-
-      <!--
-      <img
-        class="button_turnoff"
-        @click="turnOffPile()"
-        src="../assets/turnoff.svg"
-      />
-      -->
 
     </div>
 
@@ -168,18 +163,20 @@ import Uploading from '../components/Images_Modal/imgUploading'
         })
       },
       getImage() {
-          const url ="https://www2.yoslab.net/~nishimura/geotour/PHP/GET/get_draw_image.php";
-          axios
-              .post(url)
-              .then(response => {
-              //画像を受け取ったときの処理
-                this.pile_image = response.data[0].image_path;
-                //this.opacity_value = response.data[0].opacity;
-              })
-              .catch(error => {
-              // エラーを受け取る
-              console.log(error);
-              });
+        const url ="https://www3.yoslab.net/~nishimura/docogeo/PHP/Images/get_trans_image.php";
+        let params = new URLSearchParams();
+        params.append('tour_id', this.tour_info.tour_id);
+        axios
+            .post(url, params)
+            .then(response => {
+              console.log(response.data);
+              this.pile_image = response.data.image_path;
+              //this.opacity_value = response.data[0].opacity;
+            })
+            .catch(error => {
+            // エラーを受け取る
+            console.log(error);
+            });
       },
       turnOffPile() {
         if(this.pile_flag) {
@@ -191,6 +188,14 @@ import Uploading from '../components/Images_Modal/imgUploading'
       return_opacity() {
          return this.opacity_value + "%";
       },
+      choice_image() {
+        this.$router.push({
+            name: 'imagesTrans',
+            params: {
+              isNotReload: true
+            }
+        })
+      }
     },
     components: {
       Footer: Footer,
@@ -211,23 +216,34 @@ import Uploading from '../components/Images_Modal/imgUploading'
 }
 
 .video_wrapper {
-  position: absolute;
-  top: 10px;
-  left: 10px;
+  position: relative;
+  margin-top: 10px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 #video {
-  width: calc(100% - 10px);
+  width: calc(100% - 20px);
   max-height: calc(100% - 80px);
 }
 
-.pile_image {
-  width: calc(100% - 10px);
+.image_wrapper {
   position: absolute;
-  top: 0;
-  left: 0;
+  left: 10px;
+  width: calc(100% - 20px);
+  height: 100%;
   z-index: 2;
-  opacity: .3;
+  overflow: hidden;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pile_image {
+  width: 100%;
 }
 
 #canvas {
@@ -255,15 +271,6 @@ import Uploading from '../components/Images_Modal/imgUploading'
   position: absolute;
   bottom: 15px;
   left: 50px;
-}
-
-.button_turnoff {
-  z-index: 3;
-  position: absolute;
-  bottom: 25px;
-  right: 40px;
-  width: 40px;
-  height: 30px;
 }
 
 input[type=range] {

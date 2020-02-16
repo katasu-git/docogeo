@@ -175,7 +175,7 @@ import DeleteImage from "../components/Images_Modal/imgDelete"
         comp_file(file) {
           return new Promise(function(resolve) {
             new Compressor(file, {
-              quality: .2,
+              quality: .4,
               mimeType: 'image/jpeg',
               maxWidth: 600,
               success(result) {

@@ -7,7 +7,7 @@
     <div class="o-border u-mt40"></div>
     <div class="l-button">
         <button class="o-button_cancel" v-on:click="close_modal()">キャンセル</button>
-        <button class="o-button_save" v-on:click="update_spot_name()">変更を保存する</button>
+        <button class="o-button_save" v-on:click="update_user_name()">変更を保存する</button>
     </div>
   </div>
 </template>
@@ -33,7 +33,7 @@
         close_modal() {
           this.$emit('close_modal');
         },
-        update_spot_name() {
+        update_user_name() {
             const url =
             "https://www2.yoslab.net/~nishimura/docogeo/PHP_C/Chat_U/change_user_name.php";
             let params = new URLSearchParams();

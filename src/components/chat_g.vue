@@ -52,9 +52,6 @@
             </div>
         </div>
 
-        <div class="l-border">
-            <div class="o-border u-mt20"></div>
-        </div>
 
         <div class="l-comment_container">
             <div 
@@ -305,10 +302,6 @@ import GuestList from '../components/Chat_Guide/GuestList'
         },
 
         move_draw(image) {
-            //let select_name = "image" + image.id
-            //let hidden_image = document.getElementById(select_name);
-            //console.log(hidden_image)
-
             let image_hidden = document.getElementById("image_hidden");
             image_hidden.src = image.image_path;
 
@@ -339,9 +332,6 @@ import GuestList from '../components/Chat_Guide/GuestList'
             let canvas = document.getElementById("canvas");
             canvas.width = width;
             canvas.height = height;
-
-            console.log(canvas.width)
-            console.log(canvas.height)
         },
 
         onClickPostImage(image) {
@@ -438,16 +428,17 @@ import GuestList from '../components/Chat_Guide/GuestList'
     overflow-x: scroll;
     overflow-y: hidden;
     -webkit-overflow-scrolling: touch; /*ios*/
-    z-index: 2;
+    z-index: 1;
     background-color: #F5F5F5;
+    border-bottom: solid 1px rgba(0,0,0, .12);
   }
 
   .o-image {
     position: relative;
-    min-height: 120px;
-    min-width: 120px;
-    max-height: 120px;
-    max-width: 120px;
+    min-height: 150px;
+    min-width: 150px;
+    max-height: 150px;
+    max-width: 150px;
     border-radius: 10px;
   }
 
@@ -470,16 +461,6 @@ import GuestList from '../components/Chat_Guide/GuestList'
     padding-right: 40px;
   }
 
-  .l-border {
-    position: fixed;
-    margin: 220px 0 0 0;
-    width: 100vw;
-    display: flex;
-    justify-content: flex-end;
-    z-index: 2;
-    background-color: #F5F5F5;
-  }
-
   .o-border {
     height: 1px;
     width: calc(100% - 20px);
@@ -488,7 +469,7 @@ import GuestList from '../components/Chat_Guide/GuestList'
 
   .l-comment_container {
       position: absolute;
-      top: 260px;
+      top: 290px;
       width: calc(100% - 40px);
       overflow-y: scroll;
   }

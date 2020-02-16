@@ -12,7 +12,6 @@
       <img
         :src="pile_image"
         class="pile_image"
-        v-show="pile_flag"
         :style="{ opacity: return_opacity()}"
       />
 
@@ -23,14 +22,6 @@
         step="1" 
         v-model="opacity_value"
       />
-
-      <!--
-      <img
-        class="button_turnoff"
-        @click="turnOffPile()"
-        src="../assets/turnoff.svg"
-      />
-      -->
 
     </div>
 
@@ -57,14 +48,10 @@ import Footer from '../components/parts/Footer'
       return {
         place: "userCamera",
         user: 'guest',
+        tour_info: '',
         user_info: '',
-        isNotReload: true,
         video: {},
         canvas: {},
-        captures: [],
-        photo_flag: true,
-        bottom_flag: false,
-        pile_flag: true,
         video_w: '200',
         video_h: '200',
         pile_image: '',
@@ -72,13 +59,12 @@ import Footer from '../components/parts/Footer'
       }
     },
     created() {
+      this.tour_info = JSON.parse(this.$localStorage.get('now_tour_info'));
       this.user_info = JSON.parse(this.$localStorage.get('user_info'));
       this.countup_pageview();
     },
     mounted() {
         this.video = this.$refs.video
-        console.log(navigator.mediaDevices)
-        console.log(navigator.mediaDevices.getUserMedia)
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
             const constraints = {
                 audio: false,
@@ -104,26 +90,7 @@ import Footer from '../components/parts/Footer'
         params.append("where", this.place);
         const res = await axios.post(url, params);
       },
-      turnCam() {
-        if(this.photo_flag) {
-          this.photo_flag = false;
-        } else {
-          this.photo_flag = true;
-        }
-      },
-      capture() {
 
-        //canvs再描画
-        this.setCanvas();
-
-        this.canvas = this.$refs.canvas
-        let w = this.video_h;
-        this.canvas.getContext('2d').drawImage(this.video, 0, 0, this.video_w, this.video_h);
-        this.captures.push(this.canvas.toDataURL('image/png'))
-
-        //お絵かきページに移動
-        this.jump();
-      },
       setCanvas() {
         //canvasのサイズ変更
         let canvas = document.getElementById("canvas");
@@ -133,41 +100,24 @@ import Footer from '../components/parts/Footer'
         canvas.width = this.video_w;
         canvas.height = this.video_h;
       },
-      jump() {
-        if(this.captures == '' || this.captures == undefined || this.captures == null) {
-          return;
-        }
-        this.$router.push({
-            name: 'draw',
-            params: {
-              width: this.video_w,
-              height: this.video_h,
-              captures: this.captures,
-              isNotReload: this.isNotReload
-            }
-        })
-      },
+
       getImage() {
-          const url ="https://www2.yoslab.net/~nishimura/geotour/PHP/GET/get_draw_image.php";
-          axios
-              .post(url)
-              .then(response => {
-              //画像を受け取ったときの処理
-                this.pile_image = response.data[0].image_path;
-                this.opacity_value = response.data[0].opacity;
-              })
-              .catch(error => {
-              // エラーを受け取る
-              console.log(error);
-              });
+        const url ="https://www3.yoslab.net/~nishimura/docogeo/PHP/Images/get_trans_image.php";
+        let params = new URLSearchParams();
+        params.append('tour_id', this.tour_info.tour_id);
+        axios
+            .post(url, params)
+            .then(response => {
+              console.log(response.data);
+              this.pile_image = response.data.image_path;
+              //this.opacity_value = response.data[0].opacity;
+            })
+            .catch(error => {
+            // エラーを受け取る
+            console.log(error);
+            });
       },
-      turnOffPile() {
-        if(this.pile_flag) {
-          this.pile_flag = false;
-        } else {
-          this.pile_flag = true;
-        }
-      },
+
       return_opacity() {
         return this.opacity_value + "%";
       },
