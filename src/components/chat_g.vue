@@ -106,6 +106,8 @@
             id="canvas"
         />
 
+        <img id="image_hidden" src="" />
+
       </div>
   </div>
 </template>
@@ -161,7 +163,7 @@ import GuestList from '../components/Chat_Guide/GuestList'
         this.init()
     },
     mounted() {
-        this.setCanvas()
+        this.setCanvas(100, 100)
     },
     methods: {
         async init() {
@@ -302,81 +304,54 @@ import GuestList from '../components/Chat_Guide/GuestList'
             const response = await axios.post(url, params);
         },
 
-        capture(image) {
-            let select_name = "image" + image.id
-            //canvs再描画
-            this.setCanvas();
-            let hidden_image = document.getElementById(select_name);
+        move_draw(image) {
+            //let select_name = "image" + image.id
+            //let hidden_image = document.getElementById(select_name);
+            //console.log(hidden_image)
 
-            this.canvas = this.$refs.canvas
-            this.canvas.getContext('2d').drawImage(hidden_image, 0, 0, this.video_w, this.video_h);
-            this.captures = this.canvas.toDataURL('image/jpg')
+            let image_hidden = document.getElementById("image_hidden");
+            image_hidden.src = image.image_path;
 
-            //お絵かきページに移動
-            this.$router.push({
-            name: 'draw',
-                params: {
-                width: this.video_w,
-                height: this.video_h,
-                captures: this.captures,
-                spot_image_id: image.id, //spot_imagesの主キー
-                isNotReload: true
-                }
-            })
-            
+            image_hidden.onload = ()=> {
+                //画像の読み込みが終わったら
+                this.canvas = this.$refs.canvas
+                this.setCanvas(image_hidden.width, image_hidden.height);
+                this.canvas.getContext('2d').drawImage(image_hidden, 0, 0, image_hidden.width, image_hidden.height);
+                let captures = this.canvas.toDataURL('image/jpg')
+
+                //お絵かきページに移動
+                this.$router.push({
+                name: 'draw',
+                    params: {
+                    width: image_hidden.width,
+                    height: image_hidden.height,
+                    captures: captures,
+                    spot_image_id: image.id, //spot_imagesの主キー
+                    isNotReload: true
+                    }
+                })
+            }
+
         },
 
-        setCanvas() {
+        setCanvas(width, height) {
             //canvasのサイズ変更
             let canvas = document.getElementById("canvas");
-            this.video_w = document.getElementById("chat_g").clientWidth;
-            this.video_w = this.video_w - 20;
-            this.video_h = this.video_w * 3 / 2;
+            canvas.width = width;
+            canvas.height = height;
 
-            canvas.width = this.video_w;
-            canvas.height = this.video_h;
+            console.log(canvas.width)
+            console.log(canvas.height)
         },
 
         onClickPostImage(image) {
 
             console.log(image); //idはspot_imageの主キー
-            this.capture(image)
-            /*
             if(image.isPosted == 0) {
-                const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/POST/post_img.php';
-                let params = new URLSearchParams();
-                params.append("tour_id", image.tour_id);
-                params.append("spot_id", image.spot_id);
-                params.append("image_id", image.image_id);
-                params.append("img_path", image.image_path);
-                axios
-                    .post(url, params).then(()=>{
-                        this.refresh(); //isPostedの値更新処理
-                    })
-                    .catch(error => {
-                        // エラーを受け取る
-                        console.log(error);
-                    });
-
+                this.move_draw(image)
             } else {
-                //配信済みの場合の処理
-                //delete処理もまとめた
-                const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/undo_posted_post.php';
-                let params = new URLSearchParams();
-                params.append("id", image.id);
-                params.append("tour_id", image.tour_id);
-                params.append("spot_id", image.spot_id);
-                params.append("image_id", image.image_id);
-                axios
-                    .post(url, params).then(response => {
-                        this.refresh(); //isPostedの値更新処理
-                    })
-                    .catch(error => {
-                        // エラーを受け取る
-                        console.log(error);
-                    });
+                console.log("配信済みです")
             }
-            */
 
         },
 
@@ -586,10 +561,11 @@ import GuestList from '../components/Chat_Guide/GuestList'
   }
 
   #canvas {
-    position: fixed;
-    right: 2000px;
+    visibility: hidden;
+  }
+
+  #image_hidden {
     width: calc(100% - 20px);
-    height: calc( (100vw - 20px) * 3 / 2);
     visibility: hidden;
   }
 

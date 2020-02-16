@@ -320,8 +320,8 @@ export default {
         axios
           .post(url, params)
           .then(response => {
-            //this.add_image_to_spot(response.data[0]);
             this.flag_uploading = false;
+            this.jump("chat_g");
           })
           .catch(error => {
             // エラーを受け取る
@@ -360,6 +360,9 @@ export default {
   position: fixed;
   width: 100%;
   height: 100%;
+
+  display: flex;
+  align-items: center;
 }
 
 #back_image_hidden {
@@ -367,9 +370,7 @@ export default {
 }
 
 .container {
-    position: absolute;
-    top: 10px;
-    left: 10px;
+    padding-left: 10px;
 }
 
 .l-button {
