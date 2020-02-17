@@ -74,11 +74,17 @@
                         >
                             <div class="kaigyo">{{ ex.spot_ex }}</div>
                         </div>
-                        <v-lazy-image 
-                            v-if="ex.image_path"
-                            class="o-image"
-                            :src="(ex.image_path)"
-                        />
+                        <div class="rel">
+                            <v-lazy-image 
+                                v-if="ex.image_path"
+                                class="o-image"
+                                :src="(ex.image_path)"
+                            />
+                            <div class="likes">
+                                <img class="u-mr5" src="../assets/like_whole.svg" />
+                                {{ex.likes}}
+                            </div>
+                        </div>
                     </div>
                     <div class="o-send_time">{{returnSended(ex.created)}}</div>
                 </div>
@@ -323,7 +329,7 @@ export default {
                     let dif = this.count_dif_spot_ex(response.data)
 
                     if( this.isAddedPost(dif) ) {
-                        //新しく説明が追加された場合
+                        console.log(response.data);
                         this.insert_new_post(response.data);
                     } else {
                         //変化がない場合
@@ -435,8 +441,6 @@ export default {
                 this.$localStorage.remove('like_array');
                 //再読み込み対策のローカル値
                 this.$localStorage.set('like_array',JSON.stringify(this.showLike));
-
-                console.log(ex)
                 this.countup_likes(ex);
             } else {
 
@@ -458,16 +462,17 @@ export default {
         },
 
         async countup_likes(ex) {
-            console.log(this.isImage(ex.image_path))
-            const url = "https://www2.yoslab.net/~nishimura/docogeo/PHP_C/Chat_U/countup_likes.php";
+            const url = "https://www3.yoslab.net/~nishimura/docogeo/PHP/Chat_U/countup_likes.php";
             let params = new URLSearchParams();
             params.append("dist_id", ex.ex_id); //distの主キー
             params.append("img_flag", this.isImage(ex.image_path));
             params.append("ex_id", ex.exp_id); //spot_explanationの主キー
-            params.append("img_id", ex.img_id);
+            params.append("image_id", ex.img_id);
             params.append("tour_id", ex.tour_id);
             params.append("spot_id", ex.spot_id);
+            params.append("spot_image_id", ex.spot_image_id);
             const res = await axios.post(url, params);
+            console.log("処理完了")
         },
 
         isImage(img_path) {
@@ -553,9 +558,32 @@ export default {
 }
 
 .l-comment {
+    position: relative;
     padding: 10px;
     background-color: #E3E5E5;
     border-radius: 10px;
+}
+
+.rel {
+    position: relative;
+}
+
+.likes {
+    margin-top: -10px;
+    position: absolute;
+    right: 0;
+    background-color: #fff;
+    width: 40px;
+    height: 20px;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,.25));
+    border-radius: 40px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    font-size: 10px;
+    color: #4B8E8D;
 }
 
 .l-comment-hidden {
@@ -585,6 +613,7 @@ export default {
 }
 
 .o-image {
+    position: relative;
     width: 100%;
     max-width: 300px;
     margin-right: 10px;
@@ -633,6 +662,10 @@ color: #CC544D;
     font-size: 30px;
     font-weight: bold;
     color: #4B8E8D;
+}
+
+.u-mr5 {
+    margin-right: 5px;
 }
 
 </style>

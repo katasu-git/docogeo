@@ -34,7 +34,7 @@
       </transition>
 
       <div class="l-header_above">
-        <div class="o-text_tour">Event</div>
+        <div class="o-text_tour">Event</div> 
         <div 
           class="o-image_image_button u_pointer"
           v-on:click='move_page("images")'
