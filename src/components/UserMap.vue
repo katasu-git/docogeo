@@ -23,7 +23,7 @@
             <GmapMap
                 class="gmap"
                 :center="{lat:this.lat, lng:this.lng}"
-                :zoom="15"
+                :zoom="18"
                 :options="{streetViewControl: false}"
                 map-type-id="terrain"
                 :style="{ width: width, height: height }"
@@ -123,7 +123,7 @@ import Footer from '../components/parts/Footer'
             if(!this.user_info) {
                 return;
             }
-            const url = "https://www2.yoslab.net/~nishimura/docogeo/PHP_C/countup_pageview.php";
+            const url = "https://www3.yoslab.net/~nishimura/docogeo/PHP/countup_pageview.php";
             let params = new URLSearchParams();
             params.append("id", this.user_info.id);
             params.append("where", this.place);

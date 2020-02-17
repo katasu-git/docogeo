@@ -36,7 +36,7 @@
         },
         update_spot_ex: function() {
             const url =
-            "https://www2.yoslab.net/~nishimura/docogeo/PHP_C/Edit_Spot/update_spot_ex.php";
+            "https://www3.yoslab.net/~nishimura/docogeo/PHP/Edit_Spot/update_spot_ex.php";
             let params = new URLSearchParams();
             params.append("id", this.selected.id);
             params.append("selected_changed", this.selected_changed);

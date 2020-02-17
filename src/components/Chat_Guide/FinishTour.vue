@@ -29,7 +29,7 @@
             this.$emit('closeModal');
         },
         finish_tour() {
-            const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/finish_tour.php';
+            const url = 'https://www3.yoslab.net/~nishimura/docogeo/PHP/Chat_G/finish_tour.php';
             let params = new URLSearchParams();
             params.append('tour_id', this.tour_info.tour_id);
             axios

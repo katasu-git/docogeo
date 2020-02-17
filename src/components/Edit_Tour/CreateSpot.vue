@@ -30,7 +30,7 @@
         },
         create_spot: function() {
             const url =
-            "https://www2.yoslab.net/~nishimura/docogeo/PHP_C/Edit_Tour/create_spot.php";
+            "https://www3.yoslab.net/~nishimura/docogeo/PHP/Edit_Tour/create_spot.php";
             let params = new URLSearchParams();
             params.append("tour_id", this.tour_info.tour_id);
             params.append("spot_name", this.spot_name_updated);

@@ -41,7 +41,7 @@ import axios from 'axios'
 
           if(this.tour_info.isActive == 0) {
             //該当ツアー開始処理
-            const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/start_tour.php';
+            const url = 'https://www3.yoslab.net/~nishimura/docogeo/PHP/Edit_Event/start_tour.php';
             let params = new URLSearchParams();
             params.append('tour_id', this.tour_info.tour_id);
             axios

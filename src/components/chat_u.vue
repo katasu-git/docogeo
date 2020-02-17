@@ -11,6 +11,7 @@
             ></TourEnd>
         </transition>
         
+        <!--
         <ChageName
             v-show="flag.isMounted"
             v-bind:class="{ slideIn: flag.change_name, slideOut: !flag.change_name }"
@@ -18,6 +19,7 @@
             @close_modal="close_modal"
             @set_local_user_name="set_local_user_name"
         />
+        -->
 
         <HeaderGuest
             :tour_info="tour_info"
@@ -38,11 +40,11 @@
             class="nothing_here"
         >
             <img 
-                src="../assets/kujira.svg"
-                class=""
+                src="../assets/kujira.png"
+                class="kujira"
             />
             <p>ようこそ<span class="fs20"> {{user_info.name}} </span>さん！</p>
-            <p class="u-mt20 sub-text">ここにはガイドの解説が表示されます</p>
+            <p class="u-mt20 sub-text">{{user_info.comment}}</p>
             <!--
             <p class="u-mt20 sub-text">くじらの名前をもじったニックネームです</p>
             -->
@@ -64,7 +66,7 @@
                         <p>メッセージが表示されます</p>
                     </div>
                     <div 
-                        @click="lookImage(ex.imgPath)"
+                        @click="lookImage(ex.image_path)"
                         v-else>
                         <div
                             class="l-comment"
@@ -72,11 +74,17 @@
                         >
                             <div class="kaigyo">{{ ex.spot_ex }}</div>
                         </div>
-                        <v-lazy-image 
-                            v-if="ex.imgPath"
-                            class="o-image"
-                            :src="(ex.imgPath)"
-                        />
+                        <div class="rel">
+                            <v-lazy-image 
+                                v-if="ex.image_path"
+                                class="o-image"
+                                :src="(ex.image_path)"
+                            />
+                            <div class="likes">
+                                <img class="u-mr5" src="../assets/like_whole.svg" />
+                                {{ex.likes}}
+                            </div>
+                        </div>
                     </div>
                     <div class="o-send_time">{{returnSended(ex.created)}}</div>
                 </div>
@@ -134,40 +142,35 @@ export default {
           },
           showList: [],
           showLike: [],
-          src_selected: ''
+          src_selected: '',
+          comment: ''
       }
     },
     created: function () {
-        //URLを直接叩かれた場合
-        if(JSON.stringify(this.$route.params) != "{}" 
-            && JSON.parse(this.$localStorage.get('now_tour_info'))) {
-                this.move_page('top_u');
-        }
-
-        if(JSON.parse(this.$localStorage.get('like_array'))) {
-            this.showLike = JSON.parse(this.$localStorage.get('like_array'))
-        }
-
-        this.set_tour_info();
-        this.set_user_info();
-        //ツアー終了の処理
-        this.judge_tour_isActive();
-        this.break_tour_timer();
         this.init();
         this.countup_pageview();
     },
     methods: {
         init() {
+            this.set_tour_info();
+            
+            //ツアー終了の判定
+            this.judge_tour_isActive();
+            this.break_tour_timer();
+            ///////////////
+
+            this.set_user_info();
+
             this.get_all_post();//全件取得
+
+            this.set_likes();//いいねを反映
+
             setInterval(function() {
-                //this.get_added_post();
-                this.get_all_post();//全件取得
+                this.get_added_post();
+                //this.get_all_post();//全件取得
             }.bind(this), 1000);
         },
-        close_modal: function() {
-            this.flag.change_name = false;
-            this.flag.lookImage = false;
-        },
+
         set_tour_info() {
             if(JSON.stringify(this.$route.params) != "{}") {
                 //ローカルストレージの初期化
@@ -181,78 +184,55 @@ export default {
                 this.tour_info = JSON.parse(this.$localStorage.get('now_tour_info'));
             }
         },
+
         async set_user_info() {
-            if(this.is_exist_local_user_info()) {
+            if(!this.is_exist_local_user_info()) {
+
+                this.set_new_user_name()
+            
+            } else {
                 this.user_info = JSON.parse(this.$localStorage.get('user_info'));
-                if( this.is_created_over_time(this.user_info.created) 
-                    ||  (this.tour_info.tour_id != this.user_info.tour_id)) {
-                    //最初にログインした時から9時間以上けいかしている場合 or ツアーが違う場合
+                
+                if( this.is_created_over_time(this.user_info.created) || (this.tour_info.tour_id != this.user_info.tour_id)) {
+
+                    //最初にログインした時から9時間以上経過している場合 or ツアーが違う場合
                     await this.reset_user_info()
-                    this.fetch_user_name_arr()
+                    this.set_new_user_name()
+
                 }
-
-            } else {
-                //ローカルにデータが残っていない場合は新たに名前を設定する
-                this.fetch_user_name_arr()
             }
         },
-        async reset_user_info() {
-            //isActivceを解除する処理
-            console.log("発火")
-            const url = "https://www2.yoslab.net/~nishimura/docogeo/PHP_C/Chat_U/reset_user_info.php";
-            let params = new URLSearchParams();
-            params.append("id", this.user_info.id);
-            params.append("user_name_id", this.user_info.user_name_id);
-            const res = await axios.post(url, params);
-            this.$localStorage.remove('user_info');
-        },
-        is_exist_local_user_info() {
-            if(this.$localStorage.get('user_info')) {
-                return true;
-            } else {
-                return false;
-            }
-        },
-        is_created_over_time(s_date) {
-            let timestamp = Date.parse(s_date)
-            //http://yut.hatenablog.com/entry/20111015/1318633937
-            let now = Date.now()
-            let dif = now - timestamp;
-            let pass_min = dif/60/1000;
-            //540分 = 9時間経過に設定
-            if(pass_min > 540) {
-                return true;
-            } else {
-                return false;
-            }
-        },
-        async fetch_user_name_arr() {
-            //名前を取ってくる
-            const url = "https://www2.yoslab.net/~nishimura/docogeo/PHP_C/Chat_U/fetch_user_name.php";
-            const res1 = await axios.post(url);
 
-            let random = Math.floor( Math.random() * res1.data.length )
-            console.log( res1.data[random] )
-            const id = res1.data[random].user_name_id
-            const init_name = res1.data[random].init_name
-            const changeble_name = res1.data[random].init_name
-
+        async set_new_user_name() {
+            let whale_info = await this.fetch_ramdom_whale_info()
             //user_infoをセット
             this.user_info = {
                 "id": "",
-                "user_name_id": id,
+                "user_name_id": whale_info.user_name_id,
                 "tour_id": this.tour_info.tour_id,
-                "init_name": init_name,
-                "name": changeble_name,
-                "created": ""
+                "init_name": whale_info.init_name,
+                "name": whale_info.init_name,
+                "created": "",
+                "comment": whale_info.comment
             }
             //actice_userに登録する
             this.set_active_user(this.user_info)
         },
+
+        async fetch_ramdom_whale_info() {
+            //鯨の名前を取ってくる
+            const url = "https://www3.yoslab.net/~nishimura/docogeo/PHP/Chat_U/fetch_user_name.php";
+            const res1 = await axios.post(url);
+
+            this.comment = res1.data.comment;
+            let random = Math.floor( Math.random() * res1.data.length )
+            return res1.data[random];
+
+        },
+
         async set_active_user(user_info_json) {
-            const url2 = "https://www2.yoslab.net/~nishimura/docogeo/PHP_C/Chat_U/set_active_user.php";
+            const url2 = "https://www3.yoslab.net/~nishimura/docogeo/PHP/Chat_U/set_active_user.php";
             let params = new URLSearchParams();
-            console.log(this.user_info)
             params.append("user_name_id", user_info_json.user_name_id);
             params.append("tour_id", user_info_json.tour_id);
             params.append("init_name", user_info_json.init_name);
@@ -266,26 +246,58 @@ export default {
             this.$localStorage.set('user_info',JSON.stringify(this.user_info));
             console.log("ユーザ情報が更新されました" + this.user_info);
         },
-        break_tour_timer() {
-            const url ="https://www2.yoslab.net/~nishimura/geotour/PHP/GET/get_tour_start_time.php";
+
+        async reset_user_info() {
+            const url = "https://www3.yoslab.net/~nishimura/docogeo/PHP/Chat_U/reset_user_info.php";
             let params = new URLSearchParams();
-            params.append("tour_id", this.tour_info.tour_id);
-            axios
-                .post(url, params)
-                .then(response => {
-                    let s_date = response.data.start_time;
-                    if(this.is_created_over_time(response.data.start_time)) {
-                        //開始から9時間でアクセス不可にする
-                        this.flag.end = true;
-                    }
-                })
-                .catch(error => {
-                    // エラーを受け取る
-                    console.log(error);
-                });
+            params.append("id", this.user_info.id);
+            params.append("user_name_id", this.user_info.user_name_id);
+            const res = await axios.post(url, params);
+
+            this.$localStorage.remove('user_info');
         },
+
+        is_exist_local_user_info() {
+            if(this.$localStorage.get('user_info')) {
+                return true;
+            } else {
+                return false;
+            }
+        },
+
+        set_likes() {
+            if(JSON.parse(this.$localStorage.get('like_array'))) {
+                this.showLike = JSON.parse(this.$localStorage.get('like_array'))
+            }
+        },
+
+        is_created_over_time(s_date) {
+            console.log(s_date)
+            let timestamp = Date.parse(s_date)
+            //http://yut.hatenablog.com/entry/20111015/1318633937
+            let now = Date.now()
+            let dif = now - timestamp;
+            let pass_min = dif/60/1000;
+            //540分 = 9時間経過に設定
+            if(pass_min > 540) {
+                return true;
+            } else {
+                return false;
+            }
+        },
+        
+        break_tour_timer() {
+
+            let s_date = this.tour_info.start_time;
+            if(this.is_created_over_time(this.tour_info.start_time)) {
+                //開始から9時間でアクセス不可にする
+                this.flag.end = true;
+            }
+
+        },
+
         judge_tour_isActive() {
-            const url ="https://www2.yoslab.net/~nishimura/docogeo/PHP_C/Chat_U/judge_tour_isActive.php";
+            const url ="https://www3.yoslab.net/~nishimura/docogeo/PHP/Chat_U/judge_tour_isActive.php";
             let params = new URLSearchParams();
             params.append("tour_id", this.tour_info.tour_id);
             axios
@@ -296,13 +308,11 @@ export default {
                         this.flag.end = true;
                     }
                 })
-                .catch(error => {
-                    // エラーを受け取る
-                    console.log(error);
-                });
+
         },
+
         get_all_post() {
-            const url ="https://www2.yoslab.net/~nishimura/docogeo/PHP_C/Chat_U/getPostedPost.php";
+            const url ="https://www3.yoslab.net/~nishimura/docogeo/PHP/Chat_U/getPostedPost.php";
             let params = new URLSearchParams();
             params.append("tour_id", this.tour_info.tour_id);
             axios
@@ -310,13 +320,10 @@ export default {
                 .then(response => {
                     this.spot_ex = response.data;
                 })
-                .catch(error => {
-                    // エラーを受け取る
-                    console.log(error);
-                });
         },
+
         get_added_post() {
-            const url ="https://www2.yoslab.net/~nishimura/docogeo/PHP_C/Chat_U/getPostedPost.php";
+            const url ="https://www3.yoslab.net/~nishimura/docogeo/PHP/Chat_U/getPostedPost.php";
             let params = new URLSearchParams();
             params.append("tour_id", this.tour_info.tour_id);
             axios
@@ -325,24 +332,23 @@ export default {
                     let dif = this.count_dif_spot_ex(response.data)
 
                     if( this.isAddedPost(dif) ) {
-                        //新しく説明が追加された場合
+                        console.log(response.data);
                         this.insert_new_post(response.data);
                     } else {
                         //変化がない場合
                         this.get_all_post();
                     }
                 })
-                .catch(error => {
-                    // エラーを受け取る
-                    console.log(error);
-                });
+
         },
+
         count_dif_spot_ex(added_data) {
             let now_len = this.spot_ex.length;
             let new_len = added_data.length;
             let dif = new_len - now_len;
             return dif;
         },
+
         isAddedPost(dif) {
             if(dif > 0) {
                 console.log("新しい説明が配信されました");
@@ -352,6 +358,7 @@ export default {
                 return false;
             }
         },
+
         insert_new_post(added_data) {
             let new_len = added_data.length;
             let dif = this.count_dif_spot_ex(added_data);
@@ -360,14 +367,17 @@ export default {
                 this.spot_ex.push(added_data[i]);
             }
         },
+
         move_page: function(where) {
             this.$router.push({
                 name: where
             });
         },
+
         returnSended(sended) {
             return sended.substr(10, 6);
         },
+
         isHidden(ex) {
             if(ex.isHidden == 0) {
                 return false;
@@ -375,9 +385,11 @@ export default {
                 return true;
             }
         },
+
         show_message(id) {
             this.showList.push(id);
         },
+
         isExistInShowList(id) {
             if(this.showList.length === 0) {
                 return false;
@@ -391,25 +403,29 @@ export default {
             }
             return flag;
         },
+
         change_name() {
             this.flag.isMounted = true;
             this.flag.change_name = true;
         },
+
         set_local_user_name(user_name_changed) {
           this.user_info.name = user_name_changed;
           this.$localStorage.remove('user_info');
           this.$localStorage.set('user_info',JSON.stringify(this.user_info));
         },
+
         async countup_pageview() {
             if(!this.user_info) {
                 return;
             }
-            const url = "https://www2.yoslab.net/~nishimura/docogeo/PHP_C/countup_pageview.php";
+            const url = "https://www3.yoslab.net/~nishimura/docogeo/PHP/countup_pageview.php";
             let params = new URLSearchParams();
             params.append("id", this.user_info.id);
             params.append("where", this.place);
             const res = await axios.post(url, params);
         },
+
         isLiked(id) {
             let len = this.showLike.length;
             let flag = false;
@@ -421,14 +437,13 @@ export default {
             }
             return flag;
         },
+
         done_like(ex) {
             if(!this.isLiked(ex.ex_id)) {
                 this.showLike.push(ex.ex_id);
                 this.$localStorage.remove('like_array');
                 //再読み込み対策のローカル値
                 this.$localStorage.set('like_array',JSON.stringify(this.showLike));
-
-                console.log(ex)
                 this.countup_likes(ex);
             } else {
 
@@ -448,18 +463,21 @@ export default {
                 */
             }
         },
+
         async countup_likes(ex) {
-            console.log(this.isImage(ex.imgPath))
-            const url = "https://www2.yoslab.net/~nishimura/docogeo/PHP_C/Chat_U/countup_likes.php";
+            const url = "https://www3.yoslab.net/~nishimura/docogeo/PHP/Chat_U/countup_likes.php";
             let params = new URLSearchParams();
             params.append("dist_id", ex.ex_id); //distの主キー
-            params.append("img_flag", this.isImage(ex.imgPath));
+            params.append("img_flag", this.isImage(ex.image_path));
             params.append("ex_id", ex.exp_id); //spot_explanationの主キー
-            params.append("img_id", ex.img_id);
+            params.append("image_id", ex.img_id);
             params.append("tour_id", ex.tour_id);
             params.append("spot_id", ex.spot_id);
+            params.append("spot_image_id", ex.spot_image_id);
             const res = await axios.post(url, params);
+            console.log("処理完了")
         },
+
         isImage(img_path) {
             if(img_path) {
                 return true;
@@ -467,6 +485,7 @@ export default {
                 return false;
             }
         },
+
         isPostExist() {
             if(this.spot_ex.length > 0) {
                 return true;
@@ -474,6 +493,7 @@ export default {
                 return false;
             }
         },
+
         lookImage(src) {
             if(!src) {
                 return;
@@ -481,7 +501,12 @@ export default {
             this.src_selected = src;
             this.flag.lookImage  = true;
             console.log("click")
-        }
+        },
+        
+        close_modal: function() {
+            this.flag.change_name = false;
+            this.flag.lookImage = false;
+        },
     },
     components: {
         HeaderGuest: HeaderGuest,
@@ -536,9 +561,32 @@ export default {
 }
 
 .l-comment {
+    position: relative;
     padding: 10px;
     background-color: #E3E5E5;
     border-radius: 10px;
+}
+
+.rel {
+    position: relative;
+}
+
+.likes {
+    margin-top: -10px;
+    position: absolute;
+    right: 0;
+    background-color: #fff;
+    width: 40px;
+    height: 20px;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,.25));
+    border-radius: 40px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    font-size: 10px;
+    color: #4B8E8D;
 }
 
 .l-comment-hidden {
@@ -568,6 +616,7 @@ export default {
 }
 
 .o-image {
+    position: relative;
     width: 100%;
     max-width: 300px;
     margin-right: 10px;
@@ -609,13 +658,22 @@ color: #CC544D;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    text-align: center;
+    align-items: center;
+}
+
+.kujira {
+    width: calc(100% - 120px);
+    max-width: 300px;
 }
 
 .fs20 {
     font-size: 30px;
     font-weight: bold;
     color: #4B8E8D;
+}
+
+.u-mr5 {
+    margin-right: 5px;
 }
 
 </style>

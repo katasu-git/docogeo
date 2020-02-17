@@ -6,6 +6,7 @@
         v-show="flag.check"
         class="checkImage"
       >
+        <div class="modal_opacity">透明度{{opacity_value}}%</div>
         <canvas 
           id="cvs1"
           ref="cvs1"
@@ -13,8 +14,18 @@
           :height="height"
           :style="{ opacity: return_opacity()}"
         />
-        <div class="modal_message">この画像を配信しますか？</div>
-        <div class="modal_opacity">透明度{{opacity_value}}%</div>
+        <div
+          v-if="!isTrans" 
+          class="modal_message"
+        >
+          この画像を配信しますか？
+        </div>
+        <div
+          v-else 
+          class="modal_message"
+        >
+          この画像を透過させますか？
+        </div>
         <div class="button_wrapper">
           <button 
             @click="hidden_modal()"
@@ -24,7 +35,11 @@
           </button>
           <button 
             @click="postFile()"
-            class="button_post">配信</button>
+            class="button_post"
+          >
+            <p v-if="!isTrans">配信</p>
+            <p v-else>透過</p>
+          </button>
         </div>
       </div>
     </transition>
@@ -56,6 +71,7 @@
     </div>
 
     <input 
+      v-if="isTrans"
       type="range" 
       min="0" 
       max="100" 
@@ -67,7 +83,7 @@
 
       <div class="flex_colmn">
         <img
-          @click="jump('camera')"
+          @click="jump('chat_g')"
           class="button_back"
           src="../assets/back.svg"
         />
@@ -80,7 +96,7 @@
       >OK</button>
 
       <div 
-        v-if="flag.half"
+        v-show="flag.half && isTrans"
         class="flex_colmn">
         <img
           @click="set_width()"
@@ -90,7 +106,7 @@
         半分
       </div>
       <div 
-        v-else
+        v-show="!flag.half && isTrans"
         class="flex_colmn">
         <img
           @click="set_width()"
@@ -119,7 +135,7 @@
 import axios from 'axios'
 import Konva from 'konva';
 import Footer from '../components/parts/Footer'
-import Uploading from '../components/modals/imgUploading'
+import Uploading from '../components/Images_Modal/imgUploading'
 
 export default {
   name: 'FreeDrawing',
@@ -139,7 +155,8 @@ export default {
     },
     get_width: '',
     get_height: '',
-    get_captures: '',
+    spot_image_id: '',
+    isTrans: Boolean
   },
   data: () => ({
     tour_info: '',
@@ -164,7 +181,7 @@ export default {
     backgroundImageScope: null,
     file: '',
     flag_uploading: false,
-    opacity_value: 50,
+    opacity_value: 100,
     flag: {
       half: false,
       check: false,
@@ -278,8 +295,8 @@ export default {
         image: this.imageObj,
         x: 0,
         y: 0,
-        width: this.canvas.width, //キャンバスと同じサイズに設定
-        height: this.canvas.height
+        width: this.get_width,
+        height: this.get_height
       })
 
       // 背景レイヤに背景イメージを追加
@@ -303,55 +320,54 @@ export default {
       this.cvs1.getContext('2d').drawImage(this.canvas, 0, 0, this.width, this.height); //線
       this.file = this.cvs1.toDataURL('image/png');
       this.flag.check = true;
-      },
-      postFile: function() {
-          this.flag.check = false;
-          this.flag_uploading = true;
-          const url = "https://www2.yoslab.net/~nishimura/geotour/PHP/upload_draw.php";
-          let params = new URLSearchParams();
-          params.append('canvasData', this.file);
-          params.append('opacity', this.opacity_value);
-          axios
-            .post(url, params)
-            .then(response => {
-              this.add_image_to_spot(response.data[0]);
-            })
-            .catch(error => {
-              // エラーを受け取る
-              console.log(error);
-            });
-        },
-        add_image_to_spot(image) {
-          const url = "https://www2.yoslab.net/~nishimura/docogeo/PHP_C/add_image_to_spot.php";
-          let params = new URLSearchParams();
-          params.append('tour_id', this.tour_info.tour_id);
-          params.append('spot_id', this.spot_info.spot_id);
-          params.append('image_id', image.id);
-          params.append('image_path', image.image_path);
-          axios.post(url, params).then(()=>{
+
+    },
+    postFile: function() {
+        this.flag.check = false;
+        this.flag_uploading = true;
+
+        if(this.isTrans) {
+          var url = "https://www3.yoslab.net/~nishimura/docogeo/PHP/Images/upload_trans_image.php";
+        } else {
+          var url = "https://www3.yoslab.net/~nishimura/docogeo/PHP/Images/upload_draw.php";
+        }
+        let params = new URLSearchParams();
+        params.append('image_data', this.file);
+        params.append('tour_id', this.tour_info.tour_id);
+        params.append('spot_id', this.spot_info.spot_id);
+        params.append('spot_image_id', this.spot_image_id);
+        params.append('opacity', this.opacity_value);
+
+        axios
+          .post(url, params)
+          .then(response => {
             this.flag_uploading = false;
-            this.jump("camera");
+            this.jump("chat_g");
           })
-        },
-        jump(where) {
-          this.$router.push({
-            name: where,
-          })
-       },
-       return_opacity() {
-         return this.opacity_value + "%";
-       },
-       set_width() {
-         if(this.flag.half) {
-           this.flag.half = false;
-         } else {
-           this.flag.half = true;
-         }
-       },
-       hidden_modal() {
-         this.flag.check = false;
-         this.onClearCanvas();
-       }
+          .catch(error => {
+            // エラーを受け取る
+            console.log(error);
+          });
+      },
+      jump(where) {
+        this.$router.push({
+          name: where,
+        })
+      },
+      return_opacity() {
+        return this.opacity_value + "%";
+      },
+      set_width() {
+        if(this.flag.half) {
+          this.flag.half = false;
+        } else {
+          this.flag.half = true;
+        }
+      },
+      hidden_modal() {
+        this.flag.check = false;
+        this.onClearCanvas();
+      }
   },
   components: {
     Footer: Footer,
@@ -365,6 +381,9 @@ export default {
   position: fixed;
   width: 100%;
   height: 100%;
+
+  display: flex;
+  align-items: center;
 }
 
 #back_image_hidden {
@@ -372,9 +391,7 @@ export default {
 }
 
 .container {
-    position: absolute;
-    top: 10px;
-    left: 10px;
+    padding-left: 10px;
 }
 
 .l-button {
@@ -480,6 +497,7 @@ input[type=range]::-webkit-slider-thumb{
 }
 
 #cvs1 {
+  margin-top: 20px;
   max-height: calc(100% - 300px);
 }
 
