@@ -4,7 +4,8 @@
             v-for="(info) in spot_info" :key="info.spot_id">
           <div class="l-image_text_burger">
             <div class="l-image_text">
-              <div class="o-list_image"><img class="o-image_circle" src="../../assets/kujira.svg" /></div>
+                <div class="o-list_image">
+                </div>
               <div class="l-list_text">
                 <div class="l_text_pen_icon">
                     <div 
@@ -33,7 +34,6 @@
 </template>
 
 <script>
-import axios from 'axios'
 export default {
   name: 'list',
   props: {
@@ -41,6 +41,9 @@ export default {
   },
   methods: {
       return_sended(sended) {
+          if(!sended) {
+              return;
+          }
             let month = sended.substr(5, 2) + '月';
             let day = sended.substr(8, 2) + '日';
             let time = ' ' + sended.substr(10, 6);

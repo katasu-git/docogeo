@@ -3,11 +3,12 @@
         <FreeDrawing
             class="freeDrawing"
             ref="freeDrawing"
-            :backgroundImage="captures[0]"
+            :backgroundImage="captures"
             :mode="mode"
             :get_width="width"
             :get_height="height"
-            :get_captures="captures"
+            :spot_image_id="spot_image_id"
+            :isTrans="isTrans"
         />
     </div>
 </template>
@@ -23,18 +24,23 @@ export default {
     defaultBrushColor: '#FFFFFF',
     width: '',
     height: '',
-    captures: ''
+    captures: '',
+    spot_image_id: '',
+    isTrans: false
   }),
   created() {
     if(this.$route.params.isNotReload) {
       this.width = this.$route.params.width;
       this.height = this.$route.params.height;
       this.captures = this.$route.params.captures;
+      this.spot_image_id = this.$route.params.spot_image_id;
+      this.isTrans = this.$route.params.isTrans;
     } else {
       this.$router.push({
-            name: 'camera'
+            name: 'chat_g'
       })
     }
+    console.log(this.captures)
   },  
   mounted: function() {
     this.init();

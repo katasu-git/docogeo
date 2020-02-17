@@ -41,19 +41,17 @@
             <div class="o-image" 
                 v-for="image in img_info"
                 :key="image.id"
-                @click="post_img(image)"
+                @click="onClickPostImage(image)"
             >
                 <img 
                     class="img"
+                    :id="return_image_name(image)"
                     :src="image.image_path"
                     :style="{ opacity:returnOpacity(image.isPosted) }"
                 />
             </div>
         </div>
 
-        <div class="l-border">
-            <div class="o-border u-mt20"></div>
-        </div>
 
         <div class="l-comment_container">
             <div 
@@ -87,7 +85,7 @@
                 <div
                     class="o-button_hoe"
                     :style="{ opacity:returnOpacity(ex.isPosted) }"
-                    @click="post_ex(ex)"
+                    @click="onClickPostButton(ex)"
                 >
                     <img src="../assets/send_button.svg" />
                 </div>
@@ -99,6 +97,14 @@
             :user="user"
             @move_page="move_page"
         />
+
+        <canvas
+            ref="canvas"
+            id="canvas"
+        />
+
+        <img id="image_hidden" src="" />
+
       </div>
   </div>
 </template>
@@ -130,7 +136,10 @@ import GuestList from '../components/Chat_Guide/GuestList'
               guest_list: false,
               isMounted: false,
               isTourChanged: false
-          }
+          },
+          video_h: '',
+          video_w: '',
+          captures: '',
       }
     },
     created: function () {
@@ -146,75 +155,65 @@ import GuestList from '../components/Chat_Guide/GuestList'
             this.flag.isTourChanged = true;
 
         } else {
-          this.tour_info = JSON.parse(this.$localStorage.get('now_tour_info'));
+            this.tour_info = JSON.parse(this.$localStorage.get('now_tour_info'));
         }
         this.init()
     },
+    mounted() {
+        this.setCanvas(100, 100)
+    },
     methods: {
-        init() {
-            this.get_spot_info_arr();
+        async init() {
+            await this.get_spot_info_arr();
+            this.get_post()
+            this.get_spot_image();
             this.fetch_active_user();
+
             this.closeModal();
         },
         refresh() {
             this.get_post()
             this.get_spot_image();
+            
             this.closeModal();
         },
-        get_spot_info_arr() {
-            const url =　"https://www2.yoslab.net/~nishimura/geotour/PHP/get_spot_info.php";
+        async get_spot_info_arr() {
+            const url = "https://www3.yoslab.net/~nishimura/docogeo/PHP/Chat_G/get_spot_info.php";
             let params = new URLSearchParams();
             params.append("tour_id", this.tour_info.tour_id);
-            axios
-                .post(url, params)
-                .then(response => {
-                    //スポットのデータを丸ごと保存
-                    this.spot_info_arr = response.data;
-                    //通常の呼び出し先
-                    this.spot_info = response.data[0];
-                    if(!this.$localStorage.get('now_spot_info') || this.flag.isTourChanged) {
-                        this.$localStorage.remove('now_spot_info');
-                        //再読み込み対策のローカル値
-                        this.$localStorage.set('now_spot_info',JSON.stringify(response.data[0]));
-                    } else {
-                        this.spot_info = JSON.parse(this.$localStorage.get('now_spot_info'));
-                    }
+            const response = await axios.post(url, params);
 
-                    //後処理
-                    this.get_post()
-                    this.get_spot_image();
-                })
-                .catch(error => {
-                // エラーを受け取る
-                console.log(error);
-                });
+            this.spot_info_arr = response.data;
+            this.spot_info = response.data[0];
+            if(!this.$localStorage.get('now_spot_info') || this.flag.isTourChanged) {
+                this.$localStorage.remove('now_spot_info');
+                //再読み込み対策のローカル値
+                this.$localStorage.set('now_spot_info',JSON.stringify(response.data[0]));
+            } else {
+                this.spot_info = JSON.parse(this.$localStorage.get('now_spot_info'));
+            }
         },
-        get_post() {
-            const url ="https://www2.yoslab.net/~nishimura/geotour/PHP/getPost.php";
+        async get_post() {
+            const url = "https://www3.yoslab.net/~nishimura/docogeo/PHP/Chat_G/getPost.php";
             let params = new URLSearchParams();
             params.append("spot_id", this.spot_info.spot_id);
-            axios 
-                .post(url, params)
-                .then(response => {
-                    this.spot_ex = response.data;
-                })
-                .catch(error => {
-                    // エラーを受け取る
-                    console.log(error);
-                });
+            const response = await axios.post(url, params);
+
+            this.spot_ex = response.data;
         },
-        get_spot_image() {
-            const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/GET/get_spot_img.php';
-                let params = new URLSearchParams();
-                params.append('tour_id', this.tour_info.tour_id);
-                params.append('spot_id', this.spot_info.spot_id);
-                axios.post(url, params
-                ).then(response => {
-                    this.img_info = response.data;
-                }).catch(error => {
-                    // エラーを受け取る
-                    console.log(error);
-                });
+        async get_spot_image() {
+            const url = "https://www3.yoslab.net/~nishimura/docogeo/PHP/Chat_G/get_spot_img.php";
+            let params = new URLSearchParams();
+            params.append('tour_id', this.tour_info.tour_id);
+            params.append('spot_id', this.spot_info.spot_id);
+            const response = await axios.post(url, params);
+
+            this.img_info = response.data;
+        },
+        async fetch_active_user() {
+            const url = "https://www3.yoslab.net/~nishimura/docogeo/PHP/Chat_G/fetch_active_user.php";
+            const res = await axios.post(url);
+            this.userList = res.data;
         },
         change_spot_name(spot_selected) {
             this.spot_info = spot_selected;
@@ -268,124 +267,95 @@ import GuestList from '../components/Chat_Guide/GuestList'
                 return 'l-comment';
             }
         },
-        post_ex(ex) {
-            if(ex.isPosted == 0) {
 
-                const url = 'https://www2.yoslab.net/~nishimura/docogeo/PHP_C/Chat_G/post_ex.php';
-                let params = new URLSearchParams();
-                params.append("tour_id", ex.tour_id);
-                params.append("spot_id", ex.spot_id);
-                params.append("ex_id", ex.ex_id);
-                params.append("posted_ex", ex.spot_ex);
-                if(this.isExist(ex)) {
-                    params.append("isHidden", 1);
-                } else {
-                    params.append("isHidden", 0);
-                }
-                axios
-                    .post(url, params)
-                    .catch(error => {
-                        // エラーを受け取る
-                        console.log(error);
-                    });
-
-                const url2 = 'https://www2.yoslab.net/~nishimura/geotour/PHP/isPosted_t.php';
-                let params2 = new URLSearchParams();
-                params2.append("ex_id", ex.ex_id);
-                axios
-                    .post(url2, params2).then(response => {
-                        this.get_post();
-                    })
-                    .catch(error => {
-                        // エラーを受け取る
-                        console.log(error);
-                    });
-
-            } else if(ex.isPosted == 1) {
-
-                //配信済みの場合の処理
-                const url2 = 'https://www2.yoslab.net/~nishimura/geotour/PHP/isPosted_f.php';
-                let params2 = new URLSearchParams();
-                params2.append("ex_id", ex.ex_id);
-                axios
-                    .post(url2, params2).then(response => {
-                    })
-                    .catch(error => {
-                        // エラーを受け取る
-                        console.log(error);
-                    });
-
-                //配信済みの場合の処理
-                const url3 = 'https://www2.yoslab.net/~nishimura/geotour/PHP/DELETE/delete_posted_post.php';
-                let params3 = new URLSearchParams();
-                params3.append("ex_id", ex.ex_id);
-                axios
-                    .post(url3, params3)
-                    .then(response => {
-                        this.refresh();
-                    })
-                    .catch(error => {
-                        // エラーを受け取る
-                        console.log(error);
-                    });
-
-            }
-        },
-        post_img(image) {
-                console.log("----------------" + JSON.stringify(image));
-
-                if(image.isPosted == 0) {
-                    const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/POST/post_img.php';
-                    let params = new URLSearchParams();
-                    params.append("tour_id", image.tour_id);
-                    params.append("spot_id", image.spot_id);
-                    params.append("image_id", image.image_id);
-                    params.append("img_path", image.image_path);
-                    axios
-                        .post(url, params).then(()=>{
-                            this.refresh(); //isPostedの値更新処理
-                        })
-                        .catch(error => {
-                            // エラーを受け取る
-                            console.log(error);
-                        });
-
-                } else {
-                    //配信済みの場合の処理
-                    //delete処理もまとめた
-                    const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/undo_posted_post.php';
-                    let params = new URLSearchParams();
-                    params.append("id", image.id);
-                    params.append("tour_id", image.tour_id);
-                    params.append("spot_id", image.spot_id);
-                    params.append("image_id", image.image_id);
-                    axios
-                        .post(url, params).then(response => {
-                            this.refresh(); //isPostedの値更新処理
-                        })
-                        .catch(error => {
-                            // エラーを受け取る
-                            console.log(error);
-                        });
-                }
-
-        },
-        isActive(isPosted) {
-            if(isPosted == 1) {
-                return false;
+        async onClickPostButton(ex_info) {
+            console.log(ex_info)
+            if(ex_info.isPosted == 0) {
+                await this.post_ex(ex_info)
             } else {
-                return true;
+                await this.undo_post_ex(ex_info)
             }
+            this.refresh()
         },
+
+        async post_ex(ex_info) {
+            const url = "https://www3.yoslab.net/~nishimura/docogeo/PHP/Chat_G/post_ex.php";
+            let params = new URLSearchParams();
+            params.append("tour_id", ex_info.tour_id);
+            params.append("spot_id", ex_info.spot_id);
+            params.append("ex_id", ex_info.ex_id);
+            params.append("posted_ex", ex_info.spot_ex);
+            
+           if(this.isExist(ex_info)) {
+                params.append("isHidden", 1);
+            } else {
+                params.append("isHidden", 0);
+            }
+            const response = await axios.post(url, params);
+        },
+
+        async undo_post_ex(ex_info) {
+            const url = "https://www3.yoslab.net/~nishimura/docogeo/PHP/Chat_G/delete_posted_post.php";
+            let params = new URLSearchParams();
+            params.append("ex_id", ex_info.ex_id);
+            const response = await axios.post(url, params);
+        },
+
+        move_draw(image) {
+            let image_hidden = document.getElementById("image_hidden");
+            image_hidden.src = image.image_path;
+
+            image_hidden.onload = ()=> {
+                //画像の読み込みが終わったら
+                this.canvas = this.$refs.canvas
+                this.setCanvas(image_hidden.width, image_hidden.height);
+                this.canvas.getContext('2d').drawImage(image_hidden, 0, 0, image_hidden.width, image_hidden.height);
+                let captures = this.canvas.toDataURL('image/jpg')
+
+                //お絵かきページに移動
+                this.$router.push({
+                name: 'draw',
+                    params: {
+                    width: image_hidden.width,
+                    height: image_hidden.height,
+                    captures: captures,
+                    spot_image_id: image.id, //spot_imagesの主キー
+                    isNotReload: true
+                    }
+                })
+            }
+
+        },
+
+        setCanvas(width, height) {
+            //canvasのサイズ変更
+            let canvas = document.getElementById("canvas");
+            canvas.width = width;
+            canvas.height = height;
+        },
+
+        onClickPostImage(image) {
+
+            console.log(image); //idはspot_imageの主キー
+            if(image.isPosted == 0) {
+                this.move_draw(image)
+            } else {
+                console.log("配信済みです")
+            }
+
+        },
+
         finish_tour () {
             this.flag.finish_tour = true;
         },
+
         returnTimeCol(isPosted) {
             if(isPosted == 0) {
                 return 'rgba(0,0,0,0)';
             }
             return '#4B8E8D';
         },
+
         returnOpacity(isPosted) {
             if(isPosted == 0) {
                 return '1';
@@ -393,29 +363,33 @@ import GuestList from '../components/Chat_Guide/GuestList'
                 return '0.4';
             }
         },
+
         changeSpot() {
             this.flag.change_spot = true;
         },
+
         show_guestList() {
             this.fetch_active_user();
             this.flag.isMounted = true;
             this.flag.guest_list = true;
         },
+
         closeModal() {
-            setTimeout(() => {
-                this.flag.change_spot = false;
-                this.flag.finish_tour = false;
-                this.flag.guest_list = false;
-            }, 200)
+            this.flag.change_spot = false;
+            this.flag.finish_tour = false;
+            this.flag.guest_list = false;
         },
+        
         returnSended(sended) {
+            if(!sended) {
+                return;
+            }
             return sended.substr(10, 6);
         },
-        async fetch_active_user() {
-            const url = "https://www2.yoslab.net/~nishimura/docogeo/PHP_C/Chat_G/fetch_active_user.php";
-            const res = await axios.post(url);
-            this.userList = res.data;
-        },
+
+        return_image_name(image) {
+            return "image" + image.id;
+        }
     },
     components: {
         VueHeader: VueHeader,
@@ -446,20 +420,25 @@ import GuestList from '../components/Chat_Guide/GuestList'
 }
 
 .l-slider_images {
-    margin: 100px 0 0 0;
+    position: fixed;
+    top: 80px;
+    padding: 20px;
     width: 100%;
     display: flex;
     overflow-x: scroll;
     overflow-y: hidden;
     -webkit-overflow-scrolling: touch; /*ios*/
+    z-index: 1;
+    background-color: #F5F5F5;
+    border-bottom: solid 1px rgba(0,0,0, .12);
   }
 
   .o-image {
     position: relative;
-    min-height: 100px;
-    min-width: 100px;
-    max-height: 100px;
-    max-width: 100px;
+    min-height: 150px;
+    min-width: 150px;
+    max-height: 150px;
+    max-width: 150px;
     border-radius: 10px;
   }
 
@@ -479,14 +458,7 @@ import GuestList from '../components/Chat_Guide/GuestList'
   }
 
   .o-image:last-of-type {
-    padding-right: 20px;
-  }
-
-  .l-border {
-    margin: 20px 0;
-    width: 100vw;
-    display: flex;
-    justify-content: flex-end;
+    padding-right: 40px;
   }
 
   .o-border {
@@ -496,7 +468,10 @@ import GuestList from '../components/Chat_Guide/GuestList'
   }
 
   .l-comment_container {
+      position: absolute;
+      top: 290px;
       width: calc(100% - 40px);
+      overflow-y: scroll;
   }
 
   .l-comment_row {
@@ -574,6 +549,15 @@ import GuestList from '../components/Chat_Guide/GuestList'
 
   .u-color-red {
     color: #CC544D;
+  }
+
+  #canvas {
+    visibility: hidden;
+  }
+
+  #image_hidden {
+    width: calc(100% - 20px);
+    visibility: hidden;
   }
 
 </style>

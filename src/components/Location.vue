@@ -63,7 +63,7 @@ export default {
             })
         },
         async post_location(altitude) {
-            const url = "https://www2.yoslab.net/~nishimura/docogeo/PHP_C/post_location.php";
+            const url = "https://www3.yoslab.net/~nishimura/docogeo/PHP/post_location.php";
             let params = new URLSearchParams();
             params.append("tour_id", this.tour_info.tour_id);
             params.append("altitude", altitude);

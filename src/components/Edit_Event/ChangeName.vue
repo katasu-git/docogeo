@@ -35,7 +35,7 @@
         },
         update_tour_name: function() {
             const url =
-            "https://www2.yoslab.net/~nishimura/docogeo/PHP_C/Edit_Event/change_tour_name.php";
+            "https://www3.yoslab.net/~nishimura/docogeo/PHP/Edit_Event/change_tour_name.php";
             let params = new URLSearchParams();
             params.append("tour_id", this.tour_info.tour_id);
             params.append("tour_name_changed", this.tour_name_changed);

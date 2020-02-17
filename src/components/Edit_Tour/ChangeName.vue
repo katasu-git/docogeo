@@ -17,7 +17,8 @@
   export default {
     name: 'changename',
     props: {
-        spot_info: ''
+      tour_info: '',
+      spot_info: ''
     },
     data() {
         return {
@@ -35,8 +36,9 @@
         },
         update_spot_name: function() {
             const url =
-            "https://www2.yoslab.net/~nishimura/docogeo/PHP_C/Edit_Tour/change_spot_name.php";
+            "https://www3.yoslab.net/~nishimura/docogeo/PHP/Edit_Tour/change_spot_name.php";
             let params = new URLSearchParams();
+            params.append("tour_id", this.tour_info.tour_id);
             params.append("spot_id", this.spot_info.spot_id);
             params.append("spot_name_changed", this.spot_name_changed);
             axios

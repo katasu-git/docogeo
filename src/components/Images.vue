@@ -51,11 +51,11 @@
           class="o-img_fit" 
           v-for="image in srcArray"
           :key="image.id"
-          @click="popup_image(image, image.id, image.isAdded, image.imgPath)"
+          @click="popup_image(image)"
         >
           <v-lazy-image
             class="box"
-            :src="image.imgPath"
+            :src="image.image_path"
           />
         </div>
       </div>
@@ -84,10 +84,10 @@
 import axios from 'axios'
 import { async, resolve, reject } from 'q';
 import Compressor from 'compressorjs'
-import Success from '../components/modals/imgSuccess'
-import PopupImage from "../components/modals/imgPopup"
-import Uploading from "../components/modals/imgUploading"
-import DeleteImage from "../components/modals/imgDelete"
+import Success from '../components/Images_Modal/imgSuccess'
+import PopupImage from "../components/Images_Modal/imgPopup"
+import Uploading from "../components/Images_Modal/imgUploading"
+import DeleteImage from "../components/Images_Modal/imgDelete"
   export default {
     name: 'images',
     data() {
@@ -175,7 +175,7 @@ import DeleteImage from "../components/modals/imgDelete"
         comp_file(file) {
           return new Promise(function(resolve) {
             new Compressor(file, {
-              quality: .2,
+              quality: .4,
               mimeType: 'image/jpeg',
               maxWidth: 600,
               success(result) {
@@ -208,14 +208,18 @@ import DeleteImage from "../components/modals/imgDelete"
             reader.readAsDataURL(file);
         },
         postFile(file) {
+            if(!file) {
+              return;
+            }
             this.closeModal();
             this.flag_uploading = true;
-            const url = "https://www2.yoslab.net/~nishimura/geotour/PHP/upload.php";
+            const url = "https://www3.yoslab.net/~nishimura/docogeo/PHP/Images/upload.php";
             let params = new URLSearchParams();
             params.append('image_data', file);
             axios
               .post(url, params)
               .then(response => {
+                  console.log(response.data)
                   this.closeModal();
               })
               .catch(error => {
@@ -223,29 +227,30 @@ import DeleteImage from "../components/modals/imgDelete"
                 console.log(error);
               });
         },
-        addImgToSpot(index, isAdded, image_path) {
+        addImgToSpot(image) {
           if(this.tour_info.tour_id == '' || this.spot_info.spot_id == '') {
             console.log("reject");
             return; //editページ以外からの遷移時は登録しない
           }
-          const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/add_img_spot.php';
-              let params = new URLSearchParams();
-              params.append('tour_id', this.tour_info.tour_id);
-              params.append('spot_id', this.spot_info.spot_id);
-              params.append('image_id', index);
-              params.append('image_path', image_path);
-              console.log(image_path);
-              axios.post(url, params
-              ).then(response => {
-                //ここでeditに戻る処理
-                this.flag_success = true;
-              }).catch(error => {
-                  // エラーを受け取る
-                  console.log(error);
-              });
+          console.log(image)
+          const url = 'https://www3.yoslab.net/~nishimura/docogeo/PHP/Images/add_img_spot.php';
+          let params = new URLSearchParams();
+          params.append('tour_id', this.tour_info.tour_id);
+          params.append('spot_id', this.spot_info.spot_id);
+          params.append('image_id', image.id);
+          params.append('image_path', image.image_path);
+          
+          axios.post(url, params
+          ).then(response => {
+            //ここでeditに戻る処理
+            this.flag_success = true;
+          }).catch(error => {
+              // エラーを受け取る
+              console.log(error);
+          });
         },
         getAllImage() {
-          const url = 'https://www2.yoslab.net/~nishimura/geotour/PHP/GET/get_all_image.php';
+          const url = 'https://www3.yoslab.net/~nishimura/docogeo/PHP/Images/get_all_image.php';
               axios.post(url
               ).then(response => {
                 this.srcArray = response.data;
@@ -254,9 +259,9 @@ import DeleteImage from "../components/modals/imgDelete"
                   console.log(error);
               });
         },
-        popup_image(image, index, isAdded, image_path) {
+        popup_image(image) {
           if(this.flag_add) {
-            this.addImgToSpot(index, isAdded, image_path)
+            this.addImgToSpot(image)
           } else {
             this.image_avoid = image;
             this.flag_popup_image = true;

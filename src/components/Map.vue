@@ -23,7 +23,7 @@
             <GmapMap
                 class="gmap"
                 :center="{lat:this.lat, lng:this.lng}"
-                :zoom="15"
+                :zoom="18"
                 :options="{streetViewControl: false}"
                 map-type-id="terrain"
                 :style="{ width: width, height: height }"

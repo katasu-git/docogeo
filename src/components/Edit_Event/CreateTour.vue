@@ -30,12 +30,13 @@
         },
         create_tour: function() {
             const url =
-            "https://www2.yoslab.net/~nishimura/docogeo/PHP_C/Edit_Event/create_tour.php";
+            "https://www3.yoslab.net/~nishimura/docogeo/PHP/Edit_Event/create_tour.php";
             let params = new URLSearchParams();
             params.append("tour_name", this.tour_name_updated);
             axios
             .post(url, params)
             .then(response => {
+              console.log(response.data);
                 this.tour_name_updated = ''; //リセット
                 this.close_modal();
             })

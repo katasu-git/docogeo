@@ -41,19 +41,20 @@ import draggable from 'vuedraggable'
 export default {
   name: 'list_drag',
   props: {
-      spot_info: Array
+      spot_info: ''
   },
   methods: {
-      update_order_spot_name() {
-        const url = 'https://www2.yoslab.net/~nishimura/docogeo/PHP_C/Edit_Tour/update_order_spot_name.php';
-        axios.post(url, this.spot_info
+    update_order_spot_name() {
+        const url = 'https://www3.yoslab.net/~nishimura/docogeo/PHP/Edit_Tour/update_order.php';
+        let params = new URLSearchParams();
+        params.append('spot_info', JSON.stringify(this.spot_info));
+        axios.post(url, params
         ).then(response => {
-            //返ってきたデータの処理
+            console.log(response.data);
         }).catch(error => {
-            // エラーを受け取る
             console.log(error);
         });
-      },
+    },
   },
   components: {
       draggable: draggable,
