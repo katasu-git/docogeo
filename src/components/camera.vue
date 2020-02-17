@@ -127,6 +127,7 @@ import Uploading from '../components/Images_Modal/imgUploading'
         params.append('image_data', this.captures);
         params.append('tour_id', this.tour_info.tour_id);
         params.append('spot_id', this.spot_info.spot_id);
+        params.append('camera_flag', true);
         axios
           .post(url, params)
           .then(response => {

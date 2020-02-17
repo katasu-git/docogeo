@@ -56,7 +56,7 @@
           @click="select_card(info)"
         >
           <img 
-            src="../assets/kujira.svg"
+            :src='require("../assets/kujira.png")'
             class="o-image_tour u_pointer"
           />
         </div>
@@ -81,10 +81,12 @@
 
       <button class="o-button_create_geosite u_pointer"
         @click="create_tour()"
-      >新しくツアーを作成する</button>
+      >
+        新しくツアーを作成する
+      </button>
 
       <div class="l-footer">
-        <div class="o-text_footer">DoCoGeo for <span class="u-color-green">GUIDE</span></div>
+        <div class="o-text_footer">DoCoGeo(www3) for <span class="u-color-green">GUIDE</span></div>
         <div
           @click="move_page('top_u')"
           class="o-text_go u-color-green u_pointer">参加者ページへ</div>
@@ -258,14 +260,15 @@ export default {
     height: calc(100% - 80px);
     width: calc(100vw - 80px);
     max-width: 400px;
+
+    display: flex;
+    justify-content: center;
   }
 
     .o-image_tour {
-      height: 100%;
-      width: calc(100vw - 80px);
+      width: 100%;
       max-width: 400px;
       border-radius: 10px 10px 0 0;
-      object-fit: cover;
       border: solid 1px rgba(0,0,0, .12);
       border-bottom: none;
     }

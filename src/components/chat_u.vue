@@ -40,11 +40,11 @@
             class="nothing_here"
         >
             <img 
-                src="../assets/kujira.svg"
-                class=""
+                src="../assets/kujira.png"
+                class="kujira"
             />
             <p>ようこそ<span class="fs20"> {{user_info.name}} </span>さん！</p>
-            <p class="u-mt20 sub-text">ここにはガイドの解説が表示されます</p>
+            <p class="u-mt20 sub-text">{{user_info.comment}}</p>
             <!--
             <p class="u-mt20 sub-text">くじらの名前をもじったニックネームです</p>
             -->
@@ -142,7 +142,8 @@ export default {
           },
           showList: [],
           showLike: [],
-          src_selected: ''
+          src_selected: '',
+          comment: ''
       }
     },
     created: function () {
@@ -211,7 +212,8 @@ export default {
                 "tour_id": this.tour_info.tour_id,
                 "init_name": whale_info.init_name,
                 "name": whale_info.init_name,
-                "created": ""
+                "created": "",
+                "comment": whale_info.comment
             }
             //actice_userに登録する
             this.set_active_user(this.user_info)
@@ -222,6 +224,7 @@ export default {
             const url = "https://www3.yoslab.net/~nishimura/docogeo/PHP/Chat_U/fetch_user_name.php";
             const res1 = await axios.post(url);
 
+            this.comment = res1.data.comment;
             let random = Math.floor( Math.random() * res1.data.length )
             return res1.data[random];
 
@@ -416,7 +419,7 @@ export default {
             if(!this.user_info) {
                 return;
             }
-            const url = "https://www2.yoslab.net/~nishimura/docogeo/PHP_C/countup_pageview.php";
+            const url = "https://www3.yoslab.net/~nishimura/docogeo/PHP/countup_pageview.php";
             let params = new URLSearchParams();
             params.append("id", this.user_info.id);
             params.append("where", this.place);
@@ -655,7 +658,12 @@ color: #CC544D;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    text-align: center;
+    align-items: center;
+}
+
+.kujira {
+    width: calc(100% - 120px);
+    max-width: 300px;
 }
 
 .fs20 {

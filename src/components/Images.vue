@@ -208,6 +208,9 @@ import DeleteImage from "../components/Images_Modal/imgDelete"
             reader.readAsDataURL(file);
         },
         postFile(file) {
+            if(!file) {
+              return;
+            }
             this.closeModal();
             this.flag_uploading = true;
             const url = "https://www3.yoslab.net/~nishimura/docogeo/PHP/Images/upload.php";

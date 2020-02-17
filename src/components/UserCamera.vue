@@ -84,7 +84,7 @@ import Footer from '../components/parts/Footer'
     },
     methods: {
       async countup_pageview() {
-        const url = "https://www2.yoslab.net/~nishimura/docogeo/PHP_C/countup_pageview.php";
+        const url = "https://www3.yoslab.net/~nishimura/docogeo/PHP/countup_pageview.php";
         let params = new URLSearchParams();
         params.append("id", this.user_info.id);
         params.append("where", this.place);

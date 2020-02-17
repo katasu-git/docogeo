@@ -6,7 +6,7 @@
         <div class="o-text_tour">Event</div>
       </div>
       <div class="l-header_under">
-        <div class="o-text_tour_min">開催中のイベント</div>
+        <div class="o-text_tour_min">参加するイベントを選択</div>
       </div>
       <div 
         class="o-slider"
@@ -17,10 +17,14 @@
           :key="info.tour_id"
           @click="move_page('chat_u', info)"
         >
-          <img src="../assets/kujira.svg" class="o-image_tour" />
+          <div class="img_wrapper">
+            <img 
+              :src='require("../assets/kujira.png")' 
+              class="o-image_tour" 
+            />
+          </div>
           <div class="o-transparent">
             <div class="o-text_tour_title">{{ info.tour_name }}</div>
-            <div class="o-text_update">最終更新 2019.11.7</div>
           </div>
         </div>
       </div>
@@ -29,13 +33,16 @@
         class="o-kujira"
         v-if="checkActiveTour() && isMounted"
       >
-        <img class="o-img_kujira" src="../assets/kujira.svg" />
+        <img 
+          class="o-img_kujira" 
+          :src='require("../assets/kujira.png")'  
+        />
         <p class="o-text_kujira">開催中のツアーはありません</p>
         <p class="o-text_kujira_min">しばらくお待ちください</p>
       </div>
 
       <div class="l-footer">
-        <div class="o-text_footer">DoCoGeo for <span class="u-color-green">GUEST</span></div>
+        <div class="o-text_footer">DoCoGeo(www3) for <span class="u-color-green">GUEST</span></div>
       </div>
 
     </div>
@@ -163,19 +170,27 @@
   height: 100%;
   width: calc(100vw - 80px);
   max-width: 400px;
+
+  display: flex;
+  justify-content: center;
 }
 
 .o-card:last-of-type {
   padding: 0 20px 0 20px;
 }
 
-.o-image_tour {
+.img_wrapper {
+  width: 100%;
   height: 100%;
-  width: calc(100vw - 80px);
-  max-width: 400px;
   border-radius: 10px;
-  object-fit: cover;
   border: solid 1px rgba(0,0,0, .12);
+
+  display: flex;
+  align-items: center;
+}
+
+.o-image_tour {
+  width: 100%;
 }
 
 .o-transparent {
@@ -204,7 +219,6 @@
 }
 
 .o-kujira {
-  margin-top: 50px;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -213,7 +227,9 @@
 }
 
 .o-img_kujira {
+  margin-top: 20vw;
   width: calc(100% - 80px);
+  max-width: 300px;
 }
 
 .o-text_kujira {

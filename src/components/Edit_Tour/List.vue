@@ -4,7 +4,8 @@
             v-for="(info) in spot_info" :key="info.spot_id">
           <div class="l-image_text_burger">
             <div class="l-image_text">
-              <div class="o-list_image"><img class="o-image_circle" src="../../assets/kujira.svg" /></div>
+                <div class="o-list_image">
+                </div>
               <div class="l-list_text">
                 <div class="l_text_pen_icon">
                     <div 
