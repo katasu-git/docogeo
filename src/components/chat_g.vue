@@ -343,9 +343,25 @@ import GuestList from '../components/Chat_Guide/GuestList'
             if(image.isPosted == 0) {
                 this.move_draw(image)
             } else {
-                
+                this.undo_post_image(image)
             }
 
+        },
+
+        undo_post_image(image) {
+            const url = "https://www3.yoslab.net/~nishimura/docogeo/PHP/Chat_G/undo_post_image.php"
+            let params = new URLSearchParams();
+            params.append('spot_image_id', image.id);
+
+            axios
+            .post(url, params)
+            .then(response => {
+                this.refresh();
+            })
+            .catch(error => {
+            // エラーを受け取る
+            console.log(error);
+            });
         },
 
         finish_tour () {
