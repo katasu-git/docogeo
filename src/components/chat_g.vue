@@ -135,7 +135,8 @@ import GuestList from '../components/Chat_Guide/GuestList'
               finish_tour: false,
               guest_list: false,
               isMounted: false,
-              isTourChanged: false
+              isTourChanged: false,
+              repost_modal: false,
           },
           video_h: '',
           video_w: '',
@@ -275,6 +276,7 @@ import GuestList from '../components/Chat_Guide/GuestList'
             if(ex_info.isPosted == 0) {
                 await this.post_ex(ex_info)
             } else {
+                this.flag.repost_modal = true;
                 await this.undo_post_ex(ex_info)
             }
             this.refresh()

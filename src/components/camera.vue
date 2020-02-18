@@ -6,7 +6,7 @@
     </transition>
 
     <div class="video_wrapper">
-
+      
       <video
         ref="video" 
         id="video"
@@ -197,7 +197,7 @@ import Uploading from '../components/Images_Modal/imgUploading'
         }
       },
       return_opacity() {
-         return this.opacity_value + "%";
+         return this.opacity_value / 100;
       },
       choice_image() {
         this.$router.push({
