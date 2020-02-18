@@ -7,6 +7,7 @@
         <div v-for="(alt, i) in altitudes" :key="i">
             {{ alt }} m
         </div>
+        <button @click="play_sound()">ヨーホエル！</button>
     </div>
 </template>
 

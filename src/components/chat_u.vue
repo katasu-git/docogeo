@@ -462,6 +462,7 @@ export default {
                 }
                 */
             }
+            this.play_sound();
         },
 
         async countup_likes(ex) {
@@ -506,6 +507,12 @@ export default {
         close_modal: function() {
             this.flag.change_name = false;
             this.flag.lookImage = false;
+        },
+
+        play_sound() {
+            let audioElem = new Audio();
+            audioElem.src = require("../assets/hoee2.mp3");
+            audioElem.play();
         },
     },
     components: {
