@@ -3,21 +3,31 @@
       
       <div class="o-background_black">
         <div class="o-modal">
-            <img 
-              @click="delete_image()"
-              class="o_button_delete"
-              src="../../assets/delete_icon.svg"
-            />
             <div class="o-text">
                 <img
                     class="o-image" 
-                    :src="image.image_path" />
+                    :src="image.image_path" 
+                />
             </div>
             <div class="l-button">
                 <button 
                     class="o-button_cancel"
                     @click="closeModal()"
-                >閉じる</button>
+                >
+                  閉じる
+                </button>
+                <button 
+                    class="o-button_undo"
+                    @click="judge_repost_button('repost')"
+                >
+                  再配信
+                </button>
+                <button 
+                    class="o-button_repost"
+                    @click="judge_repost_button('undo')"
+                >
+                  配信取消
+                </button>
             </div>
         </div>
       </div>
@@ -27,7 +37,6 @@
 </template>
 
 <script>
-　import axios from 'axios'
   export default {
     name: 'popupimage',
     props: {
@@ -38,9 +47,9 @@
             console.log(this.image);
             this.$emit('closeModal');
         },
-        delete_image() {
-            this.$emit('closeModal');
-            this.$emit('confDelete');
+        judge_repost_button(which) {
+          this.$emit('closeModal');
+          this.$emit('judge_repost_button', which, this.image);
         }
     },
   }
@@ -56,7 +65,7 @@
     height: 100%;
     width: 100%;
     position: fixed;
-    z-index: 1;
+    z-index: 2;
   }
 
   .o-border {
@@ -107,14 +116,27 @@
   .l-button {
       width: 100%;
       display: flex;
+      padding-bottom: 20px;
   }
 
-  .o-button_cancel, .o-button_finish {
-    padding: 20px;
+  .o-button_cancel {
     width: 100%;
-    font-size: 16px;
+    padding: 20px 0 20px 20px;
+    font-size: 12px;
     font-weight: bold;
     color: #4B8E8D;
+  }
+
+  .o-button_undo, .o-button_repost {
+    padding: 20px;
+    width: 100%;
+    font-size: 12px;
+    font-weight: bold;
+    color: rgba(0,0,0, .87);
+  }
+
+  .o-button_repost {
+    color: #CC544D;
   }
 
   .o-button_finish {

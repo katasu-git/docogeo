@@ -14,6 +14,15 @@
         </transition>
 
         <transition name="fade">
+            <RepostImage
+                :image="selected_image"
+                @closeModal="closeModal"
+                @judge_repost_button="judge_repost_button"
+                v-show="flag.repost_modal"
+            />
+        </transition>
+
+        <transition name="fade">
             <FinishTour
                 :tour_info="tour_info"
                 @closeModal="closeModal"
@@ -116,6 +125,7 @@ import Footer from '../components/parts/Footer'
 import ToggleSpot from '../components/Chat_Guide/ToggleSpot'
 import FinishTour from '../components/Chat_Guide/FinishTour'
 import GuestList from '../components/Chat_Guide/GuestList'
+import RepostImage from '../components/Chat_Guide/RepostImage'
 
   export default {
     name: 'chat_g',
@@ -141,6 +151,7 @@ import GuestList from '../components/Chat_Guide/GuestList'
           video_h: '',
           video_w: '',
           captures: '',
+          selected_image: require('../assets/test2.jpeg')
       }
     },
     created: function () {
@@ -276,7 +287,7 @@ import GuestList from '../components/Chat_Guide/GuestList'
             if(ex_info.isPosted == 0) {
                 await this.post_ex(ex_info)
             } else {
-                this.flag.repost_modal = true;
+                //this.flag.repost_modal = true;
                 await this.undo_post_ex(ex_info)
             }
             this.refresh()
@@ -345,9 +356,20 @@ import GuestList from '../components/Chat_Guide/GuestList'
             if(image.isPosted == 0) {
                 this.move_draw(image)
             } else {
-                this.undo_post_image(image)
+                this.selected_image = image;
+                this.flag.repost_modal = true;
             }
 
+        },
+
+        judge_repost_button(which, image) {
+            console.log(which)
+            console.log(image)
+            if(which == "repost") {
+                this.move_draw(image)
+            } else {
+                this.undo_post_image(image)
+            }
         },
 
         undo_post_image(image) {
@@ -399,6 +421,7 @@ import GuestList from '../components/Chat_Guide/GuestList'
             this.flag.change_spot = false;
             this.flag.finish_tour = false;
             this.flag.guest_list = false;
+            this.flag.repost_modal = false;
         },
         
         returnSended(sended) {
@@ -417,7 +440,8 @@ import GuestList from '../components/Chat_Guide/GuestList'
         Footer: Footer,
         ToggleSpot: ToggleSpot,
         FinishTour: FinishTour,
-        GuestList: GuestList
+        GuestList: GuestList,
+        RepostImage: RepostImage
     }
   }
 

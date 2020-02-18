@@ -511,7 +511,8 @@ export default {
 
         play_sound() {
             let audioElem = new Audio();
-            audioElem.src = require("../assets/hoee2.mp3");
+            audioElem.src = "https://www2.yoslab.net/~nishimura/sounds/hoee2.mp3";
+            console.log(audioElem.src);
             audioElem.play();
         },
     },
