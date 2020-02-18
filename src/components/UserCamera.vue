@@ -33,6 +33,7 @@
     <Footer
       :user="user"
       :place="place"
+      @stop_video="stop_video"
     ></Footer>
 
   </div>
@@ -83,6 +84,15 @@ import Footer from '../components/parts/Footer'
 
     },
     methods: {
+      stop_video() {
+        //this.video.pause();
+        let stream = this.video.srcObject;
+        let tracks = stream.getTracks();
+
+        tracks.forEach(function(track) {
+          track.stop();
+        });
+      },
       async countup_pageview() {
         const url = "https://www3.yoslab.net/~nishimura/docogeo/PHP/countup_pageview.php";
         let params = new URLSearchParams();
@@ -110,7 +120,7 @@ import Footer from '../components/parts/Footer'
             .then(response => {
               console.log(response.data);
               this.pile_image = response.data.image_path;
-              //this.opacity_value = response.data[0].opacity;
+              this.opacity_value = response.data.opacity;
             })
             .catch(error => {
             // エラーを受け取る

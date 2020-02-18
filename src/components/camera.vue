@@ -51,6 +51,7 @@
     <Footer
       :user="user"
       :place="place"
+      @stop_video="stop_video"
     ></Footer>
 
   </div>
@@ -106,6 +107,15 @@ import Uploading from '../components/Images_Modal/imgUploading'
 
     },
     methods: {
+      stop_video() {
+        //this.video.pause();
+        let stream = this.video.srcObject;
+        let tracks = stream.getTracks();
+
+        tracks.forEach(function(track) {
+          track.stop();
+        });
+      },
       capture() {
 
         //canvs再描画

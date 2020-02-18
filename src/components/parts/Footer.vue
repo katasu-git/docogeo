@@ -58,8 +58,10 @@
               page = "userCamera"
             } else if(where === "chat") {
               page = "chat_u"
+              this.$emit('stop_video');
             } else if(where === "maps") {
               page = "userMap"
+              this.$emit('stop_video');
             }
 
           } else if(this.user === "guide") {
@@ -67,12 +69,13 @@
               page =  "camera"
             } else if(where === "chat") {
               page = "chat_g"
+              this.$emit('stop_video');
             } else if(where === "maps") {
               page = "maps"
+              this.$emit('stop_video');
             }
 
           }
-          console.log(page)
 
           this.$router.push({
                 name: page
