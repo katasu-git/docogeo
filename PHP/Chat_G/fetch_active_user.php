@@ -4,9 +4,10 @@ require_once("../connect_mysql.php");
 header("Access-Control-Allow-Origin: *"); //CORS回避
 
 function fetch_active_user() {
+    $tour_id = $_POST['tour_id'];
     
     $pdo = connect_mysql();  //mysqlに接続
-    $sql = "SELECT * FROM active_user WHERE isDeleted=0 ORDER BY id ASC";
+    $sql = "SELECT * FROM active_user WHERE tour_id=$tour_id AND isDeleted=0 ORDER BY id ASC";
     $stmt = $pdo -> query($sql);
     $result = array();
     foreach($stmt as $row) {

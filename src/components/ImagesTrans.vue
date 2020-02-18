@@ -100,7 +100,8 @@ import DeleteImage from "../components/Images_Modal/imgDelete"
                         width: image_hidden.width,
                         height: image_hidden.height,
                         captures: captures,
-                        spot_image_id: image.id, //spot_imagesの主キー
+                        spot_image_id: image.id, //spot_imagesの主キー,
+                        image_path: image.image_path,
                         isNotReload: true,
                         isTrans: true
                     }

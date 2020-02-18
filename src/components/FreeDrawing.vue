@@ -156,6 +156,7 @@ export default {
     get_width: '',
     get_height: '',
     spot_image_id: '',
+    image_path: '',
     isTrans: Boolean
   },
   data: () => ({
@@ -185,6 +186,7 @@ export default {
     flag: {
       half: false,
       check: false,
+      isDraw: false,
     }
   }),
   created() {
@@ -273,6 +275,8 @@ export default {
       this.drawingLayer.draw()
 
       this.lastPointerPosition = this.pos
+
+      this.flag.isDraw = true;
     },
     onClearCanvas: function () {
       this.context.globalCompositeOperation = 'destination-out'
@@ -280,6 +284,8 @@ export default {
       this.drawingLayer.draw()
 
       this.$emit('on-reset')
+
+      this.flag.isDraw = false;
     },
     // 現在のモードが指定されたモードと一致するかどうか
     isTargetMode: function (targetMode) {
@@ -321,11 +327,45 @@ export default {
       this.file = this.cvs1.toDataURL('image/png');
       this.flag.check = true;
 
+      console.log(this.flag.isDraw);
+
     },
     postFile: function() {
-        this.flag.check = false;
-        this.flag_uploading = true;
+      this.flag.check = false;
+      this.flag_uploading = true;
 
+      if(!this.flag.isDraw) {
+        //何も書き込まれていない場合
+        this.post_undraw()
+      } else {
+        //書き込みがある場合
+        this.post_draw();
+        }
+      },
+      post_undraw() {
+        if(this.isTrans) {
+          this.post_draw();
+        } else {
+          var url = "https://www3.yoslab.net/~nishimura/docogeo/PHP/Images/post_image_to_dist.php";
+        }
+        let params = new URLSearchParams();
+        console.log(this.image_path);
+        params.append('image_path', this.image_path);
+        params.append('tour_id', this.tour_info.tour_id);
+        params.append('spot_id', this.spot_info.spot_id);
+        params.append('spot_image_id', this.spot_image_id);
+        params.append('opacity', this.opacity_value);
+        axios.post(url, params).then(response => {
+          this.flag_uploading = false;
+          this.jump("chat_g");
+        })
+        .catch(error => {
+          console.log(error);
+          this.flag_uploading = false;
+          this.jump("chat_g");
+        });
+      },
+      post_draw() {
         if(this.isTrans) {
           var url = "https://www3.yoslab.net/~nishimura/docogeo/PHP/Images/upload_trans_image.php";
         } else {
@@ -339,15 +379,18 @@ export default {
         params.append('opacity', this.opacity_value);
 
         axios
-          .post(url, params)
-          .then(response => {
-            this.flag_uploading = false;
-            this.jump("chat_g");
-          })
-          .catch(error => {
-            // エラーを受け取る
-            console.log(error);
-          });
+        .post(url, params)
+        .then(response => {
+          console.log(response.data);
+          this.flag_uploading = false;
+          this.jump("chat_g");
+        })
+        .catch(error => {
+          // エラーを受け取る
+          console.log(error);
+          this.flag_uploading = false;
+          this.jump("chat_g");
+        });
       },
       jump(where) {
         this.$router.push({

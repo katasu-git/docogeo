@@ -203,7 +203,7 @@ import Uploading from '../components/Images_Modal/imgUploading'
         this.$router.push({
             name: 'imagesTrans',
             params: {
-              isNotReload: true
+              isNotReload: true,
             }
         })
       }

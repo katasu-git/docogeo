@@ -212,7 +212,9 @@ import GuestList from '../components/Chat_Guide/GuestList'
         },
         async fetch_active_user() {
             const url = "https://www3.yoslab.net/~nishimura/docogeo/PHP/Chat_G/fetch_active_user.php";
-            const res = await axios.post(url);
+            let params = new URLSearchParams();
+            params.append('tour_id', this.tour_info.tour_id);
+            const res = await axios.post(url, params);
             this.userList = res.data;
         },
         change_spot_name(spot_selected) {
@@ -320,6 +322,7 @@ import GuestList from '../components/Chat_Guide/GuestList'
                     height: image_hidden.height,
                     captures: captures,
                     spot_image_id: image.id, //spot_imagesの主キー
+                    image_path: image.image_path,
                     isNotReload: true
                     }
                 })
@@ -340,7 +343,7 @@ import GuestList from '../components/Chat_Guide/GuestList'
             if(image.isPosted == 0) {
                 this.move_draw(image)
             } else {
-                console.log("配信済みです")
+                
             }
 
         },

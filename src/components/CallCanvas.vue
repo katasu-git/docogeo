@@ -8,6 +8,7 @@
             :get_width="width"
             :get_height="height"
             :spot_image_id="spot_image_id"
+            :image_path="image_path"
             :isTrans="isTrans"
         />
     </div>
@@ -26,6 +27,7 @@ export default {
     height: '',
     captures: '',
     spot_image_id: '',
+    image_path: '',
     isTrans: false
   }),
   created() {
@@ -34,6 +36,7 @@ export default {
       this.height = this.$route.params.height;
       this.captures = this.$route.params.captures;
       this.spot_image_id = this.$route.params.spot_image_id;
+      this.image_path = this.$route.params.image_path;
       this.isTrans = this.$route.params.isTrans;
     } else {
       this.$router.push({

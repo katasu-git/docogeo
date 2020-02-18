@@ -180,7 +180,7 @@
 }
 
 .img_wrapper {
-  width: 100%;
+  width: calc(100vw - 80px);
   height: 100%;
   border-radius: 10px;
   border: solid 1px rgba(0,0,0, .12);
