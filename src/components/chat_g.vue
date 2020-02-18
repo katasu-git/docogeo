@@ -58,6 +58,10 @@
                     :src="image.image_path"
                     :style="{ opacity:returnOpacity(image.isPosted) }"
                 />
+                <div class="likes_image">
+                    <img class="u-mr5" src="../assets/like_whole.svg" />
+                    {{image.likes}}
+                </div>
             </div>
         </div>
 
@@ -76,6 +80,10 @@
                             @click="hide_message(ex)"
                         >
                             <div class="kaigyo">{{ ex.spot_ex }}</div>
+                            <div class="likes">
+                                <img class="u-mr5" src="../assets/like_whole.svg" />
+                                {{ex.likes}}
+                            </div>
                         </div>
                         <div 
                             v-show="isExist(ex)"
@@ -539,12 +547,14 @@ import RepostImage from '../components/Chat_Guide/RepostImage'
   }
 
   .l-comment {
+      position: relative;
       padding: 10px 10px 10px 10px;
       background-color: #E3E5E5;
       border-radius: 10px;
   }
 
   .l-comment-hidden {
+    position: relative;
     padding: 8px;
     background-color: rgba(0,0,0,0);
     border: solid 2px #4B8E8D;
@@ -604,5 +614,27 @@ import RepostImage from '../components/Chat_Guide/RepostImage'
     width: calc(100% - 20px);
     visibility: hidden;
   }
+
+.likes, .likes_image {
+    position: absolute;
+    right: -5px;
+    background-color: #fff;
+    width: 40px;
+    height: 20px;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,.25));
+    border-radius: 40px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    font-size: 10px;
+    color: #4B8E8D;
+}
+
+.likes_image {
+    right: 0;
+    bottom: -10px;
+}
 
 </style>
