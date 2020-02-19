@@ -5,12 +5,13 @@
             <div class="l_altitude">
                 <div class="o_altitude">
                     <div class="o_alt_text">
-                        現在地の海抜：
+                        海抜：
                         <div 
                             class="o_alt_green"
                             :style="{ 'font-size': return_font_size()}" 
                         >{{return_altitude()}}</div>
                     m</div>
+                    <p class="example"><span class="u-color-red">赤いピン</span>を動かして海抜を見られます</p>
                 </div>
             </div>
             <div class="body">
@@ -23,6 +24,13 @@
                     :style="{ width: width, height: height }"
                 >
                     <GmapMarker
+                        v-for="(m) in markers"
+                        :position="m.position"
+                        :clickable="false"
+                        :draggable="false"
+                        :icon="icon_center"
+                    />
+                    <GmapMarker
                         :key="index"
                         v-for="(m, index) in markers"
                         :position="m.position"
@@ -30,6 +38,7 @@
                         :draggable="true"
                         @click="center=m.position"
                         @dragend="updateCoordinates"
+                        :icon="icon_pin"
                     />
                 </GmapMap>
             </div>
@@ -65,7 +74,17 @@ import Footer from '../components/parts/Footer'
         markers: [{ position: { lat: 10, lng: 10 } }],
         flag: {
             isLoad: false
-        }
+        },
+        icon_center: {
+            url: require('../assets/center_icon.png'),
+            size: {width: 30, height: 30, f: 'px', b: 'px'},
+            scaledSize: {width: 30, height: 30, f: 'px', b: 'px'}
+        },
+        icon_pin: {
+            url: require('../assets/pin_icon.png'),
+            size: {width: 30, height: 60, f: 'px', b: 'px'},
+            scaledSize: {width: 30, height: 50, f: 'px', b: 'px'}
+        },
       }
     },
     created() {
@@ -87,9 +106,9 @@ import Footer from '../components/parts/Footer'
             this.lng = Number(position.coords.longitude);
             this.markers[0].position.lat = this.lat;
             this.markers[0].position.lng = this.lng;
-            this.getElevation();
+            this.getElevation(this.lat, this.lng);
         },
-        getElevation() {
+        getElevation(lat, lng) {
             let url ="https://map.yahooapis.jp/alt/V1/getAltitude?appid=dj00aiZpPW5HanZkalZwY1poTyZzPWNvbnN1bWVyc2VjcmV0Jng9ZGQ-&coordinates=" 
                 + this.lng + "," + this.lat + "&output=json";
             this.$jsonp(url).then(json => {
@@ -128,9 +147,9 @@ import Footer from '../components/parts/Footer'
         },
 
         updateCoordinates(location) {
-            this.lat = location.latLng.lat()
-            this.lng = location.latLng.lng()
-            this.getElevation();
+            let lat = location.latLng.lat()
+            let lng = location.latLng.lng()
+            this.getElevation(lat, lng);
         },
     },
     components: {
@@ -150,6 +169,7 @@ import Footer from '../components/parts/Footer'
     background-color: #F5F5F5;
     color: rgba(0,0,0,.87);
     overflow-y: scroll;
+    overflow-x: hidden;
 	-webkit-overflow-scrolling: touch;
 }
 
@@ -165,16 +185,15 @@ import Footer from '../components/parts/Footer'
 }
 
 .o_altitude {
-    margin: 20px 0;
+    margin: 20px;
     width: calc(100% - 40px);
-    height: 150px;
     background-color: #FFF;
     border-radius: 10px;
     filter: drop-shadow(0 1px 3px rgba(0,0,0,.26));
 }
 
 .o_alt_text {
-    margin-top: 10px;
+    padding: 20px;
     width: 100%;
     display: flex;
     justify-content: center;
@@ -250,6 +269,14 @@ align-items: center;
     font-size: 12px;
     font-weight: bold;
     color: rgba(0,0,0, .26);
+}
+
+.example {
+    font-weight: bold;
+    font-size: 14px;
+    width: 100%;
+    text-align: center;
+    margin-bottom: 20px;
 }
 
 </style>
