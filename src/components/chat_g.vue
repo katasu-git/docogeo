@@ -633,7 +633,7 @@ import RepostImage from '../components/Chat_Guide/RepostImage'
 }
 
 .likes_image {
-    right: 0;
+    left: -5px;
     bottom: -10px;
 }
 

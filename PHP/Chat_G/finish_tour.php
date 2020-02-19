@@ -26,21 +26,23 @@ function delete_all_posted_post() {
 }
 
 function reset_post() {
-    
+    $tour_id = $_POST['tour_id'];
+
     $pdo = connect_mysql();
-    $sql = "UPDATE spot_explanation SET isPosted = :isPosted";
+    $sql = "UPDATE spot_explanation SET isPosted = :isPosted, likes = :likes WHERE tour_id=$tour_id";
     $stmt = $pdo->prepare($sql);
-    $params = array(':isPosted' => 0);
+    $params = array(':isPosted' => 0, ':likes' => 0);
     $stmt->execute($params);
 
 }
 
 function reset_post_img() {
-
+    $tour_id = $_POST['tour_id'];
+    
     $pdo = connect_mysql();  //mysqlに接続
-    $sql = "UPDATE spot_image SET isPosted = :isPosted";
+    $sql = "UPDATE spot_image SET isPosted = :isPosted, likes = :likes WHERE tour_id=$tour_id";
     $stmt = $pdo->prepare($sql);
-    $params = array(':isPosted' => 0);
+    $params = array(':isPosted' => 0, ':likes' => 0);
     $stmt->execute($params);
 
 }

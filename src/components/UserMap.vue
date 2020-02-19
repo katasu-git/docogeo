@@ -7,36 +7,38 @@
             :place="place"
         />
 
-        <div class="l_altitude">
-            <div class="o_altitude">
-                <div class="o_alt_text">
-                    現在地の海抜：
-                    <div 
-                        class="o_alt_green"
-                        :style="{ 'font-size': return_font_size()}" 
-                    >{{return_altitude()}}</div>
-                m</div>
-            </div>
-        </div>
-        <div class="body">
+        <div class="background">
 
-            <GmapMap
-                class="gmap"
-                :center="{lat:this.lat, lng:this.lng}"
-                :zoom="18"
-                :options="{streetViewControl: false}"
-                map-type-id="terrain"
-                :style="{ width: width, height: height }"
-            >
-                <GmapMarker
-                    :key="index"
-                    v-for="(m, index) in markers"
-                    :position="m.position"
-                    :clickable="true"
-                    :draggable="true"
-                    @click="center=m.position"
-                />
-            </GmapMap>
+            <div class="l_altitude">
+                <div class="o_altitude">
+                    <div class="o_alt_text">
+                        現在地の海抜：
+                        <div 
+                            class="o_alt_green"
+                            :style="{ 'font-size': return_font_size()}" 
+                        >{{return_altitude()}}</div>
+                    m</div>
+                </div>
+            </div>
+            <div class="body">
+                <GmapMap
+                    class="gmap"
+                    :center="{lat:this.lat, lng:this.lng}"
+                    :zoom="18"
+                    :options="{streetViewControl: false, gestureHandling: 'cooperative'}"
+                    map-type-id="terrain"
+                    :style="{ width: width, height: height }"
+                >
+                    <GmapMarker
+                        :key="index"
+                        v-for="(m, index) in markers"
+                        :position="m.position"
+                        :clickable="true"
+                        :draggable="true"
+                        @click="center=m.position"
+                    />
+                </GmapMap>
+            </div>
 
         </div>
     <Footer
@@ -146,6 +148,13 @@ import Footer from '../components/parts/Footer'
     width: 100%;
     background-color: #F5F5F5;
     color: rgba(0,0,0,.87);
+}
+
+.background {
+    width: 100%;
+    height: 100%;
+    overflow: scroll;
+    -webkit-overflow-scrolling: touch;
 }
 
 .body {
