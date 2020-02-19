@@ -45,11 +45,19 @@
 }
 
 .close {
+    background-color: #fff;
+    width: 50px;
+    height: 50px;
     position: absolute;
     top: 5px;
     right: 10px;
     font-size: 40px;
     font-weight: bold;
-    color: #fff;
+    border-radius: 100%;
+    color: rgba(0,0,0,.87);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 </style>
