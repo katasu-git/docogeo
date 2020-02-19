@@ -1,12 +1,7 @@
 <template>
     <div id="maps">
 
-        <VueHeader
-            :place="place"
-            :tour_info="tour_info"
-            :spot_info="spot_info"
-        />
-
+    <div class="background">
         <div class="l_altitude">
             <div class="o_altitude">
                 <div class="o_alt_text">
@@ -24,7 +19,7 @@
                 class="gmap"
                 :center="{lat:this.lat, lng:this.lng}"
                 :zoom="18"
-                :options="{streetViewControl: false}"
+                :options="{streetViewControl: false, gestureHandling: 'cooperative'}"
                 map-type-id="terrain"
                 :style="{ width: width, height: height }"
             >
@@ -39,6 +34,7 @@
             </GmapMap>
 
         </div>
+    </div>
     <Footer
         :place="place"
         :user="user"
@@ -65,7 +61,7 @@ import Footer from '../components/parts/Footer'
         lng: Number,
         altitude: Number,
         width: '200px',
-        height: '400px',
+        height: '450px',
         markers: [{ position: { lat: 10, lng: 10 } }],
         flag: {
             isLoad: false
@@ -141,14 +137,16 @@ import Footer from '../components/parts/Footer'
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 #maps {
-    position: relative;
+    position: fixed;
     height: 100%;
     width: 100%;
     background-color: #F5F5F5;
     color: rgba(0,0,0,.87);
+    overflow-y: scroll;
+	-webkit-overflow-scrolling: touch;
 }
 
-.body {
+.background {
     width: 100%;
 }
 
@@ -187,7 +185,7 @@ import Footer from '../components/parts/Footer'
 
 .gmap {
     margin-left: 20px;
-    margin-bottom: 120px;
+    margin-bottom: 170px;
 }
 
 .o-header {

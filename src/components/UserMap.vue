@@ -1,12 +1,5 @@
 <template>
     <div id="userMap">
-
-        <HeaderGuest 
-            :tour_info="tour_info"
-            :user_info="user_info"
-            :place="place"
-        />
-
         <div class="background">
 
             <div class="l_altitude">
@@ -67,7 +60,7 @@ import Footer from '../components/parts/Footer'
         lng: Number,
         altitude: Number,
         width: '200px',
-        height: '400px',
+        height: '450px',
         markers: [{ position: { lat: 10, lng: 10 } }],
         flag: {
             isLoad: false
@@ -143,21 +136,16 @@ import Footer from '../components/parts/Footer'
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 #userMap {
-    position: relative;
+    position: fixed;
     height: 100%;
     width: 100%;
     background-color: #F5F5F5;
     color: rgba(0,0,0,.87);
+    overflow-y: scroll;
+	-webkit-overflow-scrolling: touch;
 }
 
 .background {
-    width: 100%;
-    height: 100%;
-    overflow: scroll;
-    -webkit-overflow-scrolling: touch;
-}
-
-.body {
     width: 100%;
 }
 
@@ -169,8 +157,7 @@ import Footer from '../components/parts/Footer'
 }
 
 .o_altitude {
-    margin-top: 100px;
-    margin-bottom: 20px;
+    margin: 20px 0;
     width: calc(100% - 40px);
     height: 150px;
     background-color: #FFF;
@@ -196,7 +183,7 @@ import Footer from '../components/parts/Footer'
 
 .gmap {
     margin-left: 20px;
-    margin-bottom: 120px;
+    margin-bottom: 170px;
 }
 
 .o-header {
