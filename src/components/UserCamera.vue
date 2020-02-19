@@ -146,12 +146,12 @@ import Footer from '../components/parts/UserFooter'
 <style scoped>
 #userCamera, .o-img-area{
   position: fixed;
+  overflow: hidden;
   height: 100%;
   width: 100%;
 
   background-color: #F5F5F5;
   color: rgba(0,0,0,.87);
-  overflow: hidden;
 }
 
 .video_wrapper {

@@ -398,7 +398,7 @@ export default {
         })
       },
       return_opacity() {
-        return this.opacity_value + "%";
+        return this.opacity_value / 100;
       },
       set_width() {
         if(this.flag.half) {

@@ -22,17 +22,6 @@
         />
       </div>
 
-      <img 
-        class="button_upImage"
-        src="../assets/upImage.svg"
-        @click="choice_image()"
-      />
-
-      <button 
-        class="button_capture"
-        @click="capture"
-      ></button>
-
       <input 
         type="range" 
         min="0" 
@@ -48,6 +37,17 @@
         id="canvas"
       ></canvas>
 
+    <img 
+      class="button_upImage"
+      src="../assets/upImage.svg"
+      @click="choice_image()"
+    />
+
+    <button 
+      class="button_capture"
+      @click="capture"
+    ></button>
+
     <Footer
       :user="user"
       :place="place"
@@ -60,7 +60,7 @@
 <script>
 import axios from 'axios'
 import { async } from 'q';
-import Footer from '../components/parts/Footer'
+import Footer from '../components/parts/UserFooter'
 import Uploading from '../components/Images_Modal/imgUploading'
 
   export default {
@@ -227,6 +227,9 @@ import Uploading from '../components/Images_Modal/imgUploading'
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 #camera{
+  position: fixed;
+  overflow: hidden;
+
   height: 100%;
   width: 100%;
 
@@ -274,7 +277,7 @@ import Uploading from '../components/Images_Modal/imgUploading'
 .button_capture {
   z-index: 3;
   position: absolute;
-  bottom: 10px;
+  bottom: 120px;
   right: 0;
   left: 0;
   margin: auto;
@@ -288,7 +291,7 @@ import Uploading from '../components/Images_Modal/imgUploading'
 .button_upImage {
   z-index: 3;
   position: absolute;
-  bottom: 15px;
+  bottom: 125px;
   left: 50px;
 }
 
