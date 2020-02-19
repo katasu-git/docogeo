@@ -22,14 +22,15 @@
                 :options="{streetViewControl: false, gestureHandling: 'cooperative'}"
                 map-type-id="terrain"
                 :style="{ width: width, height: height }"
+                @center_changed="onCenterChanged"
             >
                 <GmapMarker
                     :key="index"
                     v-for="(m, index) in markers"
                     :position="m.position"
-                    :clickable="true"
+                    :clickable="false"
                     :draggable="true"
-                    @click="center=m.position"
+                    @dragend="updateCoordinates"
                 />
             </GmapMap>
 
@@ -125,6 +126,12 @@ import Footer from '../components/parts/Footer'
             params.append("where", this.place);
             const res = await axios.post(url, params);
         },
+
+        updateCoordinates(location) {
+            this.lat = location.latLng.lat()
+            this.lng = location.latLng.lng()
+            this.getElevation();
+        },
     },
     components: {
         Footer: Footer,
@@ -158,8 +165,7 @@ import Footer from '../components/parts/Footer'
 }
 
 .o_altitude {
-    margin-top: 100px;
-    margin-bottom: 20px;
+    margin: 20px;
     width: calc(100% - 40px);
     height: 150px;
     background-color: #FFF;

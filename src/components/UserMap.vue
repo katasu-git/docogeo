@@ -26,9 +26,10 @@
                         :key="index"
                         v-for="(m, index) in markers"
                         :position="m.position"
-                        :clickable="true"
+                        :clickable="false"
                         :draggable="true"
                         @click="center=m.position"
+                        @dragend="updateCoordinates"
                     />
                 </GmapMap>
             </div>
@@ -114,6 +115,7 @@ import Footer from '../components/parts/Footer'
                 return '20px'
             }
         },
+
         async countup_pageview() {
             if(!this.user_info) {
                 return;
@@ -123,6 +125,12 @@ import Footer from '../components/parts/Footer'
             params.append("id", this.user_info.id);
             params.append("where", this.place);
             const res = await axios.post(url, params);
+        },
+
+        updateCoordinates(location) {
+            this.lat = location.latLng.lat()
+            this.lng = location.latLng.lng()
+            this.getElevation();
         },
     },
     components: {
