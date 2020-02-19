@@ -2,18 +2,20 @@
   <div id="userCamera">
 
     <div class="video_wrapper">
-
+      
       <video
         ref="video" 
         id="video"
         autoplay muted playsinline
       ></video>
 
-      <img
-        :src="pile_image"
-        class="pile_image"
-        :style="{ opacity: return_opacity()}"
-      />
+      <div class="image_wrapper">
+        <img
+          :src="pile_image"
+          class="pile_image"
+          :style="{ opacity: return_opacity()}"
+        />
+      </div>
 
       <input 
         type="range" 
@@ -25,10 +27,11 @@
 
     </div>
 
-      <canvas
-        ref="canvas"
-        id="canvas"
-      ></canvas>
+
+    <canvas
+      ref="canvas"
+      id="canvas"
+    ></canvas>
 
     <Footer
       :user="user"
@@ -42,7 +45,7 @@
 <script>
 import axios from 'axios'
 import { async } from 'q';
-import Footer from '../components/parts/Footer'
+import Footer from '../components/parts/UserFooter'
   export default {
     name: 'userCamera',
     data() {
@@ -129,7 +132,7 @@ import Footer from '../components/parts/Footer'
       },
 
       return_opacity() {
-        return this.opacity_value + "%";
+        return this.opacity_value / 100;
       },
     },
     components: {
@@ -142,30 +145,44 @@ import Footer from '../components/parts/Footer'
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 #userCamera, .o-img-area{
+  position: fixed;
   height: 100%;
   width: 100%;
 
   background-color: #F5F5F5;
   color: rgba(0,0,0,.87);
+  overflow: hidden;
 }
 
 .video_wrapper {
-  position: absolute;
-  top: 10px;
-  left: 10px;
+  position: relative;
+  margin-top: 10px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 #video {
-  width: calc(100% - 10px);
+  width: calc(100% - 20px);
+  max-height: calc(100% - 150px);
+}
+
+.image_wrapper {
+  position: absolute;
+  left: 10px;
+  width: calc(100% - 20px);
+  height: 100%;
+  z-index: 2;
+  overflow: hidden;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .pile_image {
-  width: calc(100% - 10px);
-  position: absolute;
-  z-index: 2;
-  top: 0;
-  left: 0;
-  opacity: .3;
+  width: 100%;
 }
 
 #canvas {

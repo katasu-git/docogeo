@@ -86,6 +86,9 @@ import Uploading from '../components/Images_Modal/imgUploading'
       this.tour_info = JSON.parse(this.$localStorage.get('now_tour_info'));
       this.spot_info = JSON.parse(this.$localStorage.get('now_spot_info'))
       this.user_info = JSON.parse(this.$localStorage.get('user_info'));
+
+      let width = this.calc_video_width(window.parent.screen.height)
+      console.log(width);
     },
     mounted() {
         this.video = this.$refs.video
@@ -107,6 +110,11 @@ import Uploading from '../components/Images_Modal/imgUploading'
 
     },
     methods: {
+      calc_video_width(screen_height) {
+        let width = (screen_height - 240) / 3 * 2;
+        return width;
+      },
+
       stop_video() {
         //this.video.pause();
         let stream = this.video.srcObject;
@@ -218,7 +226,7 @@ import Uploading from '../components/Images_Modal/imgUploading'
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-#camera, .o-img-area{
+#camera{
   height: 100%;
   width: 100%;
 
