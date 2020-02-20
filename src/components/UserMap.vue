@@ -4,14 +4,15 @@
 
             <div class="l_altitude">
                 <div class="o_altitude">
+                    <p class="example"><span class="u-color-red">赤いピン</span>を動かして海抜を見られます</p>
                     <div class="o_alt_text">
                         海抜：
                         <div 
                             class="o_alt_green"
                             :style="{ 'font-size': return_font_size()}" 
                         >{{return_altitude()}}</div>
-                    m</div>
-                    <p class="example"><span class="u-color-red">赤いピン</span>を動かして海抜を見られます</p>
+                        m
+                    </div>
                 </div>
             </div>
             <div class="body">
@@ -41,8 +42,15 @@
                         :icon="icon_pin"
                     />
                 </GmapMap>
-            </div>
 
+                <div class="dif_altitude">1分ごとの海抜の変化</div>
+
+                <chart
+                    :eval_log="eval_log" 
+                    class="chart u-mt20 u-mb150" 
+                />
+
+            </div>
         </div>
     <Footer
         :place="place"
@@ -55,6 +63,7 @@
 import axios from 'axios'
 import HeaderGuest from '../components/parts/HeaderGuest'
 import Footer from '../components/parts/Footer'
+import Chart from '../components/parts/Chart';
 
   export default {
     name: 'userMap',
@@ -85,6 +94,7 @@ import Footer from '../components/parts/Footer'
             size: {width: 30, height: 60, f: 'px', b: 'px'},
             scaledSize: {width: 30, height: 50, f: 'px', b: 'px'}
         },
+        eval_log: []
       }
     },
     created() {
@@ -92,6 +102,7 @@ import Footer from '../components/parts/Footer'
         this.tour_info = JSON.parse(this.$localStorage.get('now_tour_info'));
         this.spot_info = JSON.parse(this.$localStorage.get('now_spot_info'));
         this.user_info = JSON.parse(this.$localStorage.get('user_info'));
+        this.fetch_eval_log()
     },
     mounted() {
         this.init();
@@ -150,10 +161,24 @@ import Footer from '../components/parts/Footer'
             let lng = location.latLng.lng()
             this.getElevation(lat, lng);
         },
+
+        async fetch_eval_log() {
+            console.log(this.tour_info)
+            const url = "https://www3.yoslab.net/~nishimura/docogeo/PHP/fetch_eval_log.php";
+            let params = new URLSearchParams();
+            params.append("tour_id", this.tour_info.tour_id);
+            const res = await axios.post(url, params);
+            let eval_log = res.data;
+            for(let i=eval_log.length - 1; i>=0; i--) {
+                this.eval_log.push(eval_log[i].altitude);
+            }
+            console.log(this.eval_log)
+        }
     },
     components: {
         Footer: Footer,
-        HeaderGuest: HeaderGuest
+        HeaderGuest: HeaderGuest,
+        Chart: Chart
     }
   }
 
@@ -192,8 +217,8 @@ import Footer from '../components/parts/Footer'
 }
 
 .o_alt_text {
-    padding: 20px;
-    width: 100%;
+    padding: 0 20px 20px 20px;
+    width: calc(100% - 40px);
     display: flex;
     justify-content: center;
     align-items: flex-end;
@@ -209,7 +234,6 @@ import Footer from '../components/parts/Footer'
 
 .gmap {
     margin-left: 20px;
-    margin-bottom: 170px;
 }
 
 .o-header {
@@ -248,11 +272,11 @@ user-select: none;
 }
 
 .l-header_under {
-width: 100%;
+    width: 100%;
 
-display: flex;
-justify-content: space-between;
-align-items: center;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .o-text_tour_min {
@@ -273,9 +297,19 @@ align-items: center;
 .example {
     font-weight: bold;
     font-size: 14px;
-    width: 100%;
+    width: calc(100% - 40px);
     text-align: center;
-    margin-bottom: 20px;
+    padding: 20px;
+}
+
+.u-mb150 {
+    margin-bottom: 150px;
+}
+
+.dif_altitude {
+    margin: 40px 0 0 20px;
+    font-weight: bold;
+    font-size: 18px;
 }
 
 </style>

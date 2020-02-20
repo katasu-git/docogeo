@@ -5,6 +5,7 @@
       <div class="o-background_black">
         <div class="o-modal">
             <button 
+                class="buttons"
                 v-for="info in spot_info_arr"
                 @click="change_spot_name(info)"
                 :key="info.spot_id"
@@ -14,7 +15,7 @@
                     :style="{color:returnCol(info.spot_id)}"
                 >{{ info.spot_name }}</div>
                 
-                <div class="o-border u-mt10"></div>
+                <div class="o-border"></div>
             </button>
         </div>
       </div>
@@ -55,6 +56,7 @@
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
   #changespot {
+    position: fixed;
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
@@ -85,11 +87,15 @@
 
   .o-modal {
     width: calc(100% - 40px);
+    max-height: calc(100% - 40px);
     border-radius: 10px;
     background-color: #fff;
 
     display: flex;
     flex-direction: column;
+
+    overflow-y: scroll; 
+    -webkit-overflow-scrolling: touch;
   }
 
   .o-text {

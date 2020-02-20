@@ -22,6 +22,6 @@ function countup_pageview() {
 
     $stmt->execute($params);
 }
-echo json_encode(countup_pageview()); 
+echo json_encode(countup_pageview());
 
 ?>

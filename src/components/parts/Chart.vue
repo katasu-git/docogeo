@@ -4,6 +4,9 @@ import { Bar } from 'vue-chartjs';
 export default {
   extends: Bar,
   name: 'chart',
+  props: {
+    eval_log: ""
+  },
   data () {
     return {
       data: {
@@ -45,18 +48,24 @@ export default {
   },
   created () {
     this.data.labels = this.create_scale()
-    this.data.datasets[0].data = [0, 30, 72, 156.6, 258.1, 258.7, 293.7, 323.4];
+    this.data.datasets[0].data = this.eval_log;
   },
   mounted() {
     //データを入れてから生成する
     this.renderChart(this.data, this.options)
   },
+  watch: {
+    eval_log() {
+      this.data.datasets[0].data = this.eval_log;
+      this.create_scale();
+      this.renderChart(this.data, this.options);//再描画
+    }
+  },
   methods: {
       create_scale() {
-          for(let i=15; i>0; i--) {
+          for(let i=this.eval_log.length; i>0; i--) {
               this.scale.push(i)
           }
-          this.scale.push('now')
           return this.scale;
       }
   }

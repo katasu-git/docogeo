@@ -1,6 +1,11 @@
 <template>
-  <div id="chat_g">
-      <div class="o-background">
+  <div 
+    id="chat_g"
+    :class="{onClickModal: flag.change_spot}"
+  >
+    <div 
+        class="o-background"
+    >
 
         <transition name="fade">
             <ToggleSpot
@@ -458,6 +463,9 @@ import RepostImage from '../components/Chat_Guide/RepostImage'
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 #chat_g {
+    position: fixed;
+    overflow-y: scroll;
+    -webkit-overflow-scrolling: touch;
     height: 100%;
     width: 100%;
     background-color: #F5F5F5;
@@ -635,6 +643,10 @@ import RepostImage from '../components/Chat_Guide/RepostImage'
 .likes_image {
     left: -5px;
     bottom: -10px;
+}
+
+.onClickModal {
+    overflow: hidden;
 }
 
 </style>

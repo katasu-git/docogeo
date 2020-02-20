@@ -4,6 +4,7 @@
     <div class="background">
         <div class="l_altitude">
             <div class="o_altitude">
+                <p class="example"><span class="u-color-red">赤いピン</span>を動かして海抜を見られます</p>
                 <div class="o_alt_text">
                     海抜：
                     <div 
@@ -11,7 +12,6 @@
                         :style="{ 'font-size': return_font_size()}" 
                     >{{return_altitude()}}</div>
                 m</div>
-                <p class="example"><span class="u-color-red">赤いピン</span>を動かして海抜を見られます</p>
             </div>
         </div>
         <div class="body">
@@ -42,7 +42,12 @@
                 />
             </GmapMap>
 
-            <chart class="chart u-mt20 u-mb150" />
+            <div class="dif_altitude">1分ごとの海抜の変化</div>
+
+            <chart
+                :eval_log="eval_log" 
+                class="chart u-mt20 u-mb150" 
+            />
 
         </div>
     </div>
@@ -88,6 +93,7 @@ import Chart from '../components/parts/Chart';
             size: {width: 30, height: 60, f: 'px', b: 'px'},
             scaledSize: {width: 30, height: 50, f: 'px', b: 'px'}
         },
+        eval_log: []
       }
     },
     created() {
@@ -95,10 +101,10 @@ import Chart from '../components/parts/Chart';
         this.tour_info = JSON.parse(this.$localStorage.get('now_tour_info'));
         this.spot_info = JSON.parse(this.$localStorage.get('now_spot_info'));
         this.user_info = JSON.parse(this.$localStorage.get('user_info'));
+        this.fetch_eval_log();
     },
     mounted() {
         this.init();
-        this.countup_pageview()
     },
     methods: {
         init() {
@@ -137,22 +143,24 @@ import Chart from '../components/parts/Chart';
                 return '20px'
             }
         },
-        async countup_pageview() {
-            if(!this.user_info) {
-                return;
-            }
-            const url = "https://www2.yoslab.net/~nishimura/docogeo/PHP_C/countup_pageview.php";
-            let params = new URLSearchParams();
-            params.append("id", this.user_info.id);
-            params.append("where", this.place);
-            const res = await axios.post(url, params);
-        },
 
         updateCoordinates(location) {
             let lat = location.latLng.lat()
             let lng = location.latLng.lng()
             this.getElevation(lat, lng);
         },
+
+        async fetch_eval_log() {
+            const url = "https://www3.yoslab.net/~nishimura/docogeo/PHP/fetch_eval_log.php";
+            let params = new URLSearchParams();
+            params.append("tour_id", this.tour_info.tour_id);
+            const res = await axios.post(url, params);
+            let eval_log = res.data;
+            for(let i=eval_log.length - 1; i>=0; i--) {
+                this.eval_log.push(eval_log[i].altitude);
+            }
+            console.log(this.eval_log)
+        }
     },
     components: {
         Footer: Footer,
@@ -278,7 +286,7 @@ align-items: center;
     font-size: 14px;
     width: 100%;
     text-align: center;
-    margin-bottom: 20px;
+    padding: 20px;
 }
 
 .u-mt20 {
@@ -287,6 +295,12 @@ align-items: center;
 
 .u-mb150 {
     margin-bottom: 150px;
+}
+
+.dif_altitude {
+    margin: 40px 0 0 20px;
+    font-weight: bold;
+    font-size: 18px;
 }
 
 </style>

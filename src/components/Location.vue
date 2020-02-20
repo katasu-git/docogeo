@@ -1,13 +1,13 @@
 <template>
     <div id="location">
+        ツアー名：{{tour_info}}
         <p>GET LOCATION HERE!!</p>
-        <p>left time <span class="fs30">{{increment}}</span> sec</p>
+        <p>left time <span class="fs30">{{increment}}</span> min</p>
         <p>success <span class="fs30">{{increment_success}}</span></p>
         <p>dont move <span class="fs30">{{increment_dontMove}}</span></p>
         <div v-for="(alt, i) in altitudes" :key="i">
             {{ alt }} m
         </div>
-        <button @click="play_sound()">ヨーホエル！</button>
     </div>
 </template>
 
@@ -33,8 +33,8 @@ export default {
         this.tour_info = JSON.parse(this.$localStorage.get('now_tour_info'));
         setInterval(function() {
             this.init();
-            this.increment += 10;
-        }.bind(this), 10000);
+            this.increment += 1;
+        }.bind(this), 60000);
     },
     methods: {
         init() {
