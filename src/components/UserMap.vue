@@ -110,10 +110,9 @@ import Footer from '../components/parts/Footer'
         },
         getElevation(lat, lng) {
             let url ="https://map.yahooapis.jp/alt/V1/getAltitude?appid=dj00aiZpPW5HanZkalZwY1poTyZzPWNvbnN1bWVyc2VjcmV0Jng9ZGQ-&coordinates=" 
-                + this.lng + "," + this.lat + "&output=json";
+                + lng + "," + lat + "&output=json";
             this.$jsonp(url).then(json => {
                 // Success.
-                console.log(json.Feature[0].Property.Altitude);
                 this.altitude = json.Feature[0].Property.Altitude;
                 this.flag.isLoad = true;
             }).catch(err => {

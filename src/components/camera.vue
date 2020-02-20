@@ -69,7 +69,6 @@ import Uploading from '../components/Images_Modal/imgUploading'
       return {
         place: "camera",
         user: 'guide',
-        user_info: '',
         isNotReload: true,
         video: {},
         canvas: {},
@@ -85,10 +84,6 @@ import Uploading from '../components/Images_Modal/imgUploading'
     created() {
       this.tour_info = JSON.parse(this.$localStorage.get('now_tour_info'));
       this.spot_info = JSON.parse(this.$localStorage.get('now_spot_info'))
-      this.user_info = JSON.parse(this.$localStorage.get('user_info'));
-
-      let width = this.calc_video_width(window.parent.screen.height)
-      console.log(width);
     },
     mounted() {
         this.video = this.$refs.video

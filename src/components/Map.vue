@@ -42,6 +42,8 @@
                 />
             </GmapMap>
 
+            <chart class="chart u-mt20 u-mb150" />
+
         </div>
     </div>
     <Footer
@@ -55,6 +57,7 @@
 import axios from 'axios'
 import VueHeader from '../components/parts/Header'
 import Footer from '../components/parts/Footer'
+import Chart from '../components/parts/Chart';
 
   export default {
     name: 'maps',
@@ -153,7 +156,8 @@ import Footer from '../components/parts/Footer'
     },
     components: {
         Footer: Footer,
-        VueHeader: VueHeader
+        VueHeader: VueHeader,
+        Chart: Chart
     }
   }
 
@@ -209,7 +213,6 @@ import Footer from '../components/parts/Footer'
 
 .gmap {
     margin-left: 20px;
-    margin-bottom: 170px;
 }
 
 .o-header {
@@ -276,6 +279,14 @@ align-items: center;
     width: 100%;
     text-align: center;
     margin-bottom: 20px;
+}
+
+.u-mt20 {
+    margin-top: 20px;
+}
+
+.u-mb150 {
+    margin-bottom: 150px;
 }
 
 </style>
