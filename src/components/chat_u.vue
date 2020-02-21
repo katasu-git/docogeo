@@ -109,7 +109,9 @@
         <Footer
             :place="place"
             :user="user"
-            @move_page="move_page">
+            @move_page="move_page"
+            @stop_interval="stop_interval"
+        >
         </Footer>
 
     </div>
@@ -138,12 +140,14 @@ export default {
             end: false,
             chage_name: false,
             isMounted: false,
-            lookImage: false
+            lookImage: false,
+            movePage: false,
           },
           showList: [],
           showLike: [],
           src_selected: '',
-          comment: ''
+          comment: '',
+          repeatObj: ''
       }
     },
     created: function () {
@@ -151,6 +155,10 @@ export default {
         this.countup_pageview();
     },
     methods: {
+        stop_interval() {
+            clearInterval(this.repeatObj);
+            console.log("ていし")
+        },
         init() {
             this.set_tour_info();
             
@@ -165,10 +173,11 @@ export default {
 
             this.set_likes();//いいねを反映
 
-            setInterval(function() {
+            this.repeatObj = setInterval(()=> {
                 this.get_added_post();
+                console.log("heehehehe")
                 //this.get_all_post();//全件取得
-            }.bind(this), 1000);
+            }, 1000);
         },
 
         set_tour_info() {
@@ -424,6 +433,7 @@ export default {
             params.append("id", this.user_info.id);
             params.append("where", this.place);
             const res = await axios.post(url, params);
+            console.log("発火")
         },
 
         isLiked(id) {

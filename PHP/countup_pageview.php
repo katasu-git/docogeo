@@ -1,6 +1,6 @@
 <?php
 ini_set('display_errors',1);
-require_once("../connect_mysql.php");
+require_once("./connect_mysql.php");
 header("Access-Control-Allow-Origin: *"); //CORS回避
 
 function countup_pageview() {

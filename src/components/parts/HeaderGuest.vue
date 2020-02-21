@@ -10,11 +10,13 @@
             @click="change_name"
         >
             {{user_info.name}}
+            <!--
             <img 
                 v-if="place !== 'userMap'"
                 class="u-ml5" 
                 src="../../assets/Polygon 1.svg" 
             />
+            -->
         </div>
     </div>
   </div>

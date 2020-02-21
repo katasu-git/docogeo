@@ -49,8 +49,7 @@
     },
     methods: {
         move_page(where) {
-          console.log(where)
-          console.log(this.user)
+          this.$emit("stop_interval");
           let page;
 
           if(this.user === "guest") {

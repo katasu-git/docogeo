@@ -12,6 +12,11 @@
                             :style="{ 'font-size': return_font_size()}" 
                         >{{return_altitude()}}</div>
                         m
+                        <img
+                            @click="reload()" 
+                            class="reloadButton u-ml20" 
+                            src="../assets/reloadbutton.png" 
+                        />
                     </div>
                 </div>
             </div>
@@ -112,6 +117,9 @@ import Chart from '../components/parts/Chart';
         init() {
             this.width = (document.getElementById("userMap").clientWidth - 40 ) + "px";
         },
+        reload() {
+            window.location.reload();
+        },
         create_src(position) {
             this.lat =  Number(position.coords.latitude);
             this.lng = Number(position.coords.longitude);
@@ -154,6 +162,7 @@ import Chart from '../components/parts/Chart';
             params.append("id", this.user_info.id);
             params.append("where", this.place);
             const res = await axios.post(url, params);
+            console.log("発火")
         },
 
         updateCoordinates(location) {
@@ -163,7 +172,6 @@ import Chart from '../components/parts/Chart';
         },
 
         async fetch_eval_log() {
-            console.log(this.tour_info)
             const url = "https://www3.yoslab.net/~nishimura/docogeo/PHP/fetch_eval_log.php";
             let params = new URLSearchParams();
             params.append("tour_id", this.tour_info.tour_id);
@@ -172,7 +180,6 @@ import Chart from '../components/parts/Chart';
             for(let i=eval_log.length - 1; i>=0; i--) {
                 this.eval_log.push(eval_log[i].altitude);
             }
-            console.log(this.eval_log)
         }
     },
     components: {
@@ -310,6 +317,19 @@ user-select: none;
     margin: 40px 0 0 20px;
     font-weight: bold;
     font-size: 18px;
+}
+
+.reloadButton {
+    height: 40px;
+    widows: 40px;
+}
+
+.reloadButton:active {
+  opacity: .5;
+}
+
+.u-ml20 {
+    margin-left: 20px;
 }
 
 </style>

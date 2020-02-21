@@ -27,6 +27,12 @@
 
     </div>
 
+    <img
+        @click="reload()" 
+        class="reloadButton u-ml20" 
+        src="../assets/reloadbutton.png" 
+    />
+
 
     <canvas
       ref="canvas"
@@ -87,6 +93,9 @@ import Footer from '../components/parts/UserFooter'
 
     },
     methods: {
+      reload() {
+        this.getImage();
+      },
       stop_video() {
         //this.video.pause();
         let stream = this.video.srcObject;
@@ -102,6 +111,7 @@ import Footer from '../components/parts/UserFooter'
         params.append("id", this.user_info.id);
         params.append("where", this.place);
         const res = await axios.post(url, params);
+        console.log("発火")
       },
 
       setCanvas() {
@@ -236,6 +246,18 @@ input[type=range]::-webkit-slider-thumb{
   height: 30px;
   width: 30px;
   border-radius:50%;
+}
+
+.reloadButton {
+  position: fixed;
+  bottom: 120px;
+  right: 20px;
+  height: 40px;
+  widows: 40px;
+}
+
+.reloadButton:active {
+  opacity: .5;
 }
 
 </style>
